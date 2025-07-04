@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sreenu Ponemoni - Salesforce Developer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            color: #374151; /* Dark gray text */
+        }
+        .tab-button.active {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e7ff; /* Light indigo */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1; /* Indigo 500 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5; /* Indigo 600 */
+        }
+
+        /* Chat specific styles */
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .chat-message.user {
+            background-color: #e0e7ff; /* Light indigo for user */
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .chat-message.bot {
+            background-color: #d1fae5; /* Light green for bot */
+            align-self: flex-start;
+            margin-right: auto;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding-top: 10px;
+        }
+
+        /* Liquid Glass Container styles for smooth visibility toggle */
+        .liquid-glass-container {
+            transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white p-6 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-4xl font-bold mb-2 md:mb-0">Sreenu Ponemoni</h1>
+            <p class="text-xl font-light">Salesforce Administrator & Developer</p>
+            <div class="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-2 md:space-y-0 md:space-x-4">
+                <a href="tel:9640352929" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
+                    <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                    9640352929
+                </a>
+                <a href="mailto:sreeponemoni6264@gmail.com" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
+                    <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                    sreeponemoni6264@gmail.com
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-md py-4 sticky top-0 z-10">
+        <div class="container mx-auto flex flex-wrap justify-center gap-4">
+            <button class="tab-button active px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="about">About</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience">Experience</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills">Skills</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education">Education</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="ai-chat">AI Chat</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="gallery">Gallery</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="my-works">My Works</button>
+            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact">Contact</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto p-6 md:p-8 lg:p-10">
+
+        <!-- About Section -->
+        <section id="about" class="tab-content active bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
+            <div class="prose max-w-none">
+                <p class="text-lg leading-relaxed mb-4">
+                    Overall, I have 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer.
+                </p>
+                <p class="text-lg leading-relaxed mb-4">
+                    I have actively participated in all stages of the Software Development Life Cycle (SDLC), including System Analysis, Design, Development, and Testing. My expertise lies in the Development, Administration, Configuration, Implementation, and Support of Salesforce CRM, leveraging Apex language and the Force.com Platform. I am proficient in writing Apex transactions while adhering to governor limits.
+                </p>
+                <p class="text-lg leading-relaxed mb-4">
+                    My experience extends to UI Development through Lightning Web Components (LWC) using VS Code, and I possess expertise in Apex Triggers, Bulk Triggers, Apex Classes, and Apex Batches to meet diverse business needs. I am skilled in creating Unit Test Classes for deployment to production environments.
+                </p>
+                <p class="text-lg leading-relaxed mb-4">
+                    I am proficient in SFDC Administrative tasks such as creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Processes, Workflows, Reports, Dashboards, Tasks, and Events. My extensive experience includes data migration using Data Loader, change sets, and Dataloader.io. I also have broad experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder, and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. I have successfully implemented Organization-Wide Defaults (OWDs) & sharing rules for different users at various organizational levels.
+                </p>
+                <p class="text-lg leading-relaxed">
+                    Furthermore, I have experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another.
+                </p>
+            </div>
+        </section>
+
+        <!-- Experience Section - Project divs updated with magnification effect -->
+        <section id="experience" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Professional Experience</h2>
+
+            <!-- Cognizant Technology Solutions -->
+            <div class="mb-8 p-6 bg-indigo-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103">
+                <h3 class="text-2xl font-semibold text-indigo-800 mb-2">Software Engineer at Cognizant Technology Solutions</h3>
+                <p class="text-lg text-gray-600 mb-4">February 17th, 2021 - June 20th, 2025</p>
+
+                <!-- Project 1: PMI -->
+                <div class="mb-6 border-l-4 border-indigo-400 pl-4">
+                    <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #1: PMI</h4>
+                    <p class="text-md text-gray-700 mb-2">Role: Salesforce Developer | Cloud: Sales & Service Cloud | Duration: May 2023 - June 2025</p>
+                    <p class="text-md leading-relaxed mb-3">
+                        Philip Morris International Inc. is an American multinational tobacco company with products sold in over 180 countries. In Philip Morris, the entire Service Model is handled with the Salesforce Platform. The Salesforce Platform was set up to provide all kinds of sales and service queries to customers. In this application, I primarily worked on the development part, specifically "Asynchronous Apex" to run the application.
+                    </p>
+                    <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
+                    <ul class="list-disc list-inside text-md text-gray-700 space-y-1">
+                        <li>Created User Profiles, Users, and Modifying User Page Layouts & Setting up Sharing Rules.</li>
+                        <li>Implemented batch classes for large data operations using Apex Batch.</li>
+                        <li>Developed Apex triggers to handle complex business processes.</li>
+                        <li>Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                        <li>Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                        <li>Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                        <li>Ensured data integrity through the appropriate use of loading and exporting tools, for bulk of data using Data Loader.</li>
+                        <li>Configured page layouts, workflows, document templates, and record types & data fields. Created Report Types, Reports and Dashboards.</li>
+                        <li>Created Custom Objects, Custom Fields, Tabs and Lightning Pages.</li>
+                        <li>Worked on Record Types and Page Layouts.</li>
+                        <li>Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                    </ul>
+                </div>
+
+                <!-- Project 2: Eaton Corporation -->
+                <div class="mb-6 border-l-4 border-indigo-400 pl-4">
+                    <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #2: Eaton Corporation</h4>
+                    <p class="text-md text-gray-700 mb-2">Role: Salesforce Administrator/Developer | Cloud: Sales & Service Cloud | Duration: Nov 2021 - Oct 2022</p>
+                    <p class="text-md leading-relaxed mb-3">
+                        Eaton is an intelligent Power Management company dedicated to improving the quality of life and protecting the environment for people everywhere. Eaton is guided by their commitment to do business, to operate sustainably, and to help their customers manage power—today and well into the future. By capitalizing on the global trends of electrification and digitalization, Eaton is accelerating the planet's transition to renewable energy and helping to solve the world's most urgent power management challenges.
+                    </p>
+                    <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
+                    <ul class="list-disc list-inside text-md text-gray-700 space-y-1">
+                        <li>Requirement analysis, validating and migrating.</li>
+                        <li>Implemented batch classes for large data operations using Apex Batch.</li>
+                        <li>Developed Apex triggers to handle complex business processes.</li>
+                        <li>Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                        <li>Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                        <li>Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                        <li>Creating/add and manage Users, Roles, Profiles and setting up group members.</li>
+                        <li>Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations.</li>
+                        <li>Analyzing business requirement and loaded the objects through data loader.</li>
+                        <li>Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                    </ul>
+                </div>
+
+                <!-- Project 3: ELECTROLUX Sales -->
+                <div class="border-l-4 border-indigo-400 pl-4">
+                    <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #3: ELECTROLUX Sales</h4>
+                    <p class="text-md text-gray-700 mb-2">Domain: Retail Management | Role: Salesforce Developer | Duration: Feb 2021 - Oct 2021</p>
+                    <p class="text-md leading-relaxed mb-3">
+                        Electrolux is a global leader in household appliances and appliances for professional use, selling more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
+                    </p>
+                    <h5 class="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h5>
+                    <ul class="list-disc list-inside text-md text-gray-700 space-y-1">
+                        <li>Development Activities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce.</li>
+                        <li>Provide technical support: Responded to inquiries and resolved technical issues related to Salesforce products and services, including custom code and integrations.</li>
+                        <li>Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and displayed them on to the component.</li>
+                        <li>Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section - Skill divs updated with magnification effect -->
+        <section id="skills" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-blue-50 p-5 rounded-lg shadow-sm transform transition-transform duration-300 hover:scale-103">
+                    <h3 class="text-xl font-semibold text-blue-700 mb-3">Salesforce Technologies</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Salesforce.com CRM</li>
+                        <li>Apex Language, Apex Classes, Apex Triggers</li>
+                        <li>SOQL, SOSL</li>
+                        <li>Workflow & Approvals</li>
+                        <li>Reports, Dashboards</li>
+                        <li>Standard and Custom Objects</li>
+                        <li>Lightning Web Components (LWC)</li>
+                        <li>Visualforce</li>
+                        <li>Salesforce Communities</li>
+                        <li>Salesforce Mobile App</li>
+                        <li>Batch Apex, Scheduled Apex</li>
+                        <li>Process Builder, Flow</li>
+                        <li>Data Loader, Change Sets, Dataloader.io</li>
+                        <li>REST API Integration</li>
+                        <li>Organization Wide Defaults (OWDs) & Sharing Rules</li>
+                    </ul>
+                </div>
+                <div class="bg-green-50 p-5 rounded-lg shadow-sm transform transition-transform duration-300 hover:scale-103">
+                    <h3 class="text-xl font-semibold text-green-700 mb-3">Development & Tools</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>HTML, CSS, JavaScript</li>
+                        <li>VS Code</li>
+                        <li>Unit Test Classes</li>
+                        <li>Debugging</li>
+                        <li>SDLC (System Analysis, Design, Development, Testing)</li>
+                    </ul>
+                </div>
+                <div class="bg-purple-50 p-5 rounded-lg shadow-sm transform transition-transform duration-300 hover:scale-103">
+                    <h3 class="text-xl font-semibold text-purple-700 mb-3">Personal Skills</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        <li>Strong analytical and assessment skills</li>
+                        <li>Ability to learn and adapt to new technologies quickly</li>
+                        <li>Rapid adaptability to learn new technologies and standards</li>
+                        <li>Troubleshooting</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Academic Qualifications</h2>
+            <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103">
+                <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Bachelor of Technology (B-Tech) in Mechanical Stream</h3>
+                <p class="text-lg text-gray-700">Kasireddy Narayan Reddy College of Engineering & Research</p>
+                <p class="text-md text-gray-600">Graduated: 2019</p>
+            </div>
+        </section>
+
+        <!-- AI Chat Section (Rule-based) -->
+        <section id="ai-chat" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">AI Chat Assistant</h2>
+            <div class="p-6 bg-blue-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103 flex flex-col h-[500px]">
+                <p class="text-md text-gray-700 mb-4">Chat with an AI assistant about my profile or general Salesforce topics!</p>
+                <div id="chatHistory" class="flex-grow overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white flex flex-col space-y-3 mb-4">
+                    <!-- Chat messages will be appended here -->
+                    <div class="chat-message bot">Hello! I'm an AI assistant. How can I help you learn more about Sreenu's Salesforce expertise?</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ask me anything...">
+                    <button id="sendChatBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.684-.236a1 1 0 00.54-1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
+                        Send
+                    </button>
+                </div>
+                <div id="chatLoadingIndicator" class="hidden text-center text-indigo-600 mt-2">
+                    AI is typing...
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section (Placeholder) -->
+        <section id="gallery" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Gallery</h2>
+            <div class="p-6 bg-gray-100 rounded-lg shadow-md text-center text-gray-600 min-h-[200px] flex items-center justify-center">
+                <p class="text-xl">Coming Soon: A collection of visuals related to my projects and work!</p>
+            </div>
+        </section>
+
+        <!-- My Works Section (Placeholder) -->
+        <section id="my-works" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">My Works</h2>
+            <div class="p-6 bg-gray-100 rounded-lg shadow-md text-center text-gray-600 min-h-[200px] flex items-center justify-center">
+                <p class="text-xl">Coming Soon: Detailed case studies and descriptions of my key projects!</p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
+            <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103">
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-800">Name:</p>
+                    <p class="text-xl text-indigo-700 font-semibold">Sreenu Ponemoni</p>
+                </div>
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-800">Date of Birth:</p>
+                    <p class="text-xl text-indigo-700 font-semibold">04-05-1997</p>
+                </div>
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-800">Marital Status:</p>
+                    <p class="text-xl text-indigo-700 font-semibold">Single</p>
+                </div>
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-800">Languages Known:</p>
+                    <p class="text-xl text-indigo-700 font-semibold">English, Hindi and Telugu</p>
+                </div>
+                <div class="mb-4">
+                    <p class="text-lg font-medium text-gray-800">Place:</p>
+                    <p class="text-xl text-indigo-700 font-semibold">Hyderabad</p>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-200">
+                    <p class="text-lg font-medium text-gray-800 mb-2">Reach out to me:</p>
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                        <a href="tel:9640352929" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                            Call Me
+                        </a>
+                        <a href="mailto:sreeponemoni6264@gmail.com" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                            Email Me
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact Form for HR, Reference, Employee, Employer -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center">
+                        Contact Me
+                    </h3>
+                    <p class="text-md text-gray-700 mb-4">If you wish to contact me, please fill out the form below.</p>
+                    <form id="contactForm" action="YOUR_BACKEND_EMAIL_HANDLER_URL" method="POST" class="space-y-4">
+                        <div>
+                            <label for="contactName" class="block text-sm font-medium text-gray-700 mb-1">Your Name:</label>
+                            <input type="text" id="contactName" name="contactName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Your Email:</label>
+                            <input type="email" id="contactEmail" name="contactEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="john.doe@example.com">
+                        </div>
+                        <div>
+                            <label for="contactRole" class="block text-sm font-medium text-gray-700 mb-1">Your Role:</label>
+                            <select id="contactRole" name="contactRole" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:focus:border-indigo-500 sm:text-sm">
+                                <option value="">Select your role</option>
+                                <option value="HR">HR</option>
+                                <option value="Reference">Reference</option>
+                                <option value="Employee">Employee</option>
+                                <option value="Employer">Employer</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="contactMessage" class="block text-sm font-medium text-gray-700 mb-1">Your Message:</label>
+                            <textarea id="contactMessage" name="contactMessage" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter your message here..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                            Send Message
+                        </button>
+                    </form>
+                    <p class="text-sm text-gray-500 mt-4">
+                        <strong>Note:</strong> This form currently only collects data on the client-side. To send the results to your email (sreeponemoni@gmail.com), you will need to integrate a backend service (e.g., Formspree, Netlify Forms, or a custom server-side script) with the `action` attribute of this form.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
+        <div class="container mx-auto">
+            <p>&copy; 2025 Sreenu Ponemoni. All rights reserved.</p>
+            <p class="text-sm mt-2">Built with HTML, Tailwind CSS, and JavaScript.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const chatHistoryDiv = document.getElementById('chatHistory');
+            const chatInput = document.getElementById('chatInput');
+            const sendChatBtn = document.getElementById('sendChatBtn');
+            const chatLoadingIndicator = document.getElementById('chatLoadingIndicator');
+
+            // Resume content for AI Chat context - Structured for easier rule-based parsing
+            const resumeContent = {
+                name: "Sreenu Ponemoni", // Added full name explicitly
+                contact: {
+                    mobile: "9640352929",
+                    email: "sreeponemoni6264@gmail.com"
+                },
+                summary: "Overall, 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer. Participated in all stages of Software Development Life Cycle (SDLC) i.e., System Analysis, Design, Development and Testing Expertise. Experience in Development, Administration, Configuration, Implementation and Support of Salesforce CRM based on Apex language and leveraging Force.com Platform. Experience in writing apex transactions against their governor limits. Experience in UI Development through Lightning web Components (LWC) using VS Code. Expertise in Apex Triggers, Bulk Triggers, Apex Classes and apex Batches as per business needs. Created Unit Test Classes for deployment on to the production. Proficiency in SFDC Administrative tasks like Creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Process, Workflows, Reports, Dashboards, Tasks and Events. Extensive experience in data migration using Data Loader, change sets, and Dataloader.io. Extensive experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. Implemented Organization wide defaults (OWDs) & sharing rules for different users at different levels of organization. Experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another instance.",
+                experience: `Cognizant Technology Solutions (Feb 2021 - June 2025) - Software Engineer.
+                    Project #1: PMI (May 2023 - June 2025) - Salesforce Developer (Sales & Service Cloud). Key Activities: Created User Profiles, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Ensured data integrity with Data Loader, Configured page layouts, Created Custom Objects/Fields/Tabs/Lightning Pages, Worked on Record Types/Page Layouts, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
+                    Project #2: Eaton Corporation (Nov 2021 - Oct 2022) - Salesforce Administrator/Developer (Sales & Service Cloud). Key Activities: Requirement analysis, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Creating/managing Users/Roles/Profiles, Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations, Loaded objects via Data Loader, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
+                    Project #3: ELECTROLUX Sales (Feb 2021 - Oct 2021) - Salesforce Developer (Retail Management). Responsibilities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce. Provide technical support. Lightning: Upgraded Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and displayed them on to the component. Troubleshoot and debug Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App.`,
+                technicalSkills: `Salesforce.com CRM, Apex Language, Apex Classes, Apex Triggers, SOQL, SOSL, Workflow & Approvals, Reports, Dashboards, Standard and Custom Objects, Lightning Web Components (LWC), Visualforce, Salesforce Communities, Salesforce Mobile App, Batch Apex, Scheduled Apex, Process Builder, Flow, Data Loader, Change Sets, Dataloader.io, REST API Integration, Organization Wide Defaults (OWDs) & Sharing Rules. HTML, CSS, JavaScript, VS Code, Unit Test Classes, Debugging, SDLC.`,
+                personalSkills: `Strong analytical and assessment skills, Ability to learn and adapt to new technologies quickly, Rapid adaptability to learn new technologies and standards, Troubleshooting.`,
+                education: `Bachelor of Technology (B-Tech) in Mechanical Stream from Kasireddy Narayan Reddy College of Engineering & Research in 2019.`,
+                place: `Hyderabad` // Added place of living explicitly
+            };
+
+            // Rule-based AI Response Function (No API Key needed)
+            function getBotResponse(userMessage) {
+                const lowerCaseMessage = userMessage.toLowerCase();
+
+                // Specific query for only college name
+                if (lowerCaseMessage.includes("only college name") || lowerCaseMessage.includes("only collage name")) {
+                    const collegeMatch = resumeContent.education.match(/from\s+(.*?)\s+in\s+\d{4}/);
+                    if (collegeMatch && collegeMatch[1]) {
+                        return `Sreenu's college name is ${collegeMatch[1]}.`;
+                    }
+                    return "I couldn't find a specific college name in the resume. Sreenu's education is listed as: " + resumeContent.education;
+                }
+                // Specific query for only education year
+                else if (lowerCaseMessage.includes("only year") || lowerCaseMessage.includes("year of education") || lowerCaseMessage.includes("graduation year") || lowerCaseMessage.includes("in which year")) { // Added "in which year"
+                    const yearMatch = resumeContent.education.match(/in\s+(\d{4})\./);
+                    if (yearMatch && yearMatch[1]) {
+                        return `Sreenu graduated in ${yearMatch[1]}.`;
+                    }
+                    return "I couldn't find a specific graduation year in the resume. Sreenu's education is listed as: " + resumeContent.education;
+                }
+                // Education related queries
+                else if (lowerCaseMessage.includes("education") || lowerCaseMessage.includes("academic") ||
+                    lowerCaseMessage.includes("b.tech") || lowerCaseMessage.includes("btech") ||
+                    lowerCaseMessage.includes("graduated") || lowerCaseMessage.includes("graduation") ||
+                    lowerCaseMessage.includes("college") || lowerCaseMessage.includes("university") ||
+                    lowerCaseMessage.includes("degree") || lowerCaseMessage.includes("studied") ||
+                    lowerCaseMessage.includes("passed out") || lowerCaseMessage.includes("when he done his education")) {
+                    return `Sreenu's academic qualification is: ${resumeContent.education}`;
+                }
+                // Name related queries
+                else if (lowerCaseMessage.includes("full name") || lowerCaseMessage.includes("name") || lowerCaseMessage.includes("who is sreenu") || lowerCaseMessage.includes("his name") || lowerCaseMessage.includes("is sreenu ponemoni is full name")) {
+                    return `Sreenu's full name is ${resumeContent.name}.`;
+                }
+                // Contact related queries
+                else if (lowerCaseMessage.includes("mobile") || lowerCaseMessage.includes("phone") || lowerCaseMessage.includes("contact number") || lowerCaseMessage.includes("call him")) {
+                    return `Sreenu's mobile number is ${resumeContent.contact.mobile}.`;
+                } else if (lowerCaseMessage.includes("email") || lowerCaseMessage.includes("email address") || lowerCaseMessage.includes("mail him")) {
+                    return `Sreenu's email address is ${resumeContent.contact.email}.`;
+                }
+                // Experience related queries - Expanded keywords
+                else if (lowerCaseMessage.includes("experience") || lowerCaseMessage.includes("exepience") || // Added common misspelling
+                         lowerCaseMessage.includes("work history") || lowerCaseMessage.includes("companies") ||
+                         lowerCaseMessage.includes("worked at") || lowerCaseMessage.includes("years of experience") ||
+                         lowerCaseMessage.includes("job history") || lowerCaseMessage.includes("professional background")) {
+                    return `Sreenu has ${resumeContent.summary.match(/(\d+\.\d+)\s+year of work experience/)?.[1] || '3.8'} years of experience. He worked at Cognizant Technology Solutions on projects like PMI, Eaton Corporation, and ELECTROLUX Sales. For more details, please see the Experience tab.`;
+                }
+                // Skills related queries
+                else if (lowerCaseMessage.includes("skills") || lowerCaseMessage.includes("technical skills") || lowerCaseMessage.includes("technologies") || lowerCaseMessage.includes("proficient in") || lowerCaseMessage.includes("what can he do")) {
+                    return `Sreenu's key technical skills include: ${resumeContent.technicalSkills}. For a full list, please see the Skills tab.`;
+                }
+                // Projects related queries
+                else if (lowerCaseMessage.includes("projects") || lowerCaseMessage.includes("project work") || lowerCaseMessage.includes("what projects") || lowerCaseMessage.includes("his projects")) {
+                    return `Sreenu worked on projects such as PMI, Eaton Corporation, and ELECTROLUX Sales. These involved Salesforce development and administration. You can find more details in the Experience tab.`;
+                }
+                // Summary/About queries
+                else if (lowerCaseMessage.includes("summary") || lowerCaseMessage.includes("professional summary") || lowerCaseMessage.includes("about sreenu") || lowerCaseMessage.includes("tell me about him") || lowerCaseMessage.includes("who is he")) {
+                    return `Here is Sreenu's professional summary: ${resumeContent.summary}`;
+                }
+                // Location queries
+                else if (lowerCaseMessage.includes("where he lives") || lowerCaseMessage.includes("place of living") || lowerCaseMessage.includes("location") || lowerCaseMessage.includes("resides") || lowerCaseMessage.includes("from where")) {
+                    return `Sreenu lives in ${resumeContent.place}.`;
+                }
+                // Greetings
+                else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hey") || lowerCaseMessage.includes("good morning") || lowerCaseMessage.includes("good afternoon") || lowerCaseMessage.includes("good evening")) {
+                    return "Hello! I'm an AI assistant. How can I help you learn more about Sreenu's Salesforce expertise?";
+                }
+                // Fallback for unanswerable questions
+                else {
+                    return "I apologize, but I can only provide information based on Sreenu's resume. Could you please rephrase your question or ask about his experience, skills, education, or contact details?";
+                }
+            }
+
+            // Function to show a specific tab
+            function showTab(tabId) {
+                // Remove 'active' class from all buttons and content
+                tabButtons.forEach(button => button.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add 'active' class to the clicked button and its corresponding content
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            }
+
+            // Function to add a message to the chat history display
+            function addMessageToChat(message, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', sender);
+                messageDiv.textContent = message;
+                chatHistoryDiv.appendChild(messageDiv);
+                chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+            }
+
+            // Function to send message and get AI response
+            async function sendMessage() {
+                const userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+
+                addMessageToChat(userMessage, 'user');
+                chatInput.value = ''; // Clear input
+                chatInput.disabled = true;
+                sendChatBtn.disabled = true;
+                chatLoadingIndicator.classList.remove('hidden');
+
+                // Simulate AI typing delay
+                await new Promise(resolve => setTimeout(() => {
+                    const botResponse = getBotResponse(userMessage);
+                    addMessageToChat(botResponse, 'bot');
+                    chatInput.disabled = false;
+                    sendChatBtn.disabled = false;
+                    chatLoadingIndicator.classList.add('hidden');
+                    chatInput.focus();
+                }, 1000)); // Simulate network delay
+            }
+
+            // Event listeners for chat input and button
+            sendChatBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Add click event listeners to all tab buttons
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    showTab(tabId);
+                });
+            });
+
+            // Optional: Smooth scroll to the top of the content area when a tab is clicked
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    document.getElementById('about').scrollBy({ top: -100, behavior: 'smooth' }); // Adjust scroll to account for sticky header
+                });
+            });
+
+            // Initialize by showing the 'about' tab
+            showTab('about');
+
+            // Liquid Glass Visibility Toggle Logic
+            const liquidGlassContainer = window.liquidGlass ? window.liquidGlass.container : null;
+            const allInputFields = document.querySelectorAll('input, textarea');
+
+            if (liquidGlassContainer) {
+                allInputFields.forEach(inputField => {
+                    inputField.addEventListener('focus', () => {
+                        liquidGlassContainer.style.opacity = '0';
+                    });
+                    inputField.addEventListener('blur', () => {
+                        liquidGlassContainer.style.opacity = '1';
+                    });
+                });
+            }
+        });
+    </script>
+
+    <!-- Liquid Glass Effect Script -->
+    <script>
+        // Created by Shu Ding (https://github.com/shuding/liquid-glass) in 2025.
+
+        (function() {
+            'use strict';
+
+            // Check if liquid glass already exists and destroy it
+            if (window.liquidGlass) {
+                window.liquidGlass.destroy();
+                console.log('Previous liquid glass effect removed.');
+            }
+
+            // Utility functions
+            function smoothStep(a, b, t) {
+                t = Math.max(0, Math.min(1, (t - a) / (b - a)));
+                return t * t * (3 - 2 * t);
+            }
+
+            function length(x, y) {
+                return Math.sqrt(x * x + y * y);
+            }
+
+            function roundedRectSDF(x, y, width, height, radius) {
+                const qx = Math.abs(x) - width + radius;
+                const qy = Math.abs(y) - height + radius;
+                return Math.min(Math.max(qx, qy), 0) + length(Math.max(qx, 0), Math.max(qy, 0)) - radius;
+            }
+
+            function texture(x, y) {
+                return { type: 't', x, y };
+            }
+
+            // Generate unique ID
+            function generateId() {
+                return 'liquid-glass-' + Math.random().toString(36).substr(2, 9);
+            }
+
+            // Main Shader class
+            class Shader {
+                constructor(options = {}) {
+                    this.width = options.width || 100;
+                    this.height = options.height || 67;
+                    this.fragment = options.fragment || ((uv) => texture(uv.x, uv.y));
+                    this.canvasDPI = 1;
+                    this.id = generateId();
+                    this.offset = 10; // Viewport boundary offset
+
+                    this.mouse = { x: 0, y: 0 };
+                    this.mouseUsed = false;
+
+                    this.createElement();
+                    this.setupEventListeners();
+                    this.updateShader();
+                    this.animationFrameId = null; // To store animation frame ID
+                    this.animate(); // Start animation loop
+                }
+
+                createElement() {
+                    // Create container
+                    this.container = document.createElement('div');
+                    this.container.classList.add('liquid-glass-container'); // Add class for transition
+                    this.container.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: ${this.width}px;
+                        height: ${this.height}px;
+                        overflow: hidden;
+                        border-radius: 150px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25), 0 -10px 25px inset rgba(0, 0, 0, 0.15);
+                        backdrop-filter: url(#${this.id}_filter) blur(0.25px) contrast(1.2) brightness(1.05) saturate(1.1);
+                        z-index: 9999;
+                        pointer-events: none; /* Make it non-interactive for clicks, only follows mouse */
+                        opacity: 1; /* Default to visible */
+                    `;
+
+                    // Create SVG filter
+                    this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    this.svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    this.svg.setAttribute('width', '0');
+                    this.svg.setAttribute('height', '0');
+                    this.svg.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        pointer-events: none;
+                        z-index: 9998;
+                    `;
+
+                    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+                    filter.setAttribute('id', `${this.id}_filter`);
+                    filter.setAttribute('filterUnits', 'userSpaceOnUse');
+                    filter.setAttribute('colorInterpolationFilters', 'sRGB');
+                    filter.setAttribute('x', '0');
+                    filter.setAttribute('y', '0');
+                    filter.setAttribute('width', this.width.toString());
+                    filter.setAttribute('height', this.height.toString());
+
+                    this.feImage = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
+                    this.feImage.setAttribute('id', `${this.id}_map`);
+                    this.feImage.setAttribute('width', this.width.toString());
+                    this.feImage.setAttribute('height', this.height.toString());
+
+                    this.feDisplacementMap = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
+                    this.feDisplacementMap.setAttribute('in', 'SourceGraphic');
+                    this.feDisplacementMap.setAttribute('in2', `${this.id}_map`);
+                    this.feDisplacementMap.setAttribute('xChannelSelector', 'R');
+                    this.feDisplacementMap.setAttribute('yChannelSelector', 'G');
+
+                    filter.appendChild(this.feImage);
+                    filter.appendChild(this.feDisplacementMap);
+                    defs.appendChild(filter);
+                    this.svg.appendChild(defs);
+
+                    // Create canvas for displacement map (hidden)
+                    this.canvas = document.createElement('canvas');
+                    this.canvas.width = this.width * this.canvasDPI;
+                    this.canvas.height = this.height * this.canvasDPI;
+                    this.canvas.style.display = 'none';
+
+                    this.context = this.canvas.getContext('2d');
+                }
+
+                constrainPosition(x, y) {
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+
+                    const halfWidth = this.width / 2;
+                    const halfHeight = this.height / 2;
+
+                    const minX = halfWidth + this.offset;
+                    const maxX = viewportWidth - halfWidth - this.offset;
+                    const minY = halfHeight + this.offset;
+                    const maxY = viewportHeight - halfHeight - this.offset;
+
+                    const constrainedX = Math.max(minX, Math.min(maxX, x));
+                    const constrainedY = Math.max(minY, Math.min(maxY, y));
+
+                    return { x: constrainedX, y: constrainedY };
+                }
+
+                setupEventListeners() {
+                    document.addEventListener('mousemove', (e) => {
+                        const desiredCenterX = e.clientX;
+                        const desiredCenterY = e.clientY;
+
+                        const constrained = this.constrainPosition(desiredCenterX, desiredCenterY);
+
+                        this.container.style.left = constrained.x + 'px';
+                        this.container.style.top = constrained.y + 'px';
+                        this.container.style.transform = 'translate(-50%, -50%)';
+
+                        const rect = this.container.getBoundingClientRect();
+                        this.mouse.x = (e.clientX - rect.left) / rect.width;
+                        this.mouse.y = (e.clientY - rect.top) / rect.height;
+                    });
+
+                    window.addEventListener('resize', () => {
+                        const rect = this.container.getBoundingClientRect();
+                        const currentCenterX = rect.left + rect.width / 2;
+                        const currentCenterY = rect.top + rect.height / 2;
+
+                        const constrained = this.constrainPosition(currentCenterX, currentCenterY);
+
+                        if (currentCenterX !== constrained.x || currentCenterY !== constrained.y) {
+                            this.container.style.left = constrained.x + 'px';
+                            this.container.style.top = constrained.y + 'px';
+                            this.container.style.transform = 'translate(-50%, -50%)';
+                        }
+                    });
+                }
+
+                animate = () => {
+                    this.updateShader();
+                    this.animationFrameId = requestAnimationFrame(this.animate);
+                }
+
+                updateShader() {
+                    const mouseProxy = new Proxy(this.mouse, {
+                        get: (target, prop) => {
+                            this.mouseUsed = true;
+                            return target[prop];
+                        }
+                    });
+
+                    this.mouseUsed = false;
+
+                    const w = this.width * this.canvasDPI;
+                    const h = this.height * this.canvasDPI;
+                    const data = new Uint8ClampedArray(w * h * 4);
+
+                    let maxScale = 0;
+                    const rawValues = [];
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        const x = (i / 4) % w;
+                        const y = Math.floor(i / 4 / w);
+                        const pos = this.fragment(
+                            { x: x / w, y: y / h },
+                            mouseProxy
+                        );
+                        const dx = pos.x * w - x;
+                        const dy = pos.y * h - y;
+                        maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
+                        rawValues.push(dx, dy);
+                    }
+
+                    maxScale *= 0.5;
+
+                    let index = 0;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = rawValues[index++] / maxScale + 0.5;
+                        const g = rawValues[index++] / maxScale + 0.5;
+                        data[i] = r * 255;
+                        data[i + 1] = g * 255;
+                        data[i + 2] = 0;
+                        data[i + 3] = 255;
+                    }
+
+                    this.context.putImageData(new ImageData(data, w, h), 0, 0);
+                    this.feImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', this.canvas.toDataURL());
+                    this.feDisplacementMap.setAttribute('scale', (maxScale / this.canvasDPI).toString());
+                }
+
+                appendTo(parent) {
+                    parent.appendChild(this.svg);
+                    parent.appendChild(this.container);
+                }
+
+                destroy() {
+                    if (this.animationFrameId) {
+                        cancelAnimationFrame(this.animationFrameId);
+                    }
+                    this.svg.remove();
+                    this.container.remove();
+                    this.canvas.remove();
+                }
+            }
+
+            // Create the liquid glass effect
+            function createLiquidGlass() {
+                const shader = new Shader({
+                    width: 100,
+                    height: 67,
+                    fragment: (uv, mouse) => {
+                        const ix = uv.x - 0.5;
+                        const iy = uv.y - 0.5;
+                        const distanceToEdge = roundedRectSDF(
+                            ix,
+                            iy,
+                            0.3,
+                            0.2,
+                            0.6
+                        );
+                        const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15);
+                        const scaled = smoothStep(0, 1, displacement);
+                        return texture(ix * scaled + 0.5, iy * scaled + 0.5);
+                    }
+                });
+
+                shader.appendTo(document.body);
+                console.log('Liquid Glass effect created! It now follows your cursor.');
+                window.liquidGlass = shader;
+            }
+
+            createLiquidGlass();
+        })();
+    </script>
+</body>
+</html>
