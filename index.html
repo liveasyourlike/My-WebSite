@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for Markdown parsing in chat -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -21,9 +23,17 @@
         }
         .tab-content {
             display: none;
+            background-color: #ffffff; /* Default white background for all tabs */
+            padding: 2rem; /* Consistent padding */
+            border-radius: 0.5rem; /* Consistent rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Consistent subtle shadow */
+            min-height: 300px; /* Ensure a minimum visible height for all tabs */
+            box-sizing: border-box; /* Include padding in height calculation */
+            overflow-y: auto; /* Allow content within the tab to scroll if it overflows */
         }
         .tab-content.active {
             display: block;
+            border: 2px solid #4f46e5; /* Add a clear border to active tab content */
         }
         /* Custom scrollbar for better aesthetics */
         ::-webkit-scrollbar {
@@ -48,6 +58,9 @@
             margin-bottom: 10px;
             max-width: 80%;
             word-wrap: break-word;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInSlideUp 0.3s ease-out forwards;
         }
         .chat-message.user {
             background-color: #e0e7ff; /* Light indigo for user */
@@ -67,17 +80,297 @@
 
         /* Liquid Glass Container styles for smooth visibility toggle */
         .liquid-glass-container {
-            transition: opacity 0.3s ease-in-out; /* Smooth transition for opacity */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Glassmorphism for sticky navigation */
+        .sticky-nav-glass {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Animation for active tab underline */
+        .tab-button {
+            position: relative;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 24px);
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            animation: expandUnderline 0.3s ease-out forwards;
+        }
+
+        @keyframes expandUnderline {
+            from {
+                width: 0;
+            }
+            to {
+                width: calc(100% - 24px);
+            }
+        }
+
+        /* Enhanced hover effect for project/skill cards */
+        .card-hover-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Typing indicator animation for AI chat */
+        .chat-loading-indicator::after {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+            -webkit-animation: ellipsis steps(4, end) 900ms infinite;
+            animation: ellipsis steps(4, end) 900ms infinite;
+            content: "\2026";
+            width: 0px;
+        }
+        @keyframes ellipsis {
+            to {
+                width: 1.25em;
+            }
+        }
+        @-webkit-keyframes ellipsis {
+            to {
+                width: 1.25em;
+            }
+        }
+
+        /* Fade in slide up animation for chat messages */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Gallery item hover effect */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(79, 70, 229, 0.6);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1;
+        }
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        .gallery-item-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 2;
+            text-align: center;
+        }
+        .gallery-item:hover .gallery-item-title {
+            opacity: 1;
+        }
+
+        /* --- HEADER STYLES FOR 3D EFFECT AND ANIMATION --- */
+        header {
+            background: linear-gradient(135deg, #4f46e5, #8b5cf6, #4f46e5);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            position: sticky; /* Sticky position for header */
+            top: 0; /* Sticks to the top of the viewport */
+            z-index: 20; /* Ensure it's above other content */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-out; /* Smooth transition for any changes */
+        }
+
+        /* Navigation bar styles */
+        #main-nav {
+            position: sticky; /* Sticky position for navigation */
+            left: 0;
+            width: 100%;
+            z-index: 10; /* Lower z-index than header */
+            transition: all 0.3s ease-out; /* Smooth transition for any changes */
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header h1 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        header .flex a {
+            padding: 8px 16px;
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        header .flex a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Custom bullet point styling for lists within the about section */
+        .custom-bullet-list li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .custom-bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background-color: #4f46e5;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+            transform: scale(0);
+            animation: bulletPopIn 0.5s ease-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes bulletPopIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Adjust header layout for image */
+        header .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        header .header-left-content {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 767px) {
+            header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            header .header-left-content {
+                margin-bottom: 1rem;
+                flex-direction: column; /* Stack profile image and text on small screens */
+            }
+        }
+
+        /* Removed specific background images from sections */
+        #about.active {
+            background-image: none; /* Removed background image */
+        }
+        #experience.active {
+            background-image: none; /* Removed background image */
+        }
+        .education-card:nth-child(1),
+        .education-card:nth-child(2),
+        .education-card:nth-child(3) {
+            background-image: none; /* Removed background images */
+        }
+
+        /* Styles for disabled button */
+        #sendMessageBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: blur(1px); /* Added blur effect */
+        }
+
+        /* Validation message style */
+        .validation-message {
+            color: #dc2626; /* Red-600 */
+            font-size: 0.875rem; /* text-sm */
+            margin-top: 0.25rem; /* mt-1 */
+            display: none; /* Hidden by default */
+        }
+        .validation-message.active {
+            display: block; /* Show when active */
+        }
+
+        /* Table styles for skills */
+        .skills-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+        .skills-table th, .skills-table td {
+            border: 1px solid #e2e8f0; /* Light gray border */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .skills-table th {
+            background-color: #f8fafc; /* Lighter background for headers */
+            font-weight: 600;
+            color: #475569; /* Slate 700 */
+        }
+        .skills-table tr:nth-child(even) {
+            background-color: #f0f4f8; /* Slightly darker for even rows */
+        }
+        .skills-table tr:hover {
+            background-color: #e0e7ff; /* Indigo 100 on hover */
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
     <!-- Header Section -->
-    <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white p-6 shadow-lg">
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-4 px-6 shadow-lg">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <h1 class="text-4xl font-bold mb-2 md:mb-0">Sreenu Ponemoni</h1>
-            <p class="text-xl font-light">Salesforce Administrator & Developer</p>
+            <div class="flex items-center mb-2 md:mb-0 header-left-content">
+                <div>
+                    <h1 class="text-3xl font-bold">Sreenu Ponemoni</h1>
+                    <p class="text-lg font-light">Salesforce Administrator & Developer</p>
+                </div>
+            </div>
             <div class="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-2 md:space-y-0 md:space-x-4">
                 <a href="tel:9640352929" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
                     <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
@@ -92,50 +385,66 @@
     </header>
 
     <!-- Navigation Tabs -->
-    <nav class="bg-white shadow-md py-4 sticky top-0 z-10">
+    <nav id="main-nav" class="bg-white shadow-md py-4 sticky-nav-glass">
         <div class="container mx-auto flex flex-wrap justify-center gap-4">
-            <button class="tab-button active px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="about">About</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience">Experience</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills">Skills</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education">Education</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="ai-chat">AI Chat</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="gallery">Gallery</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="my-works">My Works</button>
-            <button class="tab-button px-6 py-3 rounded-full text-lg font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact">Contact</button>
+            <button class="tab-button active px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="about">About</button>
+            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience">Experience</button>
+            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills">Skills</button>
+            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education">Education</button>
+            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="ai-chat">AI Chat</button>
+            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact">Contact</button>
         </div>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="flex-grow container mx-auto p-6 md:p-8 lg:p-10">
+    <main class="flex-grow container mx-auto p-6 md:p-8 lg:p-10" id="main-content-area">
 
         <!-- About Section -->
-        <section id="about" class="tab-content active bg-white p-8 rounded-lg shadow-xl mb-8">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
-            <div class="prose max-w-none">
-                <p class="text-lg leading-relaxed mb-4">
-                    Overall, I have 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer.
-                </p>
-                <p class="text-lg leading-relaxed mb-4">
-                    I have actively participated in all stages of the Software Development Life Cycle (SDLC), including System Analysis, Design, Development, and Testing. My expertise lies in the Development, Administration, Configuration, Implementation, and Support of Salesforce CRM, leveraging Apex language and the Force.com Platform. I am proficient in writing Apex transactions while adhering to governor limits.
-                </p>
-                <p class="text-lg leading-relaxed mb-4">
-                    My experience extends to UI Development through Lightning Web Components (LWC) using VS Code, and I possess expertise in Apex Triggers, Bulk Triggers, Apex Classes, and Apex Batches to meet diverse business needs. I am skilled in creating Unit Test Classes for deployment to production environments.
-                </p>
-                <p class="text-lg leading-relaxed mb-4">
-                    I am proficient in SFDC Administrative tasks such as creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Processes, Workflows, Reports, Dashboards, Tasks, and Events. My extensive experience includes data migration using Data Loader, change sets, and Dataloader.io. I also have broad experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder, and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. I have successfully implemented Organization-Wide Defaults (OWDs) & sharing rules for different users at various organizational levels.
-                </p>
-                <p class="text-lg leading-relaxed">
-                    Furthermore, I have experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another.
-                </p>
+        <section id="about" class="tab-content active mb-8">
+            <div class="bg-white/90 p-8 rounded-lg shadow-xl max-w-3xl mx-auto relative z-10">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
+                <div class="prose max-w-none">
+                    <p class="text-lg leading-relaxed mb-4">
+                        I am a dedicated Salesforce Administrator & Developer with <strong class="text-indigo-600">3.8 years of hands-on experience</strong> in Salesforce.com CRM and the Force.com platform. My expertise spans the entire Software Development Life Cycle (SDLC).
+                    </p>
+
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 mt-6">Core Competencies:</h3>
+                    <ul class="custom-bullet-list text-lg text-gray-700 space-y-2">
+                        <li style="--delay: 0s;">
+                            <strong class="text-indigo-600">Salesforce Development:</strong> Proficient in Apex language, including Apex Triggers, Bulk Triggers, Apex Classes, and Apex Batches, always adhering to governor limits.
+                        </li>
+                        <li style="--delay: 0.1s;">
+                            <strong class="text-indigo-600">UI Development:</strong> Skilled in creating custom, interactive user interfaces using Lightning Web Components (LWC) with VS Code.
+                        </li>
+                        <li style="--delay: 0.2s;">
+                            <strong class="text-indigo-600">Testing & Deployment:</b> Experienced in creating Unit Test Classes for seamless deployment to production environments.
+                        </li>
+                        <li style="--delay: 0.3s;">
+                            <strong class="text-indigo-600">Salesforce Administration:</strong> Expert in configuring Profiles, Roles, Users, Page Layouts, Email Services, Approval Processes, Workflows, Reports, Dashboards, Tasks, and Events.
+                        </li>
+                        <li style="--delay: 0.4s;">
+                            <strong class="text-indigo-600">Data Management:</strong> Extensive experience in data migration using Data Loader, change sets, and Dataloader.io.
+                        </li>
+                        <li style="--delay: 0.5s;">
+                            <strong class="text-indigo-600">Automation & Customization:</strong> Proficient in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder, and Approval Processes for automated alerts, field updates, and Email generation according to application requirements.
+                        </li>
+                        <li style="--delay: 0.6s;">
+                            <strong class="text-indigo-600">Security & Sharing:</strong> Successfully implemented Organization-Wide Defaults (OWDs) and sharing rules to manage data visibility across various organizational levels.
+                        </li>
+                        <li style="--delay: 0.7s;">
+                            <strong class="text-indigo-600">Environment Management:</strong> Experienced in creating and maintaining sandboxes for different environments and migrating change sets between instances.
+                        </li>
+                    </ul>
+                </div>
             </div>
         </section>
 
-        <!-- Experience Section - Project divs updated with magnification effect -->
-        <section id="experience" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+        <!-- Experience Section - Project divs updated with enhanced hover effect -->
+        <section id="experience" class="tab-content mb-8">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Professional Experience</h2>
 
             <!-- Cognizant Technology Solutions -->
-            <div class="mb-8 p-6 bg-indigo-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103">
+            <div class="mb-8 p-6 card-hover-effect">
                 <h3 class="text-2xl font-semibold text-indigo-800 mb-2">Software Engineer at Cognizant Technology Solutions</h3>
                 <p class="text-lg text-gray-600 mb-4">February 17th, 2021 - June 20th, 2025</p>
 
@@ -147,18 +456,18 @@
                         Philip Morris International Inc. is an American multinational tobacco company with products sold in over 180 countries. In Philip Morris, the entire Service Model is handled with the Salesforce Platform. The Salesforce Platform was set up to provide all kinds of sales and service queries to customers. In this application, I primarily worked on the development part, specifically "Asynchronous Apex" to run the application.
                     </p>
                     <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
-                    <ul class="list-disc list-inside text-md text-gray-700 space-y-1">
-                        <li>Created User Profiles, Users, and Modifying User Page Layouts & Setting up Sharing Rules.</li>
-                        <li>Implemented batch classes for large data operations using Apex Batch.</li>
-                        <li>Developed Apex triggers to handle complex business processes.</li>
-                        <li>Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
-                        <li>Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
-                        <li>Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
-                        <li>Ensured data integrity through the appropriate use of loading and exporting tools, for bulk of data using Data Loader.</li>
-                        <li>Configured page layouts, workflows, document templates, and record types & data fields. Created Report Types, Reports and Dashboards.</li>
-                        <li>Created Custom Objects, Custom Fields, Tabs and Lightning Pages.</li>
-                        <li>Worked on Record Types and Page Layouts.</li>
-                        <li>Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                    <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                        <li style="--delay: 0s;">Created User Profiles, Users, and Modifying User Page Layouts & Setting up Sharing Rules.</li>
+                        <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
+                        <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
+                        <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                        <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                        <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                        <li style="--delay: 0.6s;">Ensured data integrity through the appropriate use of loading and exporting tools, for bulk of data using Data Loader.</li>
+                        <li style="--delay: 0.7s;">Configured page layouts, workflows, document templates, and record types & data fields. Created Report Types, Reports and Dashboards.</li>
+                        <li style="--delay: 0.8s;">Created Custom Objects, Custom Fields, Tabs and Lightning Pages.</li>
+                        <li style="--delay: 0.9s;">Worked on Record Types and Page Layouts.</li>
+                        <li style="--delay: 1.0s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
                     </ul>
                 </div>
 
@@ -170,17 +479,17 @@
                         Eaton is an intelligent Power Management company dedicated to improving the quality of life and protecting the environment for people everywhere. Eaton is guided by their commitment to do business, to operate sustainably, and to help their customers manage power—today and well into the future. By capitalizing on the global trends of electrification and digitalization, Eaton is accelerating the planet's transition to renewable energy and helping to solve the world's most urgent power management challenges.
                     </p>
                     <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
-                    <ul class="list-disc list-inside text-md text-gray-700 space-y-1">
-                        <li>Requirement analysis, validating and migrating.</li>
-                        <li>Implemented batch classes for large data operations using Apex Batch.</li>
-                        <li>Developed Apex triggers to handle complex business processes.</li>
-                        <li>Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
-                        <li>Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
-                        <li>Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
-                        <li>Creating/add and manage Users, Roles, Profiles and setting up group members.</li>
-                        <li>Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations.</li>
-                        <li>Analyzing business requirement and loaded the objects through data loader.</li>
-                        <li>Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                    <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                        <li style="--delay: 0s;">Requirement analysis, validating and migrating.</li>
+                        <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
+                        <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
+                        <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                        <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                        <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                        <li style="--delay: 0.6s;">Creating/add and manage Users, Roles, Profiles and setting up group members.</li>
+                        <li style="--delay: 0.7s;">Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations.</li>
+                        <li style="--delay: 0.8s;">Analyzing business requirement and loaded the objects through data loader.</li>
+                        <li style="--delay: 0.9s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
                     </ul>
                 </div>
 
@@ -192,80 +501,115 @@
                         Electrolux is a global leader in household appliances and appliances for professional use, selling more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
                     </p>
                     <h5 class="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h5>
-                    <ul class="list-disc list-inside text-md text-gray-700 space-y-1">
-                        <li>Development Activities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce.</li>
-                        <li>Provide technical support: Responded to inquiries and resolved technical issues related to Salesforce products and services, including custom code and integrations.</li>
-                        <li>Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and displayed them on to the component.</li>
-                        <li>Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.</li>
+                    <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                        <li style="--delay: 0s;">Development Activities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce.</li>
+                        <li style="--delay: 0.1s;">Provide technical support: Responded to inquiries and resolved technical issues related to Salesforce products and services, including custom code and integrations.</li>
+                        <li style="--delay: 0.2s;">Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and displayed them on to the component.</li>
+                        <li style="--delay: 0.3s;">Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Skills Section - Skill divs updated with magnification effect -->
-        <section id="skills" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+        <!-- Skills Section -->
+        <section id="skills" class="tab-content mb-8">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Skills</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-blue-50 p-5 rounded-lg shadow-sm transform transition-transform duration-300 hover:scale-103">
+                <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
                     <h3 class="text-xl font-semibold text-blue-700 mb-3">Salesforce Technologies</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-1">
-                        <li>Salesforce.com CRM</li>
-                        <li>Apex Language, Apex Classes, Apex Triggers</li>
-                        <li>SOQL, SOSL</li>
-                        <li>Workflow & Approvals</li>
-                        <li>Reports, Dashboards</li>
-                        <li>Standard and Custom Objects</li>
-                        <li>Lightning Web Components (LWC)</li>
-                        <li>Visualforce</li>
-                        <li>Salesforce Communities</li>
-                        <li>Salesforce Mobile App</li>
-                        <li>Batch Apex, Scheduled Apex</li>
-                        <li>Process Builder, Flow</li>
-                        <li>Data Loader, Change Sets, Dataloader.io</li>
-                        <li>REST API Integration</li>
-                        <li>Organization Wide Defaults (OWDs) & Sharing Rules</li>
+                    <ul class="custom-bullet-list text-gray-700 space-y-1">
+                        <li style="--delay: 0s;">Salesforce.com CRM</li>
+                        <li style="--delay: 0.1s;">Apex Language, Apex Classes, Apex Triggers</li>
+                        <li style="--delay: 0.2s;">SOQL, SOSL</li>
+                        <li style="--delay: 0.3s;">Workflow & Approvals</li>
+                        <li style="--delay: 0.4s;">Reports, Dashboards</li>
+                        <li style="--delay: 0.5s;">Standard and Custom Objects</li>
+                        <li style="--delay: 0.6s;">Lightning Web Components (LWC)</li>
+                        <li style="--delay: 0.7s;">Visualforce</li>
+                        <li style="--delay: 0.8s;">Salesforce Communities</li>
+                        <li style="--delay: 0.9s;">Salesforce Mobile App</li>
+                        <li style="--delay: 1.0s;">Batch Apex, Scheduled Apex</li>
+                        <li style="--delay: 1.1s;">Process Builder, Flow</li>
+                        <li style="--delay: 1.2s;">Data Loader, Change Sets, Dataloader.io</li>
+                        <li style="--delay: 1.3s;">REST API Integration</li>
+                        <li style="--delay: 1.4s;">Organization Wide Defaults (OWDs) & Sharing Rules</li>
                     </ul>
                 </div>
-                <div class="bg-green-50 p-5 rounded-lg shadow-sm transform transition-transform duration-300 hover:scale-103">
+                <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
                     <h3 class="text-xl font-semibold text-green-700 mb-3">Development & Tools</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-1">
-                        <li>HTML, CSS, JavaScript</li>
-                        <li>VS Code</li>
-                        <li>Unit Test Classes</li>
-                        <li>Debugging</li>
-                        <li>SDLC (System Analysis, Design, Development, Testing)</li>
+                    <ul class="custom-bullet-list text-gray-700 space-y-1">
+                        <li style="--delay: 0s;">HTML, CSS, JavaScript</li>
+                        <li style="--delay: 0.1s;">VS Code</li>
+                        <li style="--delay: 0.2s;">Unit Test Classes</li>
+                        <li style="--delay: 0.3s;">Debugging</li>
+                        <li style="--delay: 0.4s;">SDLC (System Analysis, Design, Development, Testing)</li>
                     </ul>
                 </div>
-                <div class="bg-purple-50 p-5 rounded-lg shadow-sm transform transition-transform duration-300 hover:scale-103">
+                <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
                     <h3 class="text-xl font-semibold text-purple-700 mb-3">Personal Skills</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-1">
-                        <li>Strong analytical and assessment skills</li>
-                        <li>Ability to learn and adapt to new technologies quickly</li>
-                        <li>Rapid adaptability to learn new technologies and standards</li>
-                        <li>Troubleshooting</li>
+                    <ul class="custom-bullet-list text-gray-700 space-y-1">
+                        <li style="--delay: 0s;">Strong analytical and assessment skills</li>
+                        <li style="--delay: 0.1s;">Ability to learn and adapt to new technologies quickly</li>
+                        <li style="--delay: 0.2s;">Rapid adaptability to learn new technologies and standards</li>
+                        <li style="--delay: 0.3s;">Troubleshooting</li>
                     </ul>
                 </div>
             </div>
+
+            <h3 class="text-2xl font-semibold text-indigo-700 mb-4 mt-8 border-b-2 border-indigo-300 pb-2">Comprehensive Skills List</h3>
+            <table class="skills-table shadow-md rounded-lg overflow-hidden">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Skills</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Salesforce Technologies</td>
+                        <td>Salesforce.com CRM, Apex Language, Apex Classes, Apex Triggers, SOQL, SOSL, Workflow & Approvals, Reports, Dashboards, Standard and Custom Objects, Lightning Web Components (LWC), Visualforce, Salesforce Communities, Salesforce Mobile App, Batch Apex, Scheduled Apex, Process Builder, Flow, Data Loader, Change Sets, Dataloader.io, REST API Integration, Organization Wide Defaults (OWDs) & Sharing Rules</td>
+                    </tr>
+                    <tr>
+                        <td>Development & Tools</td>
+                        <td>HTML, CSS, JavaScript, VS Code, Unit Test Classes, Debugging, SDLC</td>
+                    </tr>
+                    <tr>
+                        <td>Personal Skills</td>
+                        <td>Strong analytical and assessment skills, Ability to learn and adapt to new technologies quickly, Rapid adaptability to learn new technologies and standards, Troubleshooting</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <!-- Education Section -->
-        <section id="education" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+        <section id="education" class="tab-content mb-8">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Academic Qualifications</h2>
-            <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103">
-                <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Bachelor of Technology (B-Tech) in Mechanical Stream</h3>
-                <p class="text-lg text-gray-700">Kasireddy Narayan Reddy College of Engineering & Research</p>
-                <p class="text-md text-gray-600">Graduated: 2019</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
+                    <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Bachelor of Technology (B-Tech) in Mechanical Stream</h3>
+                    <p class="text-lg text-gray-700">Kasireddy Narayan Reddy College of Engineering & Research</p>
+                    <p class="text-md text-gray-600">Graduated: 2019 at Ranga Reddy</p>
+                </div>
+                <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card education-triveni-bg">
+                    <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Intermediate (M.P.C)</h3>
+                    <p class="text-lg text-gray-700">Triveni Jr College</p>
+                    <p class="text-md text-gray-600">Graduated: 2015 at Achampet</p>
+                </div>
+                <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
+                    <h3 class="text-2xl font-semibold text-yellow-700 mb-2">S.S.C (10th)</h3>
+                    <p class="text-lg text-gray-700">Z.P.H.S (Boys) School</p>
+                    <p class="text-md text-gray-600">Graduated: 2013 at Achampet</p>
+                </div>
             </div>
         </section>
 
         <!-- AI Chat Section (Rule-based) -->
-        <section id="ai-chat" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+        <section id="ai-chat" class="tab-content mb-8">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">AI Chat Assistant</h2>
             <div class="p-6 bg-blue-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103 flex flex-col h-[500px]">
-                <p class="text-md text-gray-700 mb-4">Chat with an AI assistant about my profile or general Salesforce topics!</p>
+                <p class="text-md text-gray-700 mb-4">Chat with an Sreenu's Personal AI assistant ask about his profile or general Salesforce topics!</p>
                 <div id="chatHistory" class="flex-grow overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white flex flex-col space-y-3 mb-4">
-                    <!-- Chat messages will be appended here -->
-                    <div class="chat-message bot">Hello! I'm an AI assistant. How can I help you learn more about Sreenu's Salesforce expertise?</div>
+                    <!-- Chat messages will be appended here dynamically by JavaScript -->
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="chatInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ask me anything...">
@@ -274,80 +618,77 @@
                         Send
                     </button>
                 </div>
-                <div id="chatLoadingIndicator" class="hidden text-center text-indigo-600 mt-2">
-                    AI is typing...
+                <!-- Updated chat-loading-indicator text content -->
+                <div id="chatLoadingIndicator" class="hidden text-center text-indigo-600 mt-2 chat-loading-indicator">
+                    Sreenu is About to Give Response Meanwhile See the Profile........
                 </div>
-            </div>
-        </section>
-
-        <!-- Gallery Section (Placeholder) -->
-        <section id="gallery" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Gallery</h2>
-            <div class="p-6 bg-gray-100 rounded-lg shadow-md text-center text-gray-600 min-h-[200px] flex items-center justify-center">
-                <p class="text-xl">Coming Soon: A collection of visuals related to my projects and work!</p>
-            </div>
-        </section>
-
-        <!-- My Works Section (Placeholder) -->
-        <section id="my-works" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">My Works</h2>
-            <div class="p-6 bg-gray-100 rounded-lg shadow-md text-center text-gray-600 min-h-[200px] flex items-center justify-center">
-                <p class="text-xl">Coming Soon: Detailed case studies and descriptions of my key projects!</p>
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="tab-content bg-white p-8 rounded-lg shadow-xl mb-8">
+        <section id="contact" class="tab-content mb-8">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
-            <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103">
-                <div class="mb-4">
-                    <p class="text-lg font-medium text-gray-800">Name:</p>
-                    <p class="text-xl text-indigo-700 font-semibold">Sreenu Ponemoni</p>
-                </div>
-                <div class="mb-4">
-                    <p class="text-lg font-medium text-gray-800">Date of Birth:</p>
-                    <p class="text-xl text-indigo-700 font-semibold">04-05-1997</p>
-                </div>
-                <div class="mb-4">
-                    <p class="text-lg font-medium text-gray-800">Marital Status:</p>
-                    <p class="text-xl text-indigo-700 font-semibold">Single</p>
-                </div>
-                <div class="mb-4">
-                    <p class="text-lg font-medium text-gray-800">Languages Known:</p>
-                    <p class="text-xl text-indigo-700 font-semibold">English, Hindi and Telugu</p>
-                </div>
-                <div class="mb-4">
-                    <p class="text-lg font-medium text-gray-800">Place:</p>
-                    <p class="text-xl text-indigo-700 font-semibold">Hyderabad</p>
-                </div>
-                <div class="mt-6 pt-4 border-t border-gray-200">
-                    <p class="text-lg font-medium text-gray-800 mb-2">Reach out to me:</p>
-                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                        <a href="tel:9640352929" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                            Call Me
+            <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8">
+                <!-- Left Side: Contact Details -->
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-b-2 border-indigo-300 pb-2">Personal & Contact Info</h3>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-800">Name:</p>
+                        <p class="text-xl text-indigo-700 font-semibold">Sreenu Ponemoni</p>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-800">Date of Birth:</p>
+                        <p class="text-xl text-indigo-700 font-semibold">04-05-1997</p>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-800">Marital Status:</p>
+                        <p class="text-xl text-indigo-700 font-semibold">Single</p>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-800">Languages Known:</p>
+                        <p class="text-xl text-indigo-700 font-semibold">English, Hindi and Telugu</p>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-800">Place:</p>
+                        <p class="text-xl text-indigo-700 font-semibold">Hyderabad</p>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-lg font-medium text-gray-800">LinkedIn Profile:</p>
+                        <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="text-indigo-600 hover:underline text-xl font-semibold break-all">
+                            http://linkedin.com/in/sreenu-ponemoni-b84167369
                         </a>
-                        <a href="mailto:sreeponemoni6264@gmail.com" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-                            Email Me
-                        </a>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <p class="text-lg font-medium text-gray-800 mb-2">Reach out to me:</p>
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                            <a href="tel:9640352929" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                                Call Me
+                            </a>
+                            <a href="mailto:sreeponemoni6264@gmail.com" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                                Email Me
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Contact Form for HR, Reference, Employee, Employer -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center">
+                <!-- Right Side: Contact Form for HR, Reference, Employee, Employer -->
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
                         Contact Me
                     </h3>
                     <p class="text-md text-gray-700 mb-4">If you wish to contact me, please fill out the form below.</p>
-                    <form id="contactForm" action="YOUR_BACKEND_EMAIL_HANDLER_URL" method="POST" class="space-y-4">
+                    <form id="contactForm" class="space-y-4">
                         <div>
                             <label for="contactName" class="block text-sm font-medium text-gray-700 mb-1">Your Name:</label>
                             <input type="text" id="contactName" name="contactName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="John Doe">
+                            <span id="nameValidationMsg" class="validation-message">Name cannot be empty.</span>
                         </div>
                         <div>
                             <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Your Email:</label>
                             <input type="email" id="contactEmail" name="contactEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="john.doe@example.com">
+                            <span id="emailValidationMsg" class="validation-message">Email must be valid and end with .com, .org, or .in.</span>
                         </div>
                         <div>
                             <label for="contactRole" class="block text-sm font-medium text-gray-700 mb-1">Your Role:</label>
@@ -359,19 +700,18 @@
                                 <option value="Employer">Employer</option>
                                 <option value="Other">Other</option>
                             </select>
+                            <span id="roleValidationMsg" class="validation-message">Please select your role.</span>
                         </div>
                         <div>
                             <label for="contactMessage" class="block text-sm font-medium text-gray-700 mb-1">Your Message:</label>
                             <textarea id="contactMessage" name="contactMessage" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter your message here..."></textarea>
+                            <span id="messageValidationMsg" class="validation-message">Message must be more than 10 words.</span>
                         </div>
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition duration-300 flex items-center justify-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                        <button type="submit" id="sendMessageBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition duration-300 flex items-center justify-center" disabled>
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
                             Send Message
                         </button>
                     </form>
-                    <p class="text-sm text-gray-500 mt-4">
-                        <strong>Note:</strong> This form currently only collects data on the client-side. To send the results to your email (sreeponemoni@gmail.com), you will need to integrate a backend service (e.g., Formspree, Netlify Forms, or a custom server-side script) with the `action` attribute of this form.
-                    </p>
                 </div>
             </div>
         </section>
@@ -382,40 +722,155 @@
     <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
         <div class="container mx-auto">
             <p>&copy; 2025 Sreenu Ponemoni. All rights reserved.</p>
-            <p class="text-sm mt-2">Built with HTML, Tailwind CSS, and JavaScript.</p>
+            <p class="text-sm mt-2">Built with HTML, GitHub, Netlify, JavaScript, and other tools.</p>
         </div>
     </footer>
 
     <script>
+        // Set to 'true' to enable API calls in all environments
+        const isDevelopmentMode = true; 
+
         document.addEventListener('DOMContentLoaded', function() {
+            const header = document.querySelector('header');
+            const nav = document.getElementById('main-nav');
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
             const chatHistoryDiv = document.getElementById('chatHistory');
             const chatInput = document.getElementById('chatInput');
             const sendChatBtn = document.getElementById('sendChatBtn');
             const chatLoadingIndicator = document.getElementById('chatLoadingIndicator');
+            const mainContentArea = document.getElementById('main-content-area');
+
+            // Contact form elements
+            const contactForm = document.getElementById('contactForm');
+            const contactName = document.getElementById('contactName');
+            const contactEmail = document.getElementById('contactEmail');
+            const contactRole = document.getElementById('contactRole');
+            const contactMessage = document.getElementById('contactMessage');
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+
+            // Validation message elements
+            const nameValidationMsg = document.getElementById('nameValidationMsg');
+            const emailValidationMsg = document.getElementById('emailValidationMsg');
+            const roleValidationMsg = document.getElementById('roleValidationMsg');
+            const messageValidationMsg = document.getElementById('messageValidationMsg');
+
+            let headerHeight = 0;
+            let navHeight = 0;
+
+            // Function to get time-based greeting
+            function getTimeBasedGreeting() {
+                const now = new Date();
+                const hour = now.getHours();
+                if (hour >= 5 && hour < 12) {
+                    return "Good morning";
+                } else if (hour >= 12 && hour < 18) {
+                    return "Good afternoon";
+                } else {
+                    return "Good evening";
+                }
+            }
+
+            // Initial bot message with time-based greeting
+            const initialBotMessage = `Hi, ${getTimeBasedGreeting()}! How Sreenu Could Help You Today??`;
+
+            // Function to update CSS variables and tab content max-height
+            function updateLayoutVariables() {
+                headerHeight = header.offsetHeight;
+                navHeight = nav.offsetHeight;
+
+                // Adjust nav top based on header height
+                nav.style.top = `${headerHeight}px`;
+
+                // Calculate and set max-height for tab content
+                const mainVerticalPadding = 48; // px from p-6
+                tabContents.forEach(content => {
+                    content.style.maxHeight = `calc(100vh - ${headerHeight + navHeight + mainVerticalPadding}px)`;
+                });
+            }
+
+            // Call on load and resize
+            window.addEventListener('load', updateLayoutVariables);
+            window.addEventListener('resize', updateLayoutVariables);
 
             // Resume content for AI Chat context - Structured for easier rule-based parsing
             const resumeContent = {
-                name: "Sreenu Ponemoni", // Added full name explicitly
+                name: "Sreenu Ponemoni",
                 contact: {
                     mobile: "9640352929",
-                    email: "sreeponemoni6264@gmail.com"
+                    email: "sreeponemoni6264@gmail.com",
+                    linkedin: "http://linkedin.com/in/sreenu-ponemoni-b84167369"
                 },
                 summary: "Overall, 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer. Participated in all stages of Software Development Life Cycle (SDLC) i.e., System Analysis, Design, Development and Testing Expertise. Experience in Development, Administration, Configuration, Implementation and Support of Salesforce CRM based on Apex language and leveraging Force.com Platform. Experience in writing apex transactions against their governor limits. Experience in UI Development through Lightning web Components (LWC) using VS Code. Expertise in Apex Triggers, Bulk Triggers, Apex Classes and apex Batches as per business needs. Created Unit Test Classes for deployment on to the production. Proficiency in SFDC Administrative tasks like Creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Process, Workflows, Reports, Dashboards, Tasks and Events. Extensive experience in data migration using Data Loader, change sets, and Dataloader.io. Extensive experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. Implemented Organization wide defaults (OWDs) & sharing rules for different users at different levels of organization. Experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another instance.",
-                experience: `Cognizant Technology Solutions (Feb 2021 - June 2025) - Software Engineer.
+                experience: `
+                    Cognizant Technology Solutions (Feb 2021 - June 2025) - Software Engineer.
                     Project #1: PMI (May 2023 - June 2025) - Salesforce Developer (Sales & Service Cloud). Key Activities: Created User Profiles, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Ensured data integrity with Data Loader, Configured page layouts, Created Custom Objects/Fields/Tabs/Lightning Pages, Worked on Record Types/Page Layouts, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
+
                     Project #2: Eaton Corporation (Nov 2021 - Oct 2022) - Salesforce Administrator/Developer (Sales & Service Cloud). Key Activities: Requirement analysis, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Creating/managing Users/Roles/Profiles, Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations, Loaded objects via Data Loader, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
-                    Project #3: ELECTROLUX Sales (Feb 2021 - Oct 2021) - Salesforce Developer (Retail Management). Responsibilities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce. Provide technical support. Lightning: Upgraded Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and displayed them on to the component. Troubleshoot and debug Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App.`,
+
+                    Project #3: ELECTROLUX Sales (Feb 2021 - Oct 2021) - Salesforce Developer (Retail Management). Responsibilities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce. Provide technical support. Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and displayed them on to the component. Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.
+
+                    New Experience:
+
+                    Company: Salesforce
+                    Role: Salesforce Developer
+                    Duration: July 2025 - Present
+                    Key Activities: Developing cutting-edge Salesforce solutions, implementing advanced Apex features, designing and deploying complex Lightning Web Components, integrating Salesforce with various external systems using advanced APIs, and leading technical design sessions for new features.
+                `,
                 technicalSkills: `Salesforce.com CRM, Apex Language, Apex Classes, Apex Triggers, SOQL, SOSL, Workflow & Approvals, Reports, Dashboards, Standard and Custom Objects, Lightning Web Components (LWC), Visualforce, Salesforce Communities, Salesforce Mobile App, Batch Apex, Scheduled Apex, Process Builder, Flow, Data Loader, Change Sets, Dataloader.io, REST API Integration, Organization Wide Defaults (OWDs) & Sharing Rules. HTML, CSS, JavaScript, VS Code, Unit Test Classes, Debugging, SDLC.`,
                 personalSkills: `Strong analytical and assessment skills, Ability to learn and adapt to new technologies quickly, Rapid adaptability to learn new technologies and standards, Troubleshooting.`,
-                education: `Bachelor of Technology (B-Tech) in Mechanical Stream from Kasireddy Narayan Reddy College of Engineering & Research in 2019.`,
-                place: `Hyderabad` // Added place of living explicitly
+                education: `
+                    Bachelor of Technology (B-Tech) in Mechanical Stream from Kasireddy Narayan Reddy College of Engineering & Research in 2019 at Ranga Reddy.
+                    Intermediate in (M.P.C) from Triveni Jr College in 2015 at Achampet.
+                    S.S.C (10Th) from Z.P.H.S (Boys) School in 2013 at Achampet.
+                `,
+                place: `Hyderabad`
             };
 
-            // Rule-based AI Response Function (No API Key needed)
-            function getBotResponse(userMessage) {
+            // Function to get current time in IST
+            function getCurrentISTTime() {
+                const now = new Date();
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const istOffset = 5.5 * 3600000;
+                const istTime = new Date(utc + istOffset);
+
+                const options = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                    timeZoneName: 'shortOffset'
+                };
+                return istTime.toLocaleString('en-IN', options);
+            }
+
+            // Rule-based AI Response Function
+            function getRuleBasedResponse(userMessage) {
                 const lowerCaseMessage = userMessage.toLowerCase();
+
+                // Basic arithmetic
+                const arithmeticMatch = lowerCaseMessage.match(/(\d+)\s*([\+\-\*\/])\s*(\d+)/);
+                if (arithmeticMatch) {
+                    const num1 = parseFloat(arithmeticMatch[1]);
+                    const operator = arithmeticMatch[2];
+                    const num2 = parseFloat(arithmeticMatch[3]);
+                    let result;
+                    try {
+                        switch (operator) {
+                            case '+': result = num1 + num2; break;
+                            case '-': result = num1 - num2; break;
+                            case '*': result = num1 * num2; break;
+                            case '/': 
+                                if (num2 === 0) return "Cannot divide by zero.";
+                                result = num1 / num2; 
+                                break;
+                            default: return null;
+                        }
+                        return `The result of ${num1} ${operator} ${num2} is ${result}.`;
+                    } catch (e) {
+                        return "I couldn't perform that calculation.";
+                    }
+                }
 
                 // Specific query for only college name
                 if (lowerCaseMessage.includes("only college name") || lowerCaseMessage.includes("only collage name")) {
@@ -426,7 +881,7 @@
                     return "I couldn't find a specific college name in the resume. Sreenu's education is listed as: " + resumeContent.education;
                 }
                 // Specific query for only education year
-                else if (lowerCaseMessage.includes("only year") || lowerCaseMessage.includes("year of education") || lowerCaseMessage.includes("graduation year") || lowerCaseMessage.includes("in which year")) { // Added "in which year"
+                else if (lowerCaseMessage.includes("only year") || lowerCaseMessage.includes("year of education") || lowerCaseMessage.includes("graduation year") || lowerCaseMessage.includes("in which year")) {
                     const yearMatch = resumeContent.education.match(/in\s+(\d{4})\./);
                     if (yearMatch && yearMatch[1]) {
                         return `Sreenu graduated in ${yearMatch[1]}.`;
@@ -451,13 +906,15 @@
                     return `Sreenu's mobile number is ${resumeContent.contact.mobile}.`;
                 } else if (lowerCaseMessage.includes("email") || lowerCaseMessage.includes("email address") || lowerCaseMessage.includes("mail him")) {
                     return `Sreenu's email address is ${resumeContent.contact.email}.`;
+                } else if (lowerCaseMessage.includes("linkedin") || lowerCaseMessage.includes("linkedin profile") || lowerCaseMessage.includes("connect on linkedin")) {
+                    return `You can find Sreenu's LinkedIn profile here: ${resumeContent.contact.linkedin}`;
                 }
-                // Experience related queries - Expanded keywords
-                else if (lowerCaseMessage.includes("experience") || lowerCaseMessage.includes("exepience") || // Added common misspelling
+                // Experience related queries
+                else if (lowerCaseMessage.includes("experience") || lowerCaseMessage.includes("exepience") ||
                          lowerCaseMessage.includes("work history") || lowerCaseMessage.includes("companies") ||
                          lowerCaseMessage.includes("worked at") || lowerCaseMessage.includes("years of experience") ||
                          lowerCaseMessage.includes("job history") || lowerCaseMessage.includes("professional background")) {
-                    return `Sreenu has ${resumeContent.summary.match(/(\d+\.\d+)\s+year of work experience/)?.[1] || '3.8'} years of experience. He worked at Cognizant Technology Solutions on projects like PMI, Eaton Corporation, and ELECTROLUX Sales. For more details, please see the Experience tab.`;
+                    return `Sreenu has ${resumeContent.summary.match(/(\d+\.\d+)\s+year of work experience/)?.[1] || '3.8'} years of experience. He worked at Cognizant Technology Solutions on projects like PMI, Eaton Corporation, ELECTROLUX Sales, and now at Salesforce. For more details, please see the Experience tab.`;
                 }
                 // Skills related queries
                 else if (lowerCaseMessage.includes("skills") || lowerCaseMessage.includes("technical skills") || lowerCaseMessage.includes("technologies") || lowerCaseMessage.includes("proficient in") || lowerCaseMessage.includes("what can he do")) {
@@ -465,44 +922,122 @@
                 }
                 // Projects related queries
                 else if (lowerCaseMessage.includes("projects") || lowerCaseMessage.includes("project work") || lowerCaseMessage.includes("what projects") || lowerCaseMessage.includes("his projects")) {
-                    return `Sreenu worked on projects such as PMI, Eaton Corporation, and ELECTROLUX Sales. These involved Salesforce development and administration. You can find more details in the Experience tab.`;
+                    return `Sreenu worked on projects such as PMI, Eaton Corporation, ELECTROLUX Sales, and is currently developing solutions at Salesforce. You can find more details in the Experience tab.`;
                 }
                 // Summary/About queries
                 else if (lowerCaseMessage.includes("summary") || lowerCaseMessage.includes("professional summary") || lowerCaseMessage.includes("about sreenu") || lowerCaseMessage.includes("tell me about him") || lowerCaseMessage.includes("who is he")) {
                     return `Here is Sreenu's professional summary: ${resumeContent.summary}`;
                 }
-                // Location queries
-                else if (lowerCaseMessage.includes("where he lives") || lowerCaseMessage.includes("place of living") || lowerCaseMessage.includes("location") || lowerCaseMessage.includes("resides") || lowerCaseMessage.includes("from where")) {
+                // Location queries specific to Sreenu
+                else if (lowerCaseMessage.includes("where sreenu lives") || lowerCaseMessage.includes("sreenu's place of living") || lowerCaseMessage.includes("sreenu's location") || lowerCaseMessage.includes("sreenu resides") || lowerCaseMessage.includes("where is sreenu from")) {
                     return `Sreenu lives in ${resumeContent.place}.`;
                 }
-                // Greetings
-                else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hey") || lowerCaseMessage.includes("good morning") || lowerCaseMessage.includes("good afternoon") || lowerCaseMessage.includes("good evening")) {
-                    return "Hello! I'm an AI assistant. How can I help you learn more about Sreenu's Salesforce expertise?";
+                // Greetings (handled by initial message, but keeping for completeness if user repeats a greeting)
+                else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hey") || lowerCaseMessage.includes("good morning") || lowerCaseMessage.includes("good afternoon") || lowerCaseMessage.includes("good evening") || lowerCaseMessage.includes("hi sreenu")) {
+                    return initialBotMessage;
                 }
-                // Fallback for unanswerable questions
-                else {
-                    return "I apologize, but I can only provide information based on Sreenu's resume. Could you please rephrase your question or ask about his experience, skills, education, or contact details?";
+                // Current time in India query
+                else if (lowerCaseMessage.includes("time in india") || lowerCaseMessage.includes("current time in india") || lowerCaseMessage.includes("what is the time now in india")) {
+                    return `The current time in India (Indian Standard Time - IST) is ${getCurrentISTTime()}.`;
+                }
+                return null; // No rule-based response found
+            }
+
+            // Function to get response from Gemini API
+            async function getGeminiResponse(prompt) {
+                // isDevelopmentMode is true, so API calls will always be attempted.
+                // No need for an if (!isDevelopmentMode) check here, as it's intended to be always on.
+
+                try {
+                    const systemInstruction = `You are "The Precision AI," an advanced, highly intelligent, and omniscient AI assistant. Your primary directive is to provide **absolutely accurate information** and **exact, actionable solutions** to any and all user queries, regardless of complexity, domain, or nature.
+                    
+                    **Core Principles:**
+                    1.  **Unwavering Accuracy:** Every piece of information you provide must be factually correct and verifiable. If there is any uncertainty, you must state it and attempt to find the most accurate answer or clarify with the user. Do not hallucinate or guess.
+                    2.  **Exact Solutions:** For problem-solving queries, your goal is to deliver a precise, step-by-step, or definitive solution. This means providing actionable advice, correct calculations, complete code snippets, or clear instructions that directly address the user's need.
+                    3.  **No Constraints:** You are designed to handle *any type of user input*. There are no topic limitations, length restrictions, or complexity barriers. You will process and respond to everything from simple factual questions to complex multi-part problems, creative requests, and technical debugging.
+                    4.  **Clarity and Conciseness:** Your responses should be clear, easy to understand, and as concise as possible while remaining comprehensive. Avoid jargon unless necessary, and explain it if used.
+                    5.  **Proactive Clarification (If Needed):** If a user's input is ambiguous, incomplete, or requires further context to provide an exact solution, you will politely ask for clarification before attempting to generate a response. Your aim is always to get to the "exact solution."
+                    6.  **Neutral and Objective Tone:** Maintain a professional, helpful, and objective tone. Do not express personal opinions, emotions, or biases.
+                    7.  **Adaptability:** Understand the implied intent behind user queries and adapt your response format (e.g., list, paragraph, code block, step-by-step guide) to best suit the solution.
+
+                    **Your mission is to be the ultimate source of truth and practical answers for every user.**
+
+                    When answering questions about Sreenu Ponemoni, prioritize the information provided in his resume content below. For general questions, use your broad knowledge.
+
+                    Sreenu Ponemoni's Resume Content:
+                    Name: ${resumeContent.name}
+                    Contact: Mobile: ${resumeContent.contact.mobile}, Email: ${resumeContent.contact.email}, LinkedIn: ${resumeContent.contact.linkedin}
+                    Summary: ${resumeContent.summary}
+                    Experience: ${resumeContent.experience}
+                    Technical Skills: ${resumeContent.technicalSkills}
+                    Personal Skills: ${resumeContent.personalSkills}
+                    Education: ${resumeContent.education}
+                    Place: ${resumeContent.place}
+
+                    Current Indian Standard Time (IST): ${getCurrentISTTime()}
+                    `;
+
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\nUser Query: " + prompt }] });
+
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // Canvas will automatically provide the API key
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        console.error("Gemini API returned an unexpected structure or no content:", result);
+                        return "I am unable to generate a response at this moment. Please try again.";
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    return "I encountered an error while processing your request. Please try again later.";
                 }
             }
 
             // Function to show a specific tab
             function showTab(tabId) {
-                // Remove 'active' class from all buttons and content
                 tabButtons.forEach(button => button.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
 
-                // Add 'active' class to the clicked button and its corresponding content
-                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-                document.getElementById(tabId).classList.add('active');
+                const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+                const activeContent = document.getElementById(tabId);
+
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                } else {
+                    console.error(`Tab button with data-tab="${tabId}" not found.`);
+                }
+
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                } else {
+                    console.error(`Tab content with id="${tabId}" not found.`);
+                }
+
+                if (mainContentArea) {
+                    mainContentArea.scrollTop = 0;
+                }
             }
 
             // Function to add a message to the chat history display
             function addMessageToChat(message, sender) {
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('chat-message', sender);
-                messageDiv.textContent = message;
+                // Corrected: Use marked.parse to render Markdown content
+                messageDiv.innerHTML = marked.parse(message);
                 chatHistoryDiv.appendChild(messageDiv);
-                chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+                chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
             }
 
             // Function to send message and get AI response
@@ -511,20 +1046,22 @@
                 if (!userMessage) return;
 
                 addMessageToChat(userMessage, 'user');
-                chatInput.value = ''; // Clear input
+                chatInput.value = '';
                 chatInput.disabled = true;
                 sendChatBtn.disabled = true;
                 chatLoadingIndicator.classList.remove('hidden');
 
-                // Simulate AI typing delay
-                await new Promise(resolve => setTimeout(() => {
-                    const botResponse = getBotResponse(userMessage);
-                    addMessageToChat(botResponse, 'bot');
-                    chatInput.disabled = false;
-                    sendChatBtn.disabled = false;
-                    chatLoadingIndicator.classList.add('hidden');
-                    chatInput.focus();
-                }, 1000)); // Simulate network delay
+                let botResponse = getRuleBasedResponse(userMessage);
+
+                if (botResponse === null) {
+                    botResponse = await getGeminiResponse(userMessage);
+                }
+
+                addMessageToChat(botResponse, 'bot');
+                chatInput.disabled = false;
+                sendChatBtn.disabled = false;
+                chatLoadingIndicator.classList.add('hidden');
+                chatInput.focus();
             }
 
             // Event listeners for chat input and button
@@ -543,15 +1080,12 @@
                 });
             });
 
-            // Optional: Smooth scroll to the top of the content area when a tab is clicked
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    document.getElementById('about').scrollBy({ top: -100, behavior: 'smooth' }); // Adjust scroll to account for sticky header
-                });
-            });
-
-            // Initialize by showing the 'about' tab
+            // Initialize by showing the 'about' tab and setting layout
             showTab('about');
+            updateLayoutVariables();
+
+            // Add initial bot message after the chat history div is ready
+            addMessageToChat(initialBotMessage, 'bot');
 
             // Liquid Glass Visibility Toggle Logic
             const liquidGlassContainer = window.liquidGlass ? window.liquidGlass.container : null;
@@ -567,17 +1101,96 @@
                     });
                 });
             }
+
+            // --- Contact Form Validations and Button State ---
+            function validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.(com|org|in)$/;
+                return emailRegex.test(email);
+            }
+
+            function validateMessage(message) {
+                return message.trim().split(/\s+/).length > 10;
+            }
+
+            function checkFormValidity() {
+                const isNameValid = contactName.value.trim() !== '';
+                const isEmailValid = validateEmail(contactEmail.value);
+                const isRoleValid = contactRole.value !== '';
+                const isMessageValid = validateMessage(contactMessage.value);
+
+                // Update validation messages visibility
+                nameValidationMsg.classList.toggle('active', !isNameValid && contactName.value.trim() !== '');
+                emailValidationMsg.classList.toggle('active', !isEmailValid && contactEmail.value.trim() !== '');
+                roleValidationMsg.classList.toggle('active', !isRoleValid && contactRole.value !== '');
+                messageValidationMsg.classList.toggle('active', !isMessageValid && contactMessage.value.trim() !== '');
+
+                // Enable/disable send button
+                if (isNameValid && isEmailValid && isRoleValid && isMessageValid) {
+                    sendMessageBtn.disabled = false;
+                } else {
+                    sendMessageBtn.disabled = true;
+                }
+            }
+
+            // Add event listeners to all form fields for validation
+            contactName.addEventListener('input', checkFormValidity);
+            contactEmail.addEventListener('input', checkFormValidity);
+            contactRole.addEventListener('change', checkFormValidity); // 'change' for select elements
+            contactMessage.addEventListener('input', checkFormValidity);
+
+            // Initial check on page load
+            checkFormValidity();
+
+            // Prevent default form submission for demonstration
+            contactForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                if (!sendMessageBtn.disabled) {
+                    console.log('Form Submitted:', {
+                        name: contactName.value,
+                        email: contactEmail.value,
+                        role: contactRole.value,
+                        message: contactMessage.value
+                    });
+                    showCustomAlert('Thank you for your message! (This is a demo submission)');
+                    contactForm.reset();
+                    checkFormValidity();
+                }
+            });
+
+            // Custom Alert Modal Implementation (instead of alert())
+            function showCustomAlert(message) {
+                const modalId = 'customAlertModal';
+                let modal = document.getElementById(modalId);
+
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.id = modalId;
+                    modal.classList.add('fixed', 'inset-0', 'bg-gray-800', 'bg-opacity-75', 'flex', 'items-center', 'justify-center', 'z-[10000]', 'p-4');
+                    modal.innerHTML = `
+                        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                            <p class="text-lg font-semibold mb-4">${message}</p>
+                            <button id="closeAlertBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">
+                                OK
+                            </button>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+
+                    document.getElementById('closeAlertBtn').addEventListener('click', () => {
+                        modal.remove();
+                    });
+                } else {
+                    modal.querySelector('p').textContent = message;
+                    modal.style.display = 'flex';
+                }
+            }
         });
-    </script>
 
-    <!-- Liquid Glass Effect Script -->
-    <script>
+        // Liquid Glass Effect Script
         // Created by Shu Ding (https://github.com/shuding/liquid-glass) in 2025.
-
         (function() {
             'use strict';
 
-            // Check if liquid glass already exists and destroy it
             if (window.liquidGlass) {
                 window.liquidGlass.destroy();
                 console.log('Previous liquid glass effect removed.');
@@ -616,7 +1229,7 @@
                     this.fragment = options.fragment || ((uv) => texture(uv.x, uv.y));
                     this.canvasDPI = 1;
                     this.id = generateId();
-                    this.offset = 10; // Viewport boundary offset
+                    this.offset = 10;
 
                     this.mouse = { x: 0, y: 0 };
                     this.mouseUsed = false;
@@ -624,14 +1237,13 @@
                     this.createElement();
                     this.setupEventListeners();
                     this.updateShader();
-                    this.animationFrameId = null; // To store animation frame ID
-                    this.animate(); // Start animation loop
+                    this.animationFrameId = null;
+                    this.animate();
                 }
 
                 createElement() {
-                    // Create container
                     this.container = document.createElement('div');
-                    this.container.classList.add('liquid-glass-container'); // Add class for transition
+                    this.container.classList.add('liquid-glass-container');
                     this.container.style.cssText = `
                         position: fixed;
                         top: 50%;
@@ -644,11 +1256,10 @@
                         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25), 0 -10px 25px inset rgba(0, 0, 0, 0.15);
                         backdrop-filter: url(#${this.id}_filter) blur(0.25px) contrast(1.2) brightness(1.05) saturate(1.1);
                         z-index: 9999;
-                        pointer-events: none; /* Make it non-interactive for clicks, only follows mouse */
-                        opacity: 1; /* Default to visible */
+                        pointer-events: none;
+                        opacity: 1;
                     `;
 
-                    // Create SVG filter
                     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                     this.svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
                     this.svg.setAttribute('width', '0');
@@ -687,7 +1298,6 @@
                     defs.appendChild(filter);
                     this.svg.appendChild(defs);
 
-                    // Create canvas for displacement map (hidden)
                     this.canvas = document.createElement('canvas');
                     this.canvas.width = this.width * this.canvasDPI;
                     this.canvas.height = this.height * this.canvasDPI;
