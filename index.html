@@ -398,28 +398,40 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        .chat-toggle-button {
+        /* Draggable AI Icon Styles */
+        .ai-icon {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            right: 0; /* Default position: right edge */
+            top: 50%; /* Default position: vertically centered */
+            transform: translateY(-50%); /* Adjust for vertical centering */
+            width: 50px;
+            height: 50px;
             background-color: #4f46e5; /* Indigo 600 */
             color: white;
-            width: 60px;
-            height: 60px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.8rem;
+            font-size: 1.2rem; /* Size for "Ai" text */
+            font-weight: bold;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            z-index: 1001; /* Above chatbot container */
-            transition: transform 0.2s ease-in-out, background-color 0.2s;
+            cursor: grab; /* Indicate it's draggable */
+            z-index: 1001; /* Above other content, below chatbot */
+            transition: background-color 0.2s, transform 0.1s; /* Smooth hover and click feedback */
+            user-select: none; /* Prevent text selection during drag */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
-        .chat-toggle-button:hover {
-            transform: scale(1.05);
-            background-color: #4338ca; /* Slightly darker indigo */
+        .ai-icon:hover {
+            background-color: #4338ca; /* Slightly darker indigo on hover */
+        }
+
+        .ai-icon.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: translateY(-50%) scale(1.05); /* Slight scale up when dragging */
         }
 
         /* Responsive adjustments for chatbot on smaller screens */
@@ -435,12 +447,16 @@
             .chatbot-container.active {
                 transform: translateX(0) translateY(0);
             }
-            .chat-toggle-button {
+            .ai-icon {
                 bottom: 10px;
                 right: 10px;
                 width: 50px;
                 height: 50px;
-                font-size: 1.5rem;
+                font-size: 1.2rem;
+                transform: translateY(0); /* Remove translateY for bottom/right positioning */
+            }
+            .ai-icon.dragging {
+                transform: scale(1.05); /* Only scale when dragging on small screens */
             }
         }
     </style>
@@ -476,7 +492,6 @@
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience">Experience</button>
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills">Skills</button>
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education">Education</button>
-            <!-- AI Chat tab removed as it's now a floating bot -->
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact">Contact</button>
         </div>
     </nav>
@@ -753,10 +768,8 @@
         </div>
     </div>
 
-    <!-- Floating Chat Toggle Button -->
-    <button id="chatToggleButton" class="chat-toggle-button">
-        <i class="fas fa-comment-dots"></i>
-    </button>
+    <!-- Floating Draggable AI Icon -->
+    <button id="aiIcon" class="ai-icon">Ai</button>
 
     <!-- Footer Section -->
     <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
@@ -776,7 +789,7 @@
 
             // Chatbot specific elements (now global)
             const chatbotContainer = document.getElementById('chatbotContainer');
-            const chatToggleButton = document.getElementById('chatToggleButton');
+            const aiIcon = document.getElementById('aiIcon'); // Renamed from chatToggleButton
             const closeChatBtn = document.getElementById('closeChatBtn');
             const chatHistoryDiv = chatbotContainer.querySelector('#chatHistory'); // Select within chatbot container
             const chatInput = chatbotContainer.querySelector('#chatInput'); // Select within chatbot container
@@ -962,15 +975,15 @@
                     return `Here is Sreenu's professional summary: ${resumeContent.summary}`;
                 }
                 // Location queries specific to Sreenu
-                else if (lowerCaseMessage.includes("where sreenu lives") || lowerCaseMessage.includes("sreenu's place of living") || lowerCaseMessage.includes("sreenu's location") || lowerCaseMessage.includes("sreenu resides") || lowerCaseMessage.includes("where is sreenu from")) {
-                    return `Sreenu lives in ${resumeContent.place}.`;
+                else if (lowerCaseMessage.includes("where sreenu lives") || lowerCaseMessage.includes("sreenu's place of living") || lowerCaseMessage.includes("sreenu's location") || lowerCaseMessage.includes("sreenu resides") || lowerCaseMessage.includes("where is sreenu from") || lowerCaseMessage.includes("where is hyderabad")) {
+                    return `Sreenu lives in ${resumeContent.place}. Hyderabad is a major city in India, known for its technology industry and rich history.`;
                 }
                 // Greetings (handled by initial message, but keeping for completeness if user repeats a greeting)
                 else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hey") || lowerCaseMessage.includes("good morning") || lowerCaseMessage.includes("good afternoon") || lowerCaseMessage.includes("good evening") || lowerCaseMessage.includes("hi sreenu")) {
                     return initialBotMessage;
                 }
                 // Current time in India query
-                else if (lowerCaseMessage.includes("time in india") || lowerCaseMessage.includes("current time in india") || lowerCaseMessage.includes("what is the time now in india")) {
+                else if (lowerCaseMessage.includes("time in india") || lowerCaseMessage.includes("current time in india") || lowerCaseMessage.includes("what is the time now in india") || lowerCaseMessage.includes("what is time now")) {
                     return `The current time in India (Indian Standard Time - IST) is ${getCurrentISTTime()}.`;
                 }
                 return null; // No rule-based response found
@@ -1133,7 +1146,12 @@
 
 
             // Chatbot Toggle Functionality
-            chatToggleButton.addEventListener('click', () => {
+            aiIcon.addEventListener('click', (event) => {
+                // Prevent opening if it was a drag
+                if (aiIcon.dataset.isDragging === 'true') {
+                    aiIcon.dataset.isDragging = 'false'; // Reset flag
+                    return;
+                }
                 chatbotContainer.classList.toggle('active');
                 if (chatbotContainer.classList.contains('active')) {
                     chatInput.focus(); // Focus input when chat opens
@@ -1145,6 +1163,93 @@
             closeChatBtn.addEventListener('click', () => {
                 chatbotContainer.classList.remove('active');
             });
+
+            // Draggable AI Icon Logic
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            aiIcon.addEventListener("mousedown", dragStart);
+            document.addEventListener("mouseup", dragEnd);
+            document.addEventListener("mousemove", drag);
+
+            function dragStart(e) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+
+                // Check if the click is on the icon itself, not its children
+                if (e.target === aiIcon) {
+                    isDragging = true;
+                    aiIcon.classList.add('dragging');
+                    // Store initial position for click vs drag detection
+                    aiIcon.dataset.startX = e.clientX;
+                    aiIcon.dataset.startY = e.clientY;
+                }
+            }
+
+            function dragEnd(e) {
+                isDragging = false;
+                aiIcon.classList.remove('dragging');
+
+                // Calculate distance moved to distinguish click from drag
+                const movedX = Math.abs(e.clientX - parseFloat(aiIcon.dataset.startX || e.clientX));
+                const movedY = Math.abs(e.clientY - parseFloat(aiIcon.dataset.startY || e.clientY));
+
+                // If moved more than a few pixels, it was a drag, not a click
+                if (movedX > 5 || movedY > 5) {
+                    aiIcon.dataset.isDragging = 'true';
+                } else {
+                    aiIcon.dataset.isDragging = 'false';
+                }
+            }
+
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault(); // Prevent default browser drag behavior
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    // Apply position, ensuring it stays within viewport
+                    let newLeft = e.clientX - (aiIcon.offsetWidth / 2);
+                    let newTop = e.clientY - (aiIcon.offsetHeight / 2);
+
+                    // Boundary checks
+                    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - aiIcon.offsetWidth));
+                    newTop = Math.max(0, Math.min(newTop, window.innerHeight - aiIcon.offsetHeight));
+
+                    aiIcon.style.left = `${newLeft}px`;
+                    aiIcon.style.top = `${newTop}px`;
+                    aiIcon.style.right = 'auto'; // Disable right property when dragging
+                    aiIcon.style.transform = 'none'; // Disable transform for drag positioning
+                }
+            }
+
+            // Set initial position on load for the AI icon
+            function setAiIconInitialPosition() {
+                const iconWidth = aiIcon.offsetWidth;
+                const iconHeight = aiIcon.offsetHeight;
+                const viewportHeight = window.innerHeight;
+
+                // Calculate top position to center it vertically on the right edge
+                const initialTop = (viewportHeight / 2) - (iconHeight / 2);
+
+                aiIcon.style.top = `${initialTop}px`;
+                aiIcon.style.right = `0px`; // Stick to the right edge
+                aiIcon.style.left = `auto`; // Ensure left is auto
+                aiIcon.style.transform = `translateY(0)`; // Remove transform as top/right are set directly
+            }
+
+            // Call on load and resize to maintain position
+            window.addEventListener('load', setAiIconInitialPosition);
+            window.addEventListener('resize', setAiIconInitialPosition);
+
 
             // Liquid Glass Visibility Toggle Logic
             const liquidGlassContainer = window.liquidGlass ? window.liquidGlass.container : null;
