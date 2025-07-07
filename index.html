@@ -11,18 +11,23 @@
     <!-- Marked.js for Markdown parsing in chat -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        /* Base styles for body and typography */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6; /* Light gray background */
             color: #374151; /* Dark gray text */
         }
+
+        /* Tab button active state styling */
         .tab-button.active {
             background-color: #4f46e5; /* Indigo 600 */
             color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
+        /* Tab content base styling */
         .tab-content {
-            display: none;
+            display: none; /* Hidden by default */
             background-color: #ffffff; /* Default white background for all tabs */
             padding: 2rem; /* Consistent padding */
             border-radius: 0.5rem; /* Consistent rounded corners */
@@ -31,10 +36,12 @@
             box-sizing: border-box; /* Include padding in height calculation */
             overflow-y: auto; /* Allow content within the tab to scroll if it overflows */
         }
+        /* Tab content active state styling */
         .tab-content.active {
             display: block;
             border: 2px solid #4f46e5; /* Add a clear border to active tab content */
         }
+
         /* Custom scrollbar for better aesthetics */
         ::-webkit-scrollbar {
             width: 8px;
@@ -58,24 +65,35 @@
             margin-bottom: 10px;
             max-width: 80%;
             word-wrap: break-word;
-            opacity: 0;
-            transform: translateY(10px);
+            opacity: 0; /* For fade-in animation */
+            transform: translateY(10px); /* For slide-up animation */
             animation: fadeInSlideUp 0.3s ease-out forwards;
         }
         .chat-message.user {
             background-color: #e0e7ff; /* Light indigo for user */
-            align-self: flex-end;
-            margin-left: auto;
+            align-self: flex-end; /* Align to right */
+            margin-left: auto; /* Push to right */
         }
         .chat-message.bot {
             background-color: #d1fae5; /* Light green for bot */
-            align-self: flex-start;
-            margin-right: auto;
+            align-self: flex-start; /* Align to left */
+            margin-right: auto; /* Push to left */
         }
         .chat-input-area {
             display: flex;
             gap: 10px;
             padding-top: 10px;
+        }
+        .chat-history {
+            flex-grow: 1; /* Allows chat history to take available space */
+            overflow-y: auto; /* Enables scrolling for chat messages */
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column; /* Stack messages vertically */
+            min-height: 300px; /* Minimum height for chat window */
         }
 
         /* Liquid Glass Container styles for smooth visibility toggle */
@@ -155,7 +173,7 @@
             }
         }
 
-        /* Gallery item hover effect */
+        /* Gallery item hover effect (if used) */
         .gallery-item {
             position: relative;
             overflow: hidden;
@@ -305,58 +323,24 @@
             }
         }
 
-        /* Removed specific background images from sections */
-        #about.active {
-            background-image: none; /* Removed background image */
-        }
-        #experience.active {
-            background-image: none; /* Removed background image */
-        }
-        .education-card:nth-child(1),
-        .education-card:nth-child(2),
-        .education-card:nth-child(3) {
-            background-image: none; /* Removed background images */
-        }
-
-        /* Styles for disabled button */
-        #sendMessageBtn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: blur(1px); /* Added blur effect */
-        }
-
-        /* Validation message style */
-        .validation-message {
-            color: #dc2626; /* Red-600 */
-            font-size: 0.875rem; /* text-sm */
-            margin-top: 0.25rem; /* mt-1 */
-            display: none; /* Hidden by default */
-        }
-        .validation-message.active {
-            display: block; /* Show when active */
-        }
-
-        /* Table styles for skills */
-        .skills-table {
+        /* Google Form specific styling */
+        .google-form-container {
+            position: relative;
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 1.5rem;
+            /* Adjust height to make it responsive, maintaining aspect ratio */
+            padding-bottom: 75%; /* This will make the iframe's height 75% of its width */
+            height: 0;
+            overflow: hidden;
         }
-        .skills-table th, .skills-table td {
-            border: 1px solid #e2e8f0; /* Light gray border */
-            padding: 0.75rem;
-            text-align: left;
-        }
-        .skills-table th {
-            background-color: #f8fafc; /* Lighter background for headers */
-            font-weight: 600;
-            color: #475569; /* Slate 700 */
-        }
-        .skills-table tr:nth-child(even) {
-            background-color: #f0f4f8; /* Slightly darker for even rows */
-        }
-        .skills-table tr:hover {
-            background-color: #e0e7ff; /* Indigo 100 on hover */
+
+        .google-form-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 0.5rem; /* Match parent container rounded corners */
         }
     </style>
 </head>
@@ -555,8 +539,6 @@
                     </ul>
                 </div>
             </div>
-                </tbody>
-            </table>
         </section>
 
         <!-- Education Section -->
@@ -586,7 +568,9 @@
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">AI Chat Assistant</h2>
             <div class="p-6 bg-blue-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103 flex flex-col h-[500px]">
                 <p class="text-md text-gray-700 mb-4">Chat with an Sreenu's Personal AI assistant ask about his profile or general Salesforce topics!</p>
-                <div id="chatHistory" class="flex-grow overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white flex flex-col space-y-3 mb-4">
+                <div id="chatHistory" class="chat-history flex-grow overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white flex flex-col space-y-3 mb-4">
+                    <!-- Initial bot message -->
+                    <div class="chat-message bot">Hi, Good morning! How Sreenu Could Help You Today??</div>
                     <!-- Chat messages will be appended here dynamically by JavaScript -->
                 </div>
                 <div class="chat-input-area">
@@ -651,45 +635,16 @@
                     </div>
                 </div>
 
-                <!-- Right Side: Contact Form for HR, Reference, Employee, Employer -->
+                <!-- Right Side: Google Form Embed -->
                 <div class="md:w-1/2">
                     <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
-                        Contact Me
+                        Send a Message
                     </h3>
-                    <p class="text-md text-gray-700 mb-4">If you wish to contact me, please fill out the form below.</p>
-                    <form id="contactForm" class="space-y-4">
-                        <div>
-                            <label for="contactName" class="block text-sm font-medium text-gray-700 mb-1">Your Name:</label>
-                            <input type="text" id="contactName" name="contactName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="John Doe">
-                            <span id="nameValidationMsg" class="validation-message">Name cannot be empty.</span>
-                        </div>
-                        <div>
-                            <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Your Email:</label>
-                            <input type="email" id="contactEmail" name="contactEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="john.doe@example.com">
-                            <span id="emailValidationMsg" class="validation-message">Email must be valid and end with .com, .org, or .in.</span>
-                        </div>
-                        <div>
-                            <label for="contactRole" class="block text-sm font-medium text-gray-700 mb-1">Your Role:</label>
-                            <select id="contactRole" name="contactRole" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:focus:border-indigo-500 sm:text-sm">
-                                <option value="">Select your role</option>
-                                <option value="HR">HR</option>
-                                <option value="Reference">Reference</option>
-                                <option value="Employee">Employee</option>
-                                <option value="Employer">Employer</option>
-                                <option value="Other">Other</option>
-                            </select>
-                            <span id="roleValidationMsg" class="validation-message">Please select your role.</span>
-                        </div>
-                        <div>
-                            <label for="contactMessage" class="block text-sm font-medium text-gray-700 mb-1">Your Message:</label>
-                            <textarea id="contactMessage" name="contactMessage" rows="4" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Enter your message here..."></textarea>
-                            <span id="messageValidationMsg" class="validation-message">Message must be more than 10 words.</span>
-                        </div>
-                        <button type="submit" id="sendMessageBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition duration-300 flex items-center justify-center" disabled>
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
-                            Send Message
-                        </button>
-                    </form>
+                    <p class="text-md text-gray-700 mb-4">Please fill out the form below to send a message to Sreenu. This form is powered by Google Forms.</p>
+                    <div class="google-form-container">
+                        <!-- Google Form Embed Code -->
+                        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3nhbX1XtlFFb7Lyf1QUAdxEtLOZ578sCLIwFvXcrFKkZJ0Q/viewform?embedded=true" width="640" height="1689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                    </div>
                 </div>
             </div>
         </section>
@@ -705,9 +660,6 @@
     </footer>
 
     <script>
-        // Set to 'true' to enable API calls in all environments
-        const isDevelopmentMode = true; 
-
         document.addEventListener('DOMContentLoaded', function() {
             const header = document.querySelector('header');
             const nav = document.getElementById('main-nav');
@@ -718,20 +670,6 @@
             const sendChatBtn = document.getElementById('sendChatBtn');
             const chatLoadingIndicator = document.getElementById('chatLoadingIndicator');
             const mainContentArea = document.getElementById('main-content-area');
-
-            // Contact form elements
-            const contactForm = document.getElementById('contactForm');
-            const contactName = document.getElementById('contactName');
-            const contactEmail = document.getElementById('contactEmail');
-            const contactRole = document.getElementById('contactRole');
-            const contactMessage = document.getElementById('contactMessage');
-            const sendMessageBtn = document.getElementById('sendMessageBtn');
-
-            // Validation message elements
-            const nameValidationMsg = document.getElementById('nameValidationMsg');
-            const emailValidationMsg = document.getElementById('emailValidationMsg');
-            const roleValidationMsg = document.getElementById('roleValidationMsg');
-            const messageValidationMsg = document.getElementById('messageValidationMsg');
 
             let headerHeight = 0;
             let navHeight = 0;
@@ -749,7 +687,7 @@
                 }
             }
 
-            // Initial bot message with time-based greeting
+            // Initial bot message with time-based greeting (updated dynamically)
             const initialBotMessage = `Hi, ${getTimeBasedGreeting()}! How Sreenu Could Help You Today??`;
 
             // Function to update CSS variables and tab content max-height
@@ -822,7 +760,7 @@
                 return istTime.toLocaleString('en-IN', options);
             }
 
-            // Rule-based AI Response Function
+            // Rule-based AI Response Function - Prioritized before Gemini API call
             function getRuleBasedResponse(userMessage) {
                 const lowerCaseMessage = userMessage.toLowerCase();
 
@@ -838,9 +776,9 @@
                             case '+': result = num1 + num2; break;
                             case '-': result = num1 - num2; break;
                             case '*': result = num1 * num2; break;
-                            case '/': 
+                            case '/':
                                 if (num2 === 0) return "Cannot divide by zero.";
-                                result = num1 / num2; 
+                                result = num1 / num2;
                                 break;
                             default: return null;
                         }
@@ -898,9 +836,14 @@
                 else if (lowerCaseMessage.includes("skills") || lowerCaseMessage.includes("technical skills") || lowerCaseMessage.includes("technologies") || lowerCaseMessage.includes("proficient in") || lowerCaseMessage.includes("what can he do")) {
                     return `Sreenu's key technical skills include: ${resumeContent.technicalSkills}. For a full list, please see the Skills tab.`;
                 }
-                // Projects related queries
+                // Projects related queries (extracted from experience)
                 else if (lowerCaseMessage.includes("projects") || lowerCaseMessage.includes("project work") || lowerCaseMessage.includes("what projects") || lowerCaseMessage.includes("his projects")) {
-                    return `Sreenu worked on projects such as PMI, Eaton Corporation, ELECTROLUX Sales, and is currently developing solutions at Salesforce. You can find more details in the Experience tab.`;
+                    const projects = [
+                        "PMI (Philip Morris International)",
+                        "Eaton Corporation",
+                        "ELECTROLUX Sales"
+                    ];
+                    return `Sreenu has worked on projects such as: ${projects.join(', ')}. You can find more details in the Experience tab.`;
                 }
                 // Summary/About queries
                 else if (lowerCaseMessage.includes("summary") || lowerCaseMessage.includes("professional summary") || lowerCaseMessage.includes("about sreenu") || lowerCaseMessage.includes("tell me about him") || lowerCaseMessage.includes("who is he")) {
@@ -923,12 +866,13 @@
 
             // Function to get response from Gemini API
             async function getGeminiResponse(prompt) {
-                // isDevelopmentMode is true, so API calls will always be attempted.
-                // No need for an if (!isDevelopmentMode) check here, as it's intended to be always on.
+                // IMPORTANT: For security, a real application should proxy this API call through a backend server
+                // to avoid exposing your API key on the frontend.
+                // This direct call is for demonstration purposes within a sandboxed environment.
 
                 try {
                     const systemInstruction = `You are "The Precision AI," an advanced, highly intelligent, and omniscient AI assistant. Your primary directive is to provide **absolutely accurate information** and **exact, actionable solutions** to any and all user queries, regardless of complexity, domain, or nature.
-                    
+
                     **Core Principles:**
                     1.  **Unwavering Accuracy:** Every piece of information you provide must be factually correct and verifiable. If there is any uncertainty, you must state it and attempt to find the most accurate answer or clarify with the user. Do not hallucinate or guess.
                     2.  **Exact Solutions:** For problem-solving queries, your goal is to deliver a precise, step-by-step, or definitive solution. This means providing actionable advice, correct calculations, complete code snippets, or clear instructions that directly address the user's need.
@@ -975,7 +919,7 @@
                         return result.candidates[0].content.parts[0].text;
                     } else {
                         console.error("Gemini API returned an unexpected structure or no content:", result);
-                        return "'...This Is Beyod My Limits Need To Contact Sreenu Meanwhile Go Through Profile Thanks...'";
+                        return "'...This Is Beyond My Limits Need To Contact Sreenu Meanwhile Go Through Profile Thanks...'";
                     }
                 } catch (error) {
                     console.error("Error calling Gemini API:", error);
@@ -985,14 +929,18 @@
 
             // Function to show a specific tab
             function showTab(tabId) {
-                tabButtons.forEach(button => button.classList.remove('active'));
+                tabButtons.forEach(button => {
+                    button.classList.remove('active', 'bg-indigo-600', 'text-white');
+                    button.classList.add('bg-gray-200', 'text-gray-700'); // Ensure inactive styling
+                });
                 tabContents.forEach(content => content.classList.remove('active'));
 
                 const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
                 const activeContent = document.getElementById(tabId);
 
                 if (activeButton) {
-                    activeButton.classList.add('active');
+                    activeButton.classList.add('active', 'bg-indigo-600', 'text-white');
+                    activeButton.classList.remove('bg-gray-200', 'text-gray-700');
                 } else {
                     console.error(`Tab button with data-tab="${tabId}" not found.`);
                 }
@@ -1031,6 +979,7 @@
 
                 let botResponse = getRuleBasedResponse(userMessage);
 
+                // If no rule-based response, try Gemini API
                 if (botResponse === null) {
                     botResponse = await getGeminiResponse(userMessage);
                 }
@@ -1062,8 +1011,9 @@
             showTab('about');
             updateLayoutVariables();
 
-            // Add initial bot message after the chat history div is ready
-            addMessageToChat(initialBotMessage, 'bot');
+            // Update initial bot message with time-based greeting
+            document.querySelector('#ai-chat .chat-message.bot').textContent = initialBotMessage;
+
 
             // Liquid Glass Visibility Toggle Logic
             const liquidGlassContainer = window.liquidGlass ? window.liquidGlass.container : null;
@@ -1079,61 +1029,6 @@
                     });
                 });
             }
-
-            // --- Contact Form Validations and Button State ---
-            function validateEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.(com|org|in)$/;
-                return emailRegex.test(email);
-            }
-
-            function validateMessage(message) {
-                return message.trim().split(/\s+/).length > 10;
-            }
-
-            function checkFormValidity() {
-                const isNameValid = contactName.value.trim() !== '';
-                const isEmailValid = validateEmail(contactEmail.value);
-                const isRoleValid = contactRole.value !== '';
-                const isMessageValid = validateMessage(contactMessage.value);
-
-                // Update validation messages visibility
-                nameValidationMsg.classList.toggle('active', !isNameValid && contactName.value.trim() !== '');
-                emailValidationMsg.classList.toggle('active', !isEmailValid && contactEmail.value.trim() !== '');
-                roleValidationMsg.classList.toggle('active', !isRoleValid && contactRole.value !== '');
-                messageValidationMsg.classList.toggle('active', !isMessageValid && contactMessage.value.trim() !== '');
-
-                // Enable/disable send button
-                if (isNameValid && isEmailValid && isRoleValid && isMessageValid) {
-                    sendMessageBtn.disabled = false;
-                } else {
-                    sendMessageBtn.disabled = true;
-                }
-            }
-
-            // Add event listeners to all form fields for validation
-            contactName.addEventListener('input', checkFormValidity);
-            contactEmail.addEventListener('input', checkFormValidity);
-            contactRole.addEventListener('change', checkFormValidity); // 'change' for select elements
-            contactMessage.addEventListener('input', checkFormValidity);
-
-            // Initial check on page load
-            checkFormValidity();
-
-            // Prevent default form submission for demonstration
-            contactForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                if (!sendMessageBtn.disabled) {
-                    console.log('Form Submitted:', {
-                        name: contactName.value,
-                        email: contactEmail.value,
-                        role: contactRole.value,
-                        message: contactMessage.value
-                    });
-                    showCustomAlert('Thank you for your message! (This is a demo submission)');
-                    contactForm.reset();
-                    checkFormValidity();
-                }
-            });
 
             // Custom Alert Modal Implementation (instead of alert())
             function showCustomAlert(message) {
@@ -1166,15 +1061,17 @@
 
         // Liquid Glass Effect Script
         // Created by Shu Ding (https://github.com/shuding/liquid-glass) in 2025.
+        // This script creates a subtle, interactive liquid glass effect that follows the mouse.
         (function() {
             'use strict';
 
+            // If a previous instance of liquid glass exists, destroy it to prevent duplicates.
             if (window.liquidGlass) {
                 window.liquidGlass.destroy();
                 console.log('Previous liquid glass effect removed.');
             }
 
-            // Utility functions
+            // Utility functions for shader calculations
             function smoothStep(a, b, t) {
                 t = Math.max(0, Math.min(1, (t - a) / (b - a)));
                 return t * t * (3 - 2 * t);
@@ -1184,42 +1081,45 @@
                 return Math.sqrt(x * x + y * y);
             }
 
+            // Signed Distance Function for a rounded rectangle
             function roundedRectSDF(x, y, width, height, radius) {
                 const qx = Math.abs(x) - width + radius;
                 const qy = Math.abs(y) - height + radius;
                 return Math.min(Math.max(qx, qy), 0) + length(Math.max(qx, 0), Math.max(qy, 0)) - radius;
             }
 
+            // Simple texture lookup placeholder (returns UV coordinates as color components)
             function texture(x, y) {
                 return { type: 't', x, y };
             }
 
-            // Generate unique ID
+            // Generate a unique ID for SVG elements to avoid conflicts
             function generateId() {
                 return 'liquid-glass-' + Math.random().toString(36).substr(2, 9);
             }
 
-            // Main Shader class
+            // Main Shader class responsible for rendering the effect
             class Shader {
                 constructor(options = {}) {
                     this.width = options.width || 100;
                     this.height = options.height || 67;
                     this.fragment = options.fragment || ((uv) => texture(uv.x, uv.y));
-                    this.canvasDPI = 1;
-                    this.id = generateId();
-                    this.offset = 10;
+                    this.canvasDPI = 1; // DPI for the internal canvas
+                    this.id = generateId(); // Unique ID for SVG filter
+                    this.offset = 10; // Offset from viewport edges for constraining movement
 
-                    this.mouse = { x: 0, y: 0 };
-                    this.mouseUsed = false;
+                    this.mouse = { x: 0, y: 0 }; // Mouse position (normalized 0-1)
+                    this.mouseUsed = false; // Flag to check if mouse position is used in fragment shader
 
-                    this.createElement();
-                    this.setupEventListeners();
-                    this.updateShader();
-                    this.animationFrameId = null;
-                    this.animate();
+                    this.createElement(); // Create DOM elements
+                    this.setupEventListeners(); // Set up mouse and resize listeners
+                    this.updateShader(); // Initial shader update
+                    this.animationFrameId = null; // To store requestAnimationFrame ID
+                    this.animate(); // Start animation loop
                 }
 
                 createElement() {
+                    // Container for the liquid glass effect
                     this.container = document.createElement('div');
                     this.container.classList.add('liquid-glass-container');
                     this.container.style.cssText = `
@@ -1230,24 +1130,26 @@
                         width: ${this.width}px;
                         height: ${this.height}px;
                         overflow: hidden;
-                        border-radius: 150px;
+                        border-radius: 150px; /* Rounded shape for the glass effect */
                         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25), 0 -10px 25px inset rgba(0, 0, 0, 0.15);
+                        /* Apply SVG filter for distortion and backdrop-filter for glassmorphism */
                         backdrop-filter: url(#${this.id}_filter) blur(0.25px) contrast(1.2) brightness(1.05) saturate(1.1);
-                        z-index: 9999;
-                        pointer-events: none;
-                        opacity: 1;
+                        z-index: 9999; /* Ensure it's on top of most content */
+                        pointer-events: none; /* Allow mouse events to pass through */
+                        opacity: 1; /* Initial opacity */
                     `;
 
+                    // SVG element to hold the filter definition
                     this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                     this.svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                    this.svg.setAttribute('width', '0');
-                    this.svg.setAttribute('height', '0');
+                    this.svg.setAttribute('width', '0'); // Hidden
+                    this.svg.setAttribute('height', '0'); // Hidden
                     this.svg.style.cssText = `
                         position: fixed;
                         top: 0;
                         left: 0;
                         pointer-events: none;
-                        z-index: 9998;
+                        z-index: 9998; /* Below the container */
                     `;
 
                     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -1260,30 +1162,34 @@
                     filter.setAttribute('width', this.width.toString());
                     filter.setAttribute('height', this.height.toString());
 
+                    // feImage element will hold the displacement map generated from canvas
                     this.feImage = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
                     this.feImage.setAttribute('id', `${this.id}_map`);
                     this.feImage.setAttribute('width', this.width.toString());
                     this.feImage.setAttribute('height', this.height.toString());
 
+                    // feDisplacementMap applies the distortion based on the feImage
                     this.feDisplacementMap = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
-                    this.feDisplacementMap.setAttribute('in', 'SourceGraphic');
-                    this.feDisplacementMap.setAttribute('in2', `${this.id}_map`);
-                    this.feDisplacementMap.setAttribute('xChannelSelector', 'R');
-                    this.feDisplacementMap.setAttribute('yChannelSelector', 'G');
+                    this.feDisplacementMap.setAttribute('in', 'SourceGraphic'); // Apply to the element itself
+                    this.feDisplacementMap.setAttribute('in2', `${this.id}_map`); // Use our generated map
+                    this.feDisplacementMap.setAttribute('xChannelSelector', 'R'); // Red channel for X displacement
+                    this.feDisplacementMap.setAttribute('yChannelSelector', 'G'); // Green channel for Y displacement
 
                     filter.appendChild(this.feImage);
                     filter.appendChild(this.feDisplacementMap);
                     defs.appendChild(filter);
                     this.svg.appendChild(defs);
 
+                    // Hidden canvas used to generate the displacement map image data
                     this.canvas = document.createElement('canvas');
                     this.canvas.width = this.width * this.canvasDPI;
                     this.canvas.height = this.height * this.canvasDPI;
-                    this.canvas.style.display = 'none';
+                    this.canvas.style.display = 'none'; // Keep hidden
 
                     this.context = this.canvas.getContext('2d');
                 }
 
+                // Constrains the liquid glass position within the viewport with an offset
                 constrainPosition(x, y) {
                     const viewportWidth = window.innerWidth;
                     const viewportHeight = window.innerHeight;
@@ -1303,6 +1209,7 @@
                 }
 
                 setupEventListeners() {
+                    // Update position on mouse move
                     document.addEventListener('mousemove', (e) => {
                         const desiredCenterX = e.clientX;
                         const desiredCenterY = e.clientY;
@@ -1311,13 +1218,15 @@
 
                         this.container.style.left = constrained.x + 'px';
                         this.container.style.top = constrained.y + 'px';
-                        this.container.style.transform = 'translate(-50%, -50%)';
+                        this.container.style.transform = 'translate(-50%, -50%)'; // Keep centered
 
+                        // Calculate normalized mouse position relative to the container for the shader
                         const rect = this.container.getBoundingClientRect();
                         this.mouse.x = (e.clientX - rect.left) / rect.width;
                         this.mouse.y = (e.clientY - rect.top) / rect.height;
                     });
 
+                    // Re-constrain position on window resize
                     window.addEventListener('resize', () => {
                         const rect = this.container.getBoundingClientRect();
                         const currentCenterX = rect.left + rect.width / 2;
@@ -1333,12 +1242,15 @@
                     });
                 }
 
+                // Animation loop
                 animate = () => {
-                    this.updateShader();
+                    this.updateShader(); // Update the displacement map
                     this.animationFrameId = requestAnimationFrame(this.animate);
                 }
 
+                // Generates the displacement map on the hidden canvas
                 updateShader() {
+                    // Create a proxy to detect if the mouse object is accessed in the fragment shader
                     const mouseProxy = new Proxy(this.mouse, {
                         get: (target, prop) => {
                             this.mouseUsed = true;
@@ -1346,50 +1258,56 @@
                         }
                     });
 
-                    this.mouseUsed = false;
+                    this.mouseUsed = false; // Reset flag for current frame
 
                     const w = this.width * this.canvasDPI;
                     const h = this.height * this.canvasDPI;
-                    const data = new Uint8ClampedArray(w * h * 4);
+                    const data = new Uint8ClampedArray(w * h * 4); // RGBA data for the canvas
 
                     let maxScale = 0;
-                    const rawValues = [];
+                    const rawValues = []; // Store raw displacement values
 
+                    // Iterate over each pixel to calculate displacement
                     for (let i = 0; i < data.length; i += 4) {
                         const x = (i / 4) % w;
                         const y = Math.floor(i / 4 / w);
+                        // Call the user-defined fragment shader
                         const pos = this.fragment(
-                            { x: x / w, y: y / h },
-                            mouseProxy
+                            { x: x / w, y: y / h }, // Normalized UV coordinates
+                            mouseProxy // Pass mouse proxy
                         );
-                        const dx = pos.x * w - x;
-                        const dy = pos.y * h - y;
-                        maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy));
+                        const dx = pos.x * w - x; // X displacement
+                        const dy = pos.y * h - y; // Y displacement
+                        maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy)); // Track max displacement for scaling
                         rawValues.push(dx, dy);
                     }
 
-                    maxScale *= 0.5;
+                    maxScale *= 0.5; // Adjust max scale
 
                     let index = 0;
+                    // Convert raw displacements to RGBA values for the canvas
                     for (let i = 0; i < data.length; i += 4) {
+                        // Normalize displacements to 0-1 range and map to 0-255 for R and G channels
                         const r = rawValues[index++] / maxScale + 0.5;
                         const g = rawValues[index++] / maxScale + 0.5;
-                        data[i] = r * 255;
-                        data[i + 1] = g * 255;
-                        data[i + 2] = 0;
-                        data[i + 3] = 255;
+                        data[i] = r * 255; // Red channel for X
+                        data[i + 1] = g * 255; // Green channel for Y
+                        data[i + 2] = 0; // Blue channel (unused)
+                        data[i + 3] = 255; // Alpha channel (fully opaque)
                     }
 
-                    this.context.putImageData(new ImageData(data, w, h), 0, 0);
-                    this.feImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', this.canvas.toDataURL());
-                    this.feDisplacementMap.setAttribute('scale', (maxScale / this.canvasDPI).toString());
+                    this.context.putImageData(new ImageData(data, w, h), 0, 0); // Put image data on canvas
+                    this.feImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', this.canvas.toDataURL()); // Update SVG feImage source
+                    this.feDisplacementMap.setAttribute('scale', (maxScale / this.canvasDPI).toString()); // Update displacement scale
                 }
 
+                // Appends the created elements to the DOM
                 appendTo(parent) {
                     parent.appendChild(this.svg);
                     parent.appendChild(this.container);
                 }
 
+                // Cleans up DOM elements and stops animation
                 destroy() {
                     if (this.animationFrameId) {
                         cancelAnimationFrame(this.animationFrameId);
@@ -1400,36 +1318,38 @@
                 }
             }
 
-            // Create the liquid glass effect
+            // Function to create and initialize the liquid glass effect
             function createLiquidGlass() {
                 const shader = new Shader({
-                    width: 100,
-                    height: 67,
+                    width: 100, // Width of the effect area
+                    height: 67, // Height of the effect area
                     fragment: (uv, mouse) => {
+                        // Fragment shader logic for distortion
                         const ix = uv.x - 0.5;
                         const iy = uv.y - 0.5;
+                        // Calculate distance to the edge of a rounded rectangle
                         const distanceToEdge = roundedRectSDF(
                             ix,
                             iy,
-                            0.3,
-                            0.2,
-                            0.6
+                            0.3, // Half-width of the inner rectangle
+                            0.2, // Half-height of the inner rectangle
+                            0.6  // Radius for rounded corners
                         );
+                        // Apply smooth step for displacement based on distance
                         const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15);
                         const scaled = smoothStep(0, 1, displacement);
+                        // Return new UV coordinates based on scaled displacement
                         return texture(ix * scaled + 0.5, iy * scaled + 0.5);
                     }
                 });
 
-                shader.appendTo(document.body);
+                shader.appendTo(document.body); // Add the effect to the body
                 console.log('Liquid Glass effect created! It now follows your cursor.');
-                window.liquidGlass = shader;
+                window.liquidGlass = shader; // Make the shader instance globally accessible for destruction
             }
 
-            createLiquidGlass();
+            createLiquidGlass(); // Initialize the effect
         })();
     </script>
 </body>
 </html>
-
-
