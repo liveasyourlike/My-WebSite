@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for chat icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Marked.js for Markdown parsing in chat -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -328,7 +330,7 @@
             position: relative;
             width: 100%;
             /* Adjust height to make it responsive, maintaining aspect ratio */
-            padding-bottom: 75%; /* This will make the iframe's height 75% of its width */
+            padding-bottom: 150%; /* Increased for more vertical space for the form */
             height: 0;
             overflow: hidden;
         }
@@ -341,6 +343,105 @@
             height: 100%;
             border: 0;
             border-radius: 0.5rem; /* Match parent container rounded corners */
+        }
+
+        /* Floating Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px; /* Fixed width for chatbot */
+            height: 500px; /* Fixed height for chatbot */
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000; /* Ensure it's above other content */
+            overflow: hidden; /* Hide scrollbars of the container itself */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            transform: translateY(20px); /* Start slightly below */
+            opacity: 0; /* Start hidden */
+            pointer-events: none; /* Do not block clicks when hidden */
+        }
+
+        .chatbot-container.active {
+            transform: translateY(0); /* Slide up */
+            opacity: 1; /* Fade in */
+            pointer-events: auto; /* Allow clicks when active */
+        }
+
+        .chatbot-header {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            padding: 1rem;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .chatbot-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .chatbot-header button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-toggle-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 1001; /* Above chatbot container */
+            transition: transform 0.2s ease-in-out, background-color 0.2s;
+        }
+
+        .chat-toggle-button:hover {
+            transform: scale(1.05);
+            background-color: #4338ca; /* Slightly darker indigo */
+        }
+
+        /* Responsive adjustments for chatbot on smaller screens */
+        @media (max-width: 768px) {
+            .chatbot-container {
+                width: 90%; /* Take more width on small screens */
+                height: 80vh; /* Use viewport height */
+                bottom: 10px;
+                right: 5%;
+                left: 5%; /* Center horizontally */
+                transform: translateX(0) translateY(20px); /* Adjust initial position */
+            }
+            .chatbot-container.active {
+                transform: translateX(0) translateY(0);
+            }
+            .chat-toggle-button {
+                bottom: 10px;
+                right: 10px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -375,7 +476,7 @@
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience">Experience</button>
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills">Skills</button>
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education">Education</button>
-            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="ai-chat">AI Chat</button>
+            <!-- AI Chat tab removed as it's now a floating bot -->
             <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact">Contact</button>
         </div>
     </nav>
@@ -385,7 +486,8 @@
 
         <!-- About Section -->
         <section id="about" class="tab-content active mb-8">
-            <div class="bg-white/90 p-8 rounded-lg shadow-xl max-w-3xl mx-auto relative z-10">
+            <!-- Removed max-w-3xl mx-auto to make it full width -->
+            <div class="bg-white/90 p-8 rounded-lg shadow-xl relative z-10">
                 <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
                 <div class="prose max-w-none">
                     <p class="text-lg leading-relaxed mb-4">
@@ -482,7 +584,7 @@
                     <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #3: ELECTROLUX Sales</h4>
                     <p class="text-xl font-semibold text-green-700 mb-3">Domain: Retail Management | Role: Salesforce Developer | Duration: Feb 2021 - Oct 2021</p>
                     <p class="text-md leading-relaxed mb-3">
-                        Electrolux is a global leader in household appliances and appliances for professional use, selling more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
+                        Electrolux is a global leader in household appliances and appliances for professional use, selling more more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
                     </p>
                     <h5 class="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h5>
                     <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
@@ -563,65 +665,41 @@
             </div>
         </section>
 
-        <!-- AI Chat Section (Rule-based) -->
-        <section id="ai-chat" class="tab-content mb-8">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">AI Chat Assistant</h2>
-            <div class="p-6 bg-blue-50 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-103 flex flex-col h-[500px]">
-                <p class="text-md text-gray-700 mb-4">Chat with an Sreenu's Personal AI assistant ask about his profile or general Salesforce topics!</p>
-                <div id="chatHistory" class="chat-history flex-grow overflow-y-auto p-4 border border-gray-300 rounded-lg bg-white flex flex-col space-y-3 mb-4">
-                    <!-- Initial bot message -->
-                    <div class="chat-message bot">Hi, Good morning! How Sreenu Could Help You Today??</div>
-                    <!-- Chat messages will be appended here dynamically by JavaScript -->
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ask Sreenu Anything About His Profile...">
-                    <button id="sendChatBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.684-.236a1 1 0 00.54-1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
-                        Send
-                    </button>
-                </div>
-                <!-- Updated chat-loading-indicator text content -->
-                <div id="chatLoadingIndicator" class="hidden text-center text-indigo-600 mt-2 chat-loading-indicator">
-                    Sreenu is About to Give Response Meanwhile See the Profile........
-                </div>
-            </div>
-        </section>
-
         <!-- Contact Section -->
         <section id="contact" class="tab-content mb-8">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
             <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8">
                 <!-- Left Side: Contact Details -->
-                <div class="md:w-1/2 mb-8 md:mb-0">
+                <div class="md:w-1/3 mb-8 md:mb-0">
                     <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-b-2 border-indigo-300 pb-2">Personal & Contact Info</h3>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium text-gray-800">Name:</p>
-                        <p class="text-xl text-indigo-700 font-semibold">Sreenu Ponemoni</p>
+                    <div class="mb-3"> <!-- Reduced margin-bottom -->
+                        <p class="text-base font-medium text-gray-800">Name:</p> <!-- Reduced font size -->
+                        <p class="text-lg text-indigo-700 font-semibold">Sreenu Ponemoni</p> <!-- Reduced font size -->
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium text-gray-800">Date of Birth:</p>
-                        <p class="text-xl text-indigo-700 font-semibold">04-05-1997</p>
+                    <div class="mb-3"> <!-- Reduced margin-bottom -->
+                        <p class="text-base font-medium text-gray-800">Date of Birth:</p> <!-- Reduced font size -->
+                        <p class="text-lg text-indigo-700 font-semibold">04-05-1997</p> <!-- Reduced font size -->
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium text-gray-800">Marital Status:</p>
-                        <p class="text-xl text-indigo-700 font-semibold">Single</p>
+                    <div class="mb-3"> <!-- Reduced margin-bottom -->
+                        <p class="text-base font-medium text-gray-800">Marital Status:</p> <!-- Reduced font size -->
+                        <p class="text-lg text-indigo-700 font-semibold">Single</p> <!-- Reduced font size -->
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium text-gray-800">Languages Known:</p>
-                        <p class="text-xl text-indigo-700 font-semibold">English, Hindi and Telugu</p>
+                    <div class="mb-3"> <!-- Reduced margin-bottom -->
+                        <p class="text-base font-medium text-gray-800">Languages Known:</p> <!-- Reduced font size -->
+                        <p class="text-lg text-indigo-700 font-semibold">English, Hindi and Telugu</p> <!-- Reduced font size -->
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium text-gray-800">Place:</p>
-                        <p class="text-xl text-indigo-700 font-semibold">Hyderabad</p>
+                    <div class="mb-3"> <!-- Reduced margin-bottom -->
+                        <p class="text-base font-medium text-gray-800">Place:</p> <!-- Reduced font size -->
+                        <p class="text-lg text-indigo-700 font-semibold">Hyderabad</p> <!-- Reduced font size -->
                     </div>
-                    <div class="mb-4">
-                        <p class="text-lg font-medium text-gray-800">LinkedIn Profile:</p>
-                        <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="text-indigo-600 hover:underline text-xl font-semibold break-all">
+                    <div class="mb-3"> <!-- Reduced margin-bottom -->
+                        <p class="text-base font-medium text-gray-800">LinkedIn Profile:</p> <!-- Reduced font size -->
+                        <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all"> <!-- Reduced font size -->
                             http://linkedin.com/in/sreenu-ponemoni-b84167369
                         </a>
                     </div>
                     <div class="mt-6 pt-4 border-t border-gray-200">
-                        <p class="text-lg font-medium text-gray-800 mb-2">Reach out to me:</p>
+                        <p class="text-base font-medium text-gray-800 mb-2">Reach out to me:</p> <!-- Reduced font size -->
                         <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                             <a href="tel:9640352929" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
                                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
@@ -636,7 +714,7 @@
                 </div>
 
                 <!-- Right Side: Google Form Embed -->
-                <div class="md:w-1/2">
+                <div class="md:w-2/3 min-h-[600px]"> <!-- Changed to md:w-2/3 and added min-h -->
                     <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
                         Send a Message
                     </h3>
@@ -650,6 +728,35 @@
         </section>
 
     </main>
+
+    <!-- Floating Chatbot Container -->
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <span>Sreenu's AI Assistant</span>
+            <button id="closeChatBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chatHistory" class="chat-history flex-grow p-4 border border-gray-300 rounded-b-lg bg-white flex flex-col space-y-3">
+            <!-- Initial bot message -->
+            <div class="chat-message bot">Hi, Good morning! How Sreenu Could Help You Today??</div>
+            <!-- Chat messages will be appended here dynamically by JavaScript -->
+        </div>
+        <div class="chat-input-area p-4 bg-white border-t border-gray-200">
+            <input type="text" id="chatInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ask Sreenu Anything About His Profile...">
+            <button id="sendChatBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.684-.236a1 1 0 00.54-1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
+                Send
+            </button>
+        </div>
+        <!-- Updated chat-loading-indicator text content -->
+        <div id="chatLoadingIndicator" class="hidden text-center text-indigo-600 mt-2 chat-loading-indicator">
+            Sreenu is About to Give Response Meanwhile See the Profile........
+        </div>
+    </div>
+
+    <!-- Floating Chat Toggle Button -->
+    <button id="chatToggleButton" class="chat-toggle-button">
+        <i class="fas fa-comment-dots"></i>
+    </button>
 
     <!-- Footer Section -->
     <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
@@ -665,11 +772,16 @@
             const nav = document.getElementById('main-nav');
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
-            const chatHistoryDiv = document.getElementById('chatHistory');
-            const chatInput = document.getElementById('chatInput');
-            const sendChatBtn = document.getElementById('sendChatBtn');
-            const chatLoadingIndicator = document.getElementById('chatLoadingIndicator');
             const mainContentArea = document.getElementById('main-content-area');
+
+            // Chatbot specific elements (now global)
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            const chatToggleButton = document.getElementById('chatToggleButton');
+            const closeChatBtn = document.getElementById('closeChatBtn');
+            const chatHistoryDiv = chatbotContainer.querySelector('#chatHistory'); // Select within chatbot container
+            const chatInput = chatbotContainer.querySelector('#chatInput'); // Select within chatbot container
+            const sendChatBtn = chatbotContainer.querySelector('#sendChatBtn'); // Select within chatbot container
+            const chatLoadingIndicator = chatbotContainer.querySelector('#chatLoadingIndicator'); // Select within chatbot container
 
             let headerHeight = 0;
             let navHeight = 0;
@@ -960,8 +1072,7 @@
             function addMessageToChat(message, sender) {
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('chat-message', sender);
-                // Corrected: Use marked.parse to render Markdown content
-                messageDiv.innerHTML = marked.parse(message);
+                messageDiv.innerHTML = marked.parse(message); // Use marked.parse for Markdown
                 chatHistoryDiv.appendChild(messageDiv);
                 chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
             }
@@ -1012,8 +1123,28 @@
             updateLayoutVariables();
 
             // Update initial bot message with time-based greeting
-            document.querySelector('#ai-chat .chat-message.bot').textContent = initialBotMessage;
+            // Ensure the initial message is added only once or reset appropriately
+            const initialBotMessageElement = chatHistoryDiv.querySelector('.chat-message.bot');
+            if (initialBotMessageElement) {
+                initialBotMessageElement.textContent = initialBotMessage;
+            } else {
+                addMessageToChat(initialBotMessage, 'bot');
+            }
 
+
+            // Chatbot Toggle Functionality
+            chatToggleButton.addEventListener('click', () => {
+                chatbotContainer.classList.toggle('active');
+                if (chatbotContainer.classList.contains('active')) {
+                    chatInput.focus(); // Focus input when chat opens
+                    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+                }
+            });
+
+            // Close Chatbot Button Functionality
+            closeChatBtn.addEventListener('click', () => {
+                chatbotContainer.classList.remove('active');
+            });
 
             // Liquid Glass Visibility Toggle Logic
             const liquidGlassContainer = window.liquidGlass ? window.liquidGlass.container : null;
@@ -1025,37 +1156,27 @@
                         liquidGlassContainer.style.opacity = '0';
                     });
                     inputField.addEventListener('blur', () => {
-                        liquidGlassContainer.style.opacity = '1';
+                        // Only make it visible if the chatbot is not active
+                        if (!chatbotContainer.classList.contains('active')) {
+                            liquidGlassContainer.style.opacity = '1';
+                        }
                     });
                 });
-            }
 
-            // Custom Alert Modal Implementation (instead of alert())
-            function showCustomAlert(message) {
-                const modalId = 'customAlertModal';
-                let modal = document.getElementById(modalId);
-
-                if (!modal) {
-                    modal = document.createElement('div');
-                    modal.id = modalId;
-                    modal.classList.add('fixed', 'inset-0', 'bg-gray-800', 'bg-opacity-75', 'flex', 'items-center', 'justify-center', 'z-[10000]', 'p-4');
-                    modal.innerHTML = `
-                        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-                            <p class="text-lg font-semibold mb-4">${message}</p>
-                            <button id="closeAlertBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">
-                                OK
-                            </button>
-                        </div>
-                    `;
-                    document.body.appendChild(modal);
-
-                    document.getElementById('closeAlertBtn').addEventListener('click', () => {
-                        modal.remove();
-                    });
-                } else {
-                    modal.querySelector('p').textContent = message;
-                    modal.style.display = 'flex';
-                }
+                // Also hide liquid glass when chatbot opens and show when it closes
+                chatbotContainer.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'opacity') {
+                        if (chatbotContainer.classList.contains('active')) {
+                            liquidGlassContainer.style.opacity = '0';
+                        } else {
+                            // Only show if no other input is focused
+                            const anyInputFocused = Array.from(allInputFields).some(input => input === document.activeElement);
+                            if (!anyInputFocused) {
+                                liquidGlassContainer.style.opacity = '1';
+                            }
+                        }
+                    }
+                });
             }
         });
 
