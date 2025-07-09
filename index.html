@@ -35,7 +35,7 @@
         /* Tab content base styling */
         .tab-content {
             display: none; /* Hidden by default */
-            background-color: #ffffff; /* Default white background for all tabs */
+            /* Removed background-color: #ffffff; to allow Tailwind classes to apply */
             padding: 2rem; /* Consistent padding */
             border-radius: 0.5rem; /* Consistent rounded corners */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Consistent subtle shadow */
@@ -368,7 +368,6 @@
         /* Floating Chatbot Styles */
         .chatbot-container {
             position: fixed;
-            /* Removed default bottom/right/transform here */
             width: 350px; /* Default width */
             height: 500px; /* Default height */
             background-color: #ffffff;
@@ -379,7 +378,6 @@
             z-index: 1000; /* Ensure it's above other content */
             overflow: hidden; /* Hide scrollbars of the container itself */
             transition: opacity 0.3s ease-in-out; /* Only opacity transition here */
-            /* Transform for initial slide-up will be applied by JS for active class */
             opacity: 0; /* Start hidden */
             pointer-events: none; /* Do not block clicks when hidden */
             min-width: 300px; /* Minimum width for resizing */
@@ -397,12 +395,12 @@
         }
 
         /* When dragging, we explicitly set left/top and remove transform via JS */
-        .chatbot-container.dragging {
+        .chatbot-container.dragging, .contact-panel-container.dragging {
             transition: none !important; /* Override all transitions when dragging */
             transform: none !important; /* Ensure no transform during drag */
         }
 
-        .chatbot-header {
+        .chatbot-header, .contact-panel-header {
             background-color: #4f46e5; /* Indigo 600 */
             color: white;
             padding: 1rem;
@@ -415,11 +413,11 @@
             cursor: grab; /* Indicate it's draggable */
         }
 
-        .chatbot-header.dragging {
+        .chatbot-header.dragging, .contact-panel-header.dragging {
             cursor: grabbing;
         }
 
-        .chatbot-header button {
+        .chatbot-header button, .contact-panel-header button {
             background: none;
             border: none;
             color: white;
@@ -430,12 +428,12 @@
             transition: background-color 0.2s;
         }
 
-        .chatbot-header button:hover {
+        .chatbot-header button:hover, .contact-panel-header button:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
 
         /* Draggable AI Icon Styles */
-        .ai-icon {
+        .ai-icon, .contact-toggle-icon {
             position: fixed;
             right: 0; /* Default position: right edge */
             top: 50%; /* Default position: vertically centered */
@@ -460,11 +458,11 @@
             -ms-user-select: none;
         }
 
-        .ai-icon:hover {
+        .ai-icon:hover, .contact-toggle-icon:hover {
             background-color: #4338ca; /* Slightly darker indigo on hover */
         }
 
-        .ai-icon.dragging {
+        .ai-icon.dragging, .contact-toggle-icon.dragging {
             cursor: grabbing;
             opacity: 0.8;
             transform: translateY(-50%) scale(1.05); /* Slight scale up when dragging */
@@ -504,7 +502,7 @@
             color: white;
         }
 
-        /* Resize Handles for Chatbot */
+        /* Resize Handles for Chatbot and Contact Panel */
         .resize-handle {
             position: absolute;
             width: 15px;
@@ -542,7 +540,7 @@
 
         /* Responsive adjustments for chatbot on smaller screens */
         @media (max-width: 768px) {
-            .chatbot-container {
+            .chatbot-container, .contact-panel-container {
                 width: 90%; /* Take more width on small screens */
                 height: 80vh; /* Use viewport height */
                 bottom: 10px;
@@ -552,10 +550,10 @@
                 min-width: unset; /* Remove min-width for small screens */
                 min-height: unset; /* Remove min-height for small screens */
             }
-            .chatbot-container.active {
+            .chatbot-container.active, .contact-panel-container.active {
                 transform: translateX(0) translateY(0);
             }
-            .ai-icon {
+            .ai-icon, .contact-toggle-icon {
                 bottom: 10px;
                 right: 10px;
                 width: 50px;
@@ -563,12 +561,46 @@
                 font-size: 1.2rem;
                 transform: translateY(0); /* Remove translateY for bottom/right positioning */
             }
-            .ai-icon.dragging {
+            .ai-icon.dragging, .contact-toggle-icon.dragging {
                 transform: scale(1.05); /* Only scale when dragging on small screens */
             }
             .resize-handle {
                 display: none; /* Hide resize handles on small screens */
             }
+        }
+
+        /* New Contact Panel Styles */
+        .contact-panel-container {
+            position: fixed;
+            width: 280px; /* Default width for contact panel */
+            height: 250px; /* Default height for contact panel */
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 990; /* Below chatbot, above general content */
+            overflow: hidden;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            min-width: 250px;
+            min-height: 200px;
+            max-width: 90vw;
+            max-height: 90vh;
+            resize: none;
+        }
+
+        .contact-panel-container.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .contact-icons-content {
+            flex-grow: 1;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -578,6 +610,8 @@
     <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-4 px-6 shadow-lg">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center mb-2 md:mb-0 header-left-content">
+                <!-- Logo Placeholder - Replace 'path/to/your/logo.png' with your logo image -->
+                <img src="https://placehold.co/50x50/4f46e5/ffffff?text=Logo" alt="Logo" class="h-12 w-12 rounded-full mr-4">
                 <div>
                     <h1 class="text-3xl font-bold">Sreenu Ponemoni</h1>
                     <p class="text-lg font-light">Salesforce Administrator & Developer</p>
@@ -585,11 +619,11 @@
             </div>
             <div class="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-2 md:space-y-0 md:space-x-4">
                 <a href="tel:9640352929" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
-                    <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                    <i class="fas fa-phone-alt w-5 h-5 mr-1"></i>
                     9640352929
                 </a>
                 <a href="mailto:sreeponemoni6264@gmail.com" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
-                    <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                    <i class="fas fa-envelope w-5 h-5 mr-1"></i>
                     sreeponemoni6264@gmail.com
                 </a>
             </div>
@@ -611,7 +645,7 @@
     <main class="flex-grow container mx-auto p-6 md:p-8 lg:p-10" id="main-content-area">
 
         <!-- About Section -->
-        <section id="about" class="tab-content active mb-8">
+        <section id="about" class="tab-content active mb-8 bg-blue-50">
             <!-- Removed max-w-3xl mx-auto to make it full width -->
             <div class="bg-white/90 p-8 rounded-lg shadow-xl relative z-10">
                 <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
@@ -663,7 +697,7 @@
         </section>
 
         <!-- Experience Section - Project divs updated with enhanced hover effect -->
-        <section id="experience" class="tab-content mb-8">
+        <section id="experience" class="tab-content mb-8 bg-green-50">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Professional Experience</h2>
 
             <!-- Cognizant Technology Solutions -->
@@ -746,7 +780,7 @@
         </section>
 
         <!-- Skills Section -->
-        <section id="skills" class="tab-content mb-8">
+        <section id="skills" class="tab-content mb-8 bg-purple-50">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Skills</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
@@ -806,7 +840,7 @@
         </section>
 
         <!-- Education Section -->
-        <section id="education" class="tab-content mb-8">
+        <section id="education" class="tab-content mb-8 bg-yellow-50">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Academic Qualifications</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
@@ -828,9 +862,9 @@
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="tab-content mb-8">
+        <section id="contact" class="tab-content mb-8 bg-red-50">
             <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
-            <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8">
+            <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8 relative">
                 <!-- Left Side: Contact Details -->
                 <div class="md:w-1/3 mb-8 md:mb-0">
                     <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-b-2 border-indigo-300 pb-2">Personal & Contact Info</h3>
@@ -860,15 +894,21 @@
                             http://linkedin.com/in/sreenu-ponemoni-b84167369
                         </a>
                     </div>
+                    <div class="mb-3"> <!-- Added GitHub link container -->
+                        <p class="text-base font-medium text-gray-800">GitHub Profile:</p>
+                        <a href="https://github.com/liveasyourlike" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all">
+                            https://github.com/liveasyourlike
+                        </a>
+                    </div>
                     <div class="mt-6 pt-4 border-t border-gray-200">
                         <p class="text-base font-medium text-gray-800 mb-2">Reach out to me:</p> <!-- Reduced font size -->
                         <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                             <a href="tel:9640352929" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                                <i class="fas fa-phone-alt w-5 h-5 mr-2"></i>
                                 Call Me
                             </a>
                             <a href="mailto:sreeponemoni6264@gmail.com" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                                <i class="fas fa-envelope w-5 h-5 mr-2"></i>
                                 Email Me
                             </a>
                         </div>
@@ -939,6 +979,41 @@
     <!-- Floating Draggable AI Icon -->
     <button id="aiIcon" class="ai-icon">Ai</button>
 
+    <!-- Floating Draggable Contact Icon -->
+    <button id="contactToggleIcon" class="contact-toggle-icon" style="right: 60px; top: 50%;">
+        <i class="fas fa-address-book"></i>
+    </button>
+
+    <!-- Floating Contact Panel Container -->
+    <div id="contactPanelContainer" class="contact-panel-container" style="bottom: 20px; right: 20px;">
+        <!-- Resize handles -->
+        <div class="resize-handle top-left"></div>
+        <div class="resize-handle top-right"></div>
+        <div class="resize-handle bottom-left"></div>
+        <div class="resize-handle bottom-right"></div>
+
+        <div class="contact-panel-header" id="contactPanelHeader">
+            <span>Contact Me</span>
+            <button id="closeContactPanelBtn" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="contact-icons-content p-4 flex flex-col space-y-3">
+            <a href="tel:9640352929" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="Call Me">
+                <i class="fas fa-phone-alt text-3xl mr-2"></i> <span>9640352929</span>
+            </a>
+            <a href="mailto:sreeponemoni6264@gmail.com" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="Email Me">
+                <i class="fas fa-envelope text-3xl mr-2"></i> <span>sreeponemoni6264@gmail.com</span>
+            </a>
+            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="LinkedIn Profile">
+                <i class="fab fa-linkedin text-3xl mr-2"></i> <span>LinkedIn</span>
+            </a>
+            <a href="https://github.com/liveasyourlike" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="GitHub Profile">
+                <i class="fab fa-github text-3xl mr-2"></i> <span>GitHub</span>
+            </a>
+        </div>
+    </div>
+
     <!-- Footer Section -->
     <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
         <div class="container mx-auto">
@@ -949,51 +1024,41 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Core element references
             const header = document.querySelector('header');
             const nav = document.getElementById('main-nav');
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
             const mainContentArea = document.getElementById('main-content-area');
 
-            // Chatbot specific elements (now global)
+            // Chatbot elements
             const chatbotContainer = document.getElementById('chatbotContainer');
-            const aiIcon = document.getElementById('aiIcon'); // Renamed from chatToggleButton
-            const closeChatBtn = document.getElementById('closeChatBtn');
-            const chatHistoryDiv = chatbotContainer.querySelector('#chatHistory'); // Select within chatbot container
-            const chatInput = chatbotContainer.querySelector('#chatInput'); // Select within chatbot container
-            const sendChatBtn = chatbotContainer.querySelector('#sendChatBtn'); // Select within chatbot container
-            const chatLoadingIndicator = chatbotContainer.querySelector('#chatLoadingIndicator'); // Select within chatbot container
+            const chatbotHeader = chatbotContainer ? chatbotContainer.querySelector('.chatbot-header') : null;
+            const closeChatBtn = chatbotContainer ? chatbotContainer.querySelector('#closeChatBtn') : null;
+            const chatHistoryDiv = chatbotContainer ? chatbotContainer.querySelector('#chatHistory') : null;
+            const chatInput = chatbotContainer ? chatbotContainer.querySelector('#chatInput') : null;
+            const sendChatBtn = chatbotContainer ? chatbotContainer.querySelector('#sendChatBtn') : null;
+            const chatLoadingIndicator = chatbotContainer ? chatbotContainer.querySelector('#chatLoadingIndicator') : null;
+            const aiIcon = document.getElementById('aiIcon');
 
-            // New elements for chatbot settings
+            // Chatbot settings elements
             const settingsBtn = document.getElementById('settingsBtn');
             const chatbotSettings = document.getElementById('chatbotSettings');
             const lightModeBtn = document.getElementById('lightModeBtn');
             const darkModeBtn = document.getElementById('darkModeBtn');
 
-            // New LLM feature elements
-            const generateSummaryBtn = document.getElementById('generateSummaryBtn');
-            const generatedSummaryOutput = document.getElementById('generatedSummaryOutput');
-            const summaryText = document.getElementById('summaryText');
-            const skillInput = document.getElementById('skillInput');
-            const elaborateSkillBtn = document.getElementById('elaborateSkillBtn');
-            const skillElaborationOutput = document.getElementById('skillElaborationOutput');
-            const elaborationText = document.getElementById('elaborationText');
-            // New LLM features for this turn
-            const generateProjectIdeaBtn = document.getElementById('generateProjectIdeaBtn');
-            const generatedProjectIdeaOutput = document.getElementById('generatedProjectIdeaOutput');
-            const projectIdeaText = document.getElementById('projectIdeaText');
+            // Contact Panel elements
+            const contactToggleIcon = document.getElementById('contactToggleIcon');
+            const contactPanelContainer = document.getElementById('contactPanelContainer');
+            const contactPanelHeader = contactPanelContainer ? contactPanelContainer.querySelector('.contact-panel-header') : null;
+            const closeContactPanelBtn = document.getElementById('closeContactPanelBtn');
+            const contactIconsContent = contactPanelContainer ? contactPanelContainer.querySelector('.contact-icons-content') : null;
 
-
-            // Resize handles
-            const resizeHandles = {
-                topLeft: chatbotContainer.querySelector('.resize-handle.top-left'),
-                topRight: chatbotContainer.querySelector('.resize-handle.top-right'),
-                bottomLeft: chatbotContainer.querySelector('.resize-handle.bottom-left'),
-                bottomRight: chatbotContainer.querySelector('.resize-handle.bottom-right')
-            };
-
-            // Draggable Chatbot Panel Elements
-            const chatbotHeader = chatbotContainer.querySelector('.chatbot-header');
+            // Add console logs to verify element existence
+            console.log('chatbotContainer:', chatbotContainer);
+            console.log('chatbotHeader:', chatbotHeader);
+            console.log('contactPanelContainer:', contactPanelContainer);
+            console.log('contactPanelHeader:', contactPanelHeader);
 
 
             let headerHeight = 0;
@@ -1017,16 +1082,16 @@
 
             // Function to update CSS variables and tab content max-height
             function updateLayoutVariables() {
-                headerHeight = header.offsetHeight;
-                navHeight = nav.offsetHeight;
+                if (header) { // Add null check for header
+                    headerHeight = header.offsetHeight;
+                }
+                if (nav) { // Add null check for nav
+                    navHeight = nav.offsetHeight;
+                    nav.style.top = `${headerHeight}px`;
+                }
 
-                // Adjust nav top based on header height
-                nav.style.top = `${headerHeight}px`;
-
-                // Calculate and set max-height for tab content
-                const mainVerticalPadding = 48; // px from p-6
                 tabContents.forEach(content => {
-                    content.style.maxHeight = `calc(100vh - ${headerHeight + navHeight + mainVerticalPadding}px)`;
+                    content.style.maxHeight = `calc(100vh - ${headerHeight + navHeight + 48}px)`; // 48px from p-6
                 });
             }
 
@@ -1040,7 +1105,8 @@
                 contact: {
                     mobile: "9640352929",
                     email: "sreeponemoni6264@gmail.com",
-                    linkedin: "http://linkedin.com/in/sreenu-ponemoni-b84167369"
+                    linkedin: "http://linkedin.com/in/sreenu-ponemoni-b84167369",
+                    github: "https://github.com/liveasyourlike" // Added GitHub
                 },
                 summary: "Overall, 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer. Participated in all stages of Software Development Life Cycle (SDLC) i.e., System Analysis, Design, Development and Testing Expertise. Experience in Development, Administration, Configuration, Implementation and Support of Salesforce CRM based on Apex language and leveraging Force.com Platform. Experience in writing apex transactions against their governor limits. Experience in UI Development through Lightning web Components (LWC) using VS Code. Expertise in Apex Triggers, Bulk Triggers, Apex Classes and apex Batches as per business needs. Created Unit Test Classes for deployment on to the production. Proficiency in SFDC Administrative tasks like Creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Process, Workflows, Reports, Dashboards, Tasks and Events. Extensive experience in data migration using Data Loader, change sets, and Dataloader.io. Extensive experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. Implemented Organization wide defaults (OWDs) & sharing rules for different users at different levels of organization. Experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another instance.",
                 experience: `
@@ -1050,13 +1116,6 @@
                     Project #2: Eaton Corporation (Nov 2021 - Oct 2022) - Salesforce Administrator/Developer (Sales & Service Cloud). Key Activities: Requirement analysis, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Creating/managing Users/Roles/Profiles, Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations, Loaded objects via Data Loader, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
 
                     Project #3: ELECTROLUX Sales (Feb 2021 - Oct 2021) - Salesforce Developer (Retail Management). Responsibilities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce. Provide technical support. Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and and displayed them on to the component. Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.
-
-                    New Experience:
-
-                    Company: Salesforce
-                    Role: Salesforce Developer
-                    Duration: July 2025 - Present
-                    Key Activities: Developing cutting-edge Salesforce solutions, implementing advanced Apex features, designing and deploying complex Lightning Web Components, integrating Salesforce with various external systems using advanced APIs, and leading technical design sessions for new features.
                 `,
                 technicalSkills: `Salesforce.com CRM, Apex Language, Apex Classes, Apex Triggers, SOQL, SOSL, Workflow & Approvals, Reports, Dashboards, Standard and Custom Objects, Lightning Web Components (LWC), Visualforce, Salesforce Communities, Salesforce Mobile App, Batch Apex, Scheduled Apex, Process Builder, Flow, Data Loader, Change Sets, Dataloader.io, REST API Integration, Organization Wide Defaults (OWDs) & Sharing Rules. HTML, CSS, JavaScript, VS Code, Unit Test Classes, Debugging, SDLC.`,
                 personalSkills: `Strong analytical and assessment skills, Ability to learn and adapt to new technologies quickly, Rapid adaptability to learn new technologies and standards, Troubleshooting.`,
@@ -1149,6 +1208,8 @@
                     return `Sreenu's email address is ${resumeContent.contact.email}.`;
                 } else if (lowerCaseMessage.includes("linkedin") || lowerCaseMessage.includes("linkedin profile") || lowerCaseMessage.includes("connect on linkedin")) {
                     return `You can find Sreenu's LinkedIn profile here: ${resumeContent.contact.linkedin}`;
+                } else if (lowerCaseMessage.includes("github") || lowerCaseMessage.includes("git profile") || lowerCaseMessage.includes("github link")) {
+                    return `You can find Sreenu's GitHub profile here: ${resumeContent.contact.github}`;
                 }
                 // Experience related queries - Made more concise
                 else if (lowerCaseMessage.includes("experience") || lowerCaseMessage.includes("exepience") ||
@@ -1213,7 +1274,7 @@
 
                     Sreenu Ponemoni's Resume Content:
                     Name: ${resumeContent.name}
-                    Contact: Mobile: ${resumeContent.contact.mobile}, Email: ${resumeContent.contact.email}, LinkedIn: ${resumeContent.contact.linkedin}
+                    Contact: Mobile: ${resumeContent.contact.mobile}, Email: ${resumeContent.contact.email}, LinkedIn: ${resumeContent.contact.linkedin}, GitHub: ${resumeContent.contact.github}
                     Summary: ${resumeContent.summary}
                     Experience: ${resumeContent.experience}
                     Technical Skills: ${resumeContent.technicalSkills}
@@ -1252,6 +1313,39 @@
                 }
             }
 
+            // New function to correct grammar using Gemini API
+            async function correctGrammar(text) {
+                if (!text) return text;
+                try {
+                    const grammarPrompt = `Correct any grammatical errors and typos in the following text. Return only the corrected text, without any introductory or concluding remarks. If there are no errors, return the original text.\n\nText: "${text}"`;
+                    let chatHistoryForGrammar = [];
+                    chatHistoryForGrammar.push({ role: "user", parts: [{ text: grammarPrompt }] });
+
+                    const payload = { contents: chatHistoryForGrammar };
+                    const apiKey = ""; // Canvas will automatically provide the API key
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text.trim();
+                    } else {
+                        console.warn("Grammar correction API returned no content, returning original text.");
+                        return text; // Fallback to original text
+                    }
+                } catch (error) {
+                    console.error("Error calling grammar correction API:", error);
+                    return text; // Fallback to original text on error
+                }
+            }
+
             // Function to show a specific tab
             function showTab(tabId) {
                 tabButtons.forEach(button => {
@@ -1285,6 +1379,7 @@
 
             // Function to add a message to the chat history display
             function addMessageToChat(message, sender) {
+                if (!chatHistoryDiv) return; // Defensive check
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('chat-message', sender);
                 messageDiv.innerHTML = marked.parse(message); // Use marked.parse for Markdown
@@ -1294,20 +1389,27 @@
 
             // Function to send message and get AI response
             async function sendMessage() {
+                if (!chatInput || !sendChatBtn || !chatLoadingIndicator) return; // Defensive checks
+
                 const userMessage = chatInput.value.trim();
                 if (!userMessage) return;
 
-                addMessageToChat(userMessage, 'user');
+                addMessageToChat(userMessage, 'user'); // Display original message
                 chatInput.value = '';
                 chatInput.disabled = true;
                 sendChatBtn.disabled = true;
                 chatLoadingIndicator.classList.remove('hidden');
 
-                let botResponse = getRuleBasedResponse(userMessage);
+                // Correct grammar before processing
+                const correctedUserMessage = await correctGrammar(userMessage);
+                console.log("Original User Message:", userMessage);
+                console.log("Corrected User Message:", correctedUserMessage);
+
+                let botResponse = getRuleBasedResponse(correctedUserMessage);
 
                 // If no rule-based response, try Gemini API
                 if (botResponse === null) {
-                    botResponse = await getGeminiResponse(userMessage);
+                    botResponse = await getGeminiResponse(correctedUserMessage);
                 }
 
                 addMessageToChat(botResponse, 'bot');
@@ -1318,12 +1420,16 @@
             }
 
             // Event listeners for chat input and button
-            sendChatBtn.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    sendMessage();
-                }
-            });
+            if (sendChatBtn) {
+                sendChatBtn.addEventListener('click', sendMessage);
+            }
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
 
             // Add click event listeners to all tab buttons
             tabButtons.forEach(button => {
@@ -1338,55 +1444,63 @@
             updateLayoutVariables();
 
             // Update initial bot message with time-based greeting
-            // Ensure the initial message is added only once or reset appropriately
-            const initialBotMessageElement = chatHistoryDiv.querySelector('.chat-message.bot');
-            if (initialBotMessageElement) {
-                initialBotMessageElement.textContent = initialBotMessage;
-            } else {
-                addMessageToChat(initialBotMessage, 'bot');
+            if (chatHistoryDiv) { // Defensive check
+                const initialBotMessageElement = chatHistoryDiv.querySelector('.chat-message.bot');
+                if (initialBotMessageElement) {
+                    initialBotMessageElement.textContent = initialBotMessage;
+                } else {
+                    addMessageToChat(initialBotMessage, 'bot');
+                }
             }
 
 
             // Chatbot Toggle Functionality
-            aiIcon.addEventListener('click', (event) => {
-                // Prevent opening if it was a drag
-                if (aiIcon.dataset.isDragging === 'true') {
-                    aiIcon.dataset.isDragging = 'false'; // Reset flag
-                    return;
-                }
-                chatbotContainer.classList.toggle('active');
-                if (chatbotContainer.classList.contains('active')) {
-                    chatInput.focus(); // Focus input when chat opens
-                    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
-                }
-            });
+            if (aiIcon && chatbotContainer) { // Defensive checks
+                aiIcon.addEventListener('click', (event) => {
+                    // Prevent opening if it was a drag
+                    if (aiIcon.dataset.isDragging === 'true') {
+                        aiIcon.dataset.isDragging = 'false'; // Reset flag
+                        return;
+                    }
+                    chatbotContainer.classList.toggle('active');
+                    if (chatbotContainer.classList.contains('active')) {
+                        if (chatInput) chatInput.focus(); // Focus input when chat opens
+                        if (chatHistoryDiv) chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+                    }
+                });
+            }
 
             // Close Chatbot Button Functionality
-            closeChatBtn.addEventListener('click', () => {
-                chatbotContainer.classList.remove('active');
-                chatbotSettings.classList.remove('active'); // Close settings when chat closes
-            });
+            if (closeChatBtn && chatbotContainer && chatbotSettings) { // Defensive checks
+                closeChatBtn.addEventListener('click', () => {
+                    chatbotContainer.classList.remove('active');
+                    chatbotSettings.classList.remove('active'); // Close settings when chat closes
+                });
+            }
 
             // Draggable AI Icon Logic
-            let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
+            let isDraggingAiIcon = false;
+            let currentAiIconX;
+            let currentAiIconY;
+            let initialAiIconX;
+            let initialAiIconY;
+            let xOffsetAiIcon = 0;
+            let yOffsetAiIcon = 0;
 
-            aiIcon.addEventListener("mousedown", dragStart);
-            document.addEventListener("mouseup", dragEnd);
-            document.addEventListener("mousemove", drag);
+            if (aiIcon) { // Defensive check
+                aiIcon.addEventListener("mousedown", dragStartAiIcon);
+                document.addEventListener("mouseup", dragEndAiIcon);
+                document.addEventListener("mousemove", dragAiIcon);
+            }
 
-            function dragStart(e) {
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
+
+            function dragStartAiIcon(e) {
+                initialAiIconX = e.clientX - xOffsetAiIcon;
+                initialAiIconY = e.clientY - yOffsetAiIcon;
 
                 // Check if the click is on the icon itself, not its children
                 if (e.target === aiIcon) {
-                    isDragging = true;
+                    isDraggingAiIcon = true;
                     aiIcon.classList.add('dragging');
                     // Store initial position for click vs drag detection
                     aiIcon.dataset.startX = e.clientX;
@@ -1394,34 +1508,36 @@
                 }
             }
 
-            function dragEnd(e) {
-                isDragging = false;
-                aiIcon.classList.remove('dragging');
+            function dragEndAiIcon(e) {
+                isDraggingAiIcon = false;
+                if (aiIcon) aiIcon.classList.remove('dragging'); // Defensive check
 
                 // Calculate distance moved to distinguish click from drag
-                const movedX = Math.abs(e.clientX - parseFloat(aiIcon.dataset.startX || e.clientX));
-                const movedY = Math.abs(e.clientY - parseFloat(aiIcon.dataset.startY || e.clientY));
+                const movedX = Math.abs(e.clientX - parseFloat(aiIcon ? aiIcon.dataset.startX || e.clientX : e.clientX));
+                const movedY = Math.abs(e.clientY - parseFloat(aiIcon ? aiIcon.dataset.startY || e.clientY : e.clientY));
 
                 // If moved more than a few pixels, it was a drag, not a click
                 if (movedX > 5 || movedY > 5) {
-                    aiIcon.dataset.isDragging = 'true';
+                    if (aiIcon) aiIcon.dataset.isDragging = 'true';
                 } else {
-                    aiIcon.dataset.isDragging = 'false';
+                    if (aiIcon) aiIcon.dataset.isDragging = 'false';
                 }
 
                 // Save position to localStorage
-                localStorage.setItem('aiIconLeft', aiIcon.style.left);
-                localStorage.setItem('aiIconTop', aiIcon.style.top);
+                if (aiIcon) {
+                    localStorage.setItem('aiIconLeft', aiIcon.style.left);
+                    localStorage.setItem('aiIconTop', aiIcon.style.top);
+                }
             }
 
-            function drag(e) {
-                if (isDragging) {
+            function dragAiIcon(e) {
+                if (isDraggingAiIcon && aiIcon) { // Defensive check
                     e.preventDefault(); // Prevent default browser drag behavior
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
+                    currentAiIconX = e.clientX - initialAiIconX;
+                    currentAiIconY = e.clientY - initialAiIconY;
 
-                    xOffset = currentX;
-                    yOffset = currentY;
+                    xOffsetAiIcon = currentAiIconX;
+                    yOffsetAiIcon = currentAiIconY;
 
                     // Apply position, ensuring it stays within viewport
                     let newLeft = e.clientX - (aiIcon.offsetWidth / 2);
@@ -1440,6 +1556,7 @@
 
             // Set initial position on load for the AI icon
             function setAiIconInitialPosition() {
+                if (!aiIcon) return; // Defensive check
                 const savedLeft = localStorage.getItem('aiIconLeft');
                 const savedTop = localStorage.getItem('aiIconTop');
 
@@ -1479,97 +1596,123 @@
                     });
                     inputField.addEventListener('blur', () => {
                         // Only make it visible if the chatbot is not active
-                        if (!chatbotContainer.classList.contains('active')) {
+                        if (!chatbotContainer || !chatbotContainer.classList.contains('active') && (!contactPanelContainer || !contactPanelContainer.classList.contains('active'))) {
                             liquidGlassContainer.style.opacity = '1';
                         }
                     });
                 });
 
                 // Also hide liquid glass when chatbot opens and show when it closes
-                chatbotContainer.addEventListener('transitionend', (e) => {
-                    if (e.propertyName === 'opacity') {
-                        if (chatbotContainer.classList.contains('active')) {
-                            liquidGlassContainer.style.opacity = '0';
-                        } else {
-                            // Only show if no other input is focused
-                            const anyInputFocused = Array.from(allInputFields).some(input => input === document.activeElement);
-                            if (!anyInputFocused) {
-                                liquidGlassContainer.style.opacity = '1';
+                if (chatbotContainer) {
+                    chatbotContainer.addEventListener('transitionend', (e) => {
+                        if (e.propertyName === 'opacity') {
+                            if (chatbotContainer.classList.contains('active')) {
+                                liquidGlassContainer.style.opacity = '0';
+                            } else {
+                                // Only show if no other input is focused or contact panel is open
+                                const anyInputFocused = Array.from(allInputFields).some(input => input === document.activeElement);
+                                if (!anyInputFocused && (!contactPanelContainer || !contactPanelContainer.classList.contains('active'))) {
+                                    liquidGlassContainer.style.opacity = '1';
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
+
+
+                // Hide liquid glass when contact panel opens and show when it closes
+                if (contactPanelContainer) {
+                    contactPanelContainer.addEventListener('transitionend', (e) => {
+                        if (e.propertyName === 'opacity') {
+                            if (contactPanelContainer.classList.contains('active')) {
+                                liquidGlassContainer.style.opacity = '0';
+                            } else {
+                                 const anyInputFocused = Array.from(allInputFields).some(input => input === document.activeElement);
+                                if (!anyInputFocused && (!chatbotContainer || !chatbotContainer.classList.contains('active'))) {
+                                    liquidGlassContainer.style.opacity = '1';
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             // Chatbot Settings Functionality
-            settingsBtn.addEventListener('click', (event) => {
-                event.stopPropagation(); // Prevent click from bubbling to document and closing settings
-                chatbotSettings.classList.toggle('active');
-            });
+            if (settingsBtn && chatbotSettings) { // Defensive checks
+                settingsBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent click from bubbling to document and closing settings
+                    chatbotSettings.classList.toggle('active');
+                });
+            }
+
 
             // Close settings if clicked outside
             document.addEventListener('click', (event) => {
                 // Check if the click target is outside both settings panel and settings button
-                if (!chatbotSettings.contains(event.target) && event.target !== settingsBtn && !settingsBtn.contains(event.target)) {
+                if (chatbotSettings && settingsBtn && !chatbotSettings.contains(event.target) && event.target !== settingsBtn && !settingsBtn.contains(event.target)) {
                     chatbotSettings.classList.remove('active');
                 }
             });
 
             // Load saved theme preference or default to light mode
-            const savedTheme = localStorage.getItem('chatTheme');
-            if (savedTheme === 'dark') {
-                chatHistoryDiv.classList.add('dark-mode');
-                darkModeBtn.classList.add('active');
-                lightModeBtn.classList.remove('active');
-            } else {
-                chatHistoryDiv.classList.remove('dark-mode');
-                lightModeBtn.classList.add('active');
-                darkModeBtn.classList.remove('active');
-                localStorage.setItem('chatTheme', 'light');
+            if (chatHistoryDiv && lightModeBtn && darkModeBtn) { // Defensive checks
+                const savedTheme = localStorage.getItem('chatTheme');
+                if (savedTheme === 'dark') {
+                    chatHistoryDiv.classList.add('dark-mode');
+                    darkModeBtn.classList.add('active');
+                    lightModeBtn.classList.remove('active');
+                } else {
+                    chatHistoryDiv.classList.remove('dark-mode');
+                    lightModeBtn.classList.add('active');
+                    darkModeBtn.classList.remove('active');
+                    localStorage.setItem('chatTheme', 'light');
+                }
+
+                lightModeBtn.addEventListener('click', () => {
+                    chatHistoryDiv.classList.remove('dark-mode');
+                    lightModeBtn.classList.add('active');
+                    darkModeBtn.classList.remove('active');
+                    localStorage.setItem('chatTheme', 'light');
+                });
+
+                darkModeBtn.addEventListener('click', () => {
+                    chatHistoryDiv.classList.add('dark-mode');
+                    darkModeBtn.classList.add('active');
+                    lightModeBtn.classList.remove('active');
+                    localStorage.setItem('chatTheme', 'dark');
+                });
             }
 
-            lightModeBtn.addEventListener('click', () => {
-                chatHistoryDiv.classList.remove('dark-mode');
-                lightModeBtn.classList.add('active');
-                darkModeBtn.classList.remove('active');
-                localStorage.setItem('chatTheme', 'light');
-            });
 
-            darkModeBtn.addEventListener('click', () => {
-                chatHistoryDiv.classList.add('dark-mode');
-                darkModeBtn.classList.add('active');
-                lightModeBtn.classList.remove('active');
-                localStorage.setItem('chatTheme', 'dark');
-            });
-
-            // Chatbot Resizing Logic
+            // Generic Resizing Logic for both Chatbot and Contact Panel
             let isResizing = false;
-            let currentResizeHandle = null;
+            let currentResizingElement = null;
+            let currentResizeHandleType = null;
             let startX, startY, startWidth, startHeight, startLeft, startTop;
 
-            function startResize(e, handleType) {
+            function startResize(e, element, handleType) {
                 // Only allow resizing on desktop (or larger screens)
                 if (window.innerWidth <= 768) return;
 
                 isResizing = true;
-                currentResizeHandle = handleType;
+                currentResizingElement = element;
+                currentResizeHandleType = handleType;
                 startX = e.clientX;
                 startY = e.clientY;
 
-                // Get current computed styles for width, height, left, top
-                const computedStyle = window.getComputedStyle(chatbotContainer);
+                const computedStyle = window.getComputedStyle(element);
                 startWidth = parseInt(computedStyle.width, 10);
                 startHeight = parseInt(computedStyle.height, 10);
-                startLeft = chatbotContainer.offsetLeft;
-                startTop = chatbotContainer.offsetTop;
+                startLeft = element.offsetLeft;
+                startTop = element.offsetTop;
 
                 document.addEventListener('mousemove', resize);
                 document.addEventListener('mouseup', stopResize);
-                chatbotContainer.style.transition = 'none'; // Disable transitions during resize
+                element.style.transition = 'none'; // Disable transitions during resize
             }
 
             function resize(e) {
-                if (!isResizing) return;
+                if (!isResizing || !currentResizingElement) return; // Defensive check
 
                 const dx = e.clientX - startX;
                 const dy = e.clientY - startY;
@@ -1579,12 +1722,12 @@
                 let newLeft = startLeft;
                 let newTop = startTop;
 
-                const minWidth = parseInt(window.getComputedStyle(chatbotContainer).minWidth, 10);
-                const minHeight = parseInt(window.getComputedStyle(chatbotContainer).minHeight, 10);
+                const minWidth = parseInt(window.getComputedStyle(currentResizingElement).minWidth, 10);
+                const minHeight = parseInt(window.getComputedStyle(currentResizingElement).minHeight, 10);
                 const maxWidth = window.innerWidth * 0.9; // Max 90vw
                 const maxHeight = window.innerHeight * 0.9; // Max 90vh
 
-                switch (currentResizeHandle) {
+                switch (currentResizeHandleType) {
                     case 'bottomRight':
                         newWidth = Math.min(Math.max(startWidth + dx, minWidth), maxWidth);
                         newHeight = Math.min(Math.max(startHeight + dy, minHeight), maxHeight);
@@ -1607,195 +1750,409 @@
                         break;
                 }
 
-                // Apply new dimensions and position
-                chatbotContainer.style.width = `${newWidth}px`;
-                chatbotContainer.style.height = `${newHeight}px`;
-                chatbotContainer.style.left = `${newLeft}px`;
-                chatbotContainer.style.top = `${newTop}px`;
-                chatbotContainer.style.right = 'auto'; // Ensure right/bottom are auto when dragging
-                chatbotContainer.style.bottom = 'auto';
-                chatbotContainer.style.transform = 'none'; // Remove transform to allow direct top/left positioning
+                currentResizingElement.style.width = `${newWidth}px`;
+                currentResizingElement.style.height = `${newHeight}px`;
+                currentResizingElement.style.left = `${newLeft}px`;
+                currentResizingElement.style.top = `${newTop}px`;
+                currentResizingElement.style.right = 'auto';
+                currentResizingElement.style.bottom = 'auto';
+                currentResizingElement.style.transform = 'none';
 
-                // Adjust chat history height to fill the container
-                // Recalculate offsets for header and input area each time, in case of dynamic changes
-                const currentChatbotHeader = chatbotContainer.querySelector('.chatbot-header');
-                const currentChatInputArea = chatbotContainer.querySelector('.chat-input-area');
-                chatHistoryDiv.style.height = `calc(${currentHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`; // 20px for padding/margins
+                // Adjust inner content height for chat history or contact icons
+                if (currentResizingElement === chatbotContainer && chatbotHeader && chatInput) {
+                    const currentChatbotHeader = chatbotHeader;
+                    const currentChatInputArea = chatInput.parentElement; // Assuming chatInput is directly inside chat-input-area
+                    chatHistoryDiv.style.height = `calc(${newHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`;
+                } else if (currentResizingElement === contactPanelContainer && contactPanelHeader && contactIconsContent) {
+                    const currentContactPanelHeader = contactPanelHeader;
+                    contactIconsContent.style.height = `calc(${newHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`; // Adjust 20px as needed for padding/margins
+                }
             }
 
             function stopResize() {
                 isResizing = false;
-                currentResizeHandle = null;
+                if (currentResizingElement) { // Defensive check
+                    currentResizingElement.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // Re-enable transitions
+                }
+                currentResizingElement = null;
+                currentResizeHandleType = null;
                 document.removeEventListener('mousemove', resize);
                 document.removeEventListener('mouseup', stopResize);
-                chatbotContainer.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // Re-enable transitions
             }
 
-            // Get references to elements needed for resizing
-            const chatInputArea = chatbotContainer.querySelector('.chat-input-area');
-
-            // Attach resize event listeners to handles
-            for (const handleType in resizeHandles) {
-                resizeHandles[handleType].addEventListener('mousedown', (e) => startResize(e, handleType));
-            }
-
-            // Initial adjustment of chat history height when chatbot opens
-            chatbotContainer.addEventListener('transitionend', (e) => {
-                if (e.propertyName === 'opacity' && chatbotContainer.classList.contains('active')) {
-                    // Set chat history height based on current panel size
-                    const currentHeight = parseInt(window.getComputedStyle(chatbotContainer).height, 10);
-                    chatHistoryDiv.style.height = `calc(${currentHeight}px - ${chatbotHeader.offsetHeight + chatInputArea.offsetHeight + 20}px)`;
-                }
-            });
-
-            // Ensure chat history height adjusts if window is resized while chatbot is open
-            window.addEventListener('resize', () => {
-                if (chatbotContainer.classList.contains('active')) {
-                    const currentHeight = parseInt(window.getComputedStyle(chatbotContainer).height, 10);
-                    chatHistoryDiv.style.height = `calc(${currentHeight}px - ${chatbotHeader.offsetHeight + chatInputArea.offsetHeight + 20}px)`;
-                }
-            });
-
-            // Draggable Chatbot Panel Logic
-            let isDraggingChatbot = false;
-            let chatbotInitialMouseX, chatbotInitialMouseY;
-            let chatbotInitialLeft, chatbotInitialTop;
-
-            chatbotHeader.addEventListener('mousedown', dragChatbotStart);
-
-            function dragChatbotStart(e) {
-                // Only allow dragging on desktop (or larger screens)
-                if (window.innerWidth <= 768) return;
-
-                isDraggingChatbot = true;
-                chatbotContainer.classList.add('dragging');
-                chatbotHeader.classList.add('dragging'); // Add class to header for cursor change
-
-                const rect = chatbotContainer.getBoundingClientRect();
-                chatbotInitialMouseX = e.clientX;
-                chatbotInitialMouseY = e.clientY;
-                chatbotInitialLeft = rect.left;
-                chatbotInitialTop = rect.top;
-
-                chatbotContainer.style.transition = 'none'; // Disable transitions during drag
-                chatbotContainer.style.right = 'auto'; // Disable right/bottom constraints
-                chatbotContainer.style.bottom = 'auto';
-                chatbotContainer.style.transform = 'none'; // Disable transform
-
-                document.addEventListener('mousemove', dragChatbot);
-                document.addEventListener('mouseup', dragChatbotEnd);
-            }
-
-            function dragChatbot(e) {
-                if (!isDraggingChatbot) return;
-                e.preventDefault();
-
-                const dx = e.clientX - chatbotInitialMouseX;
-                const dy = e.clientY - chatbotInitialMouseY;
-
-                let newLeft = chatbotInitialLeft + dx;
-                let newTop = chatbotInitialTop + dy;
-
-                // Boundary checks to keep chatbot within viewport
-                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - chatbotContainer.offsetWidth));
-                newTop = Math.max(0, Math.min(newTop, window.innerHeight - chatbotContainer.offsetHeight));
-
-                chatbotContainer.style.left = `${newLeft}px`;
-                chatbotContainer.style.top = `${newTop}px`;
-            }
-
-            function dragChatbotEnd(e) {
-                isDraggingChatbot = false;
-                chatbotContainer.classList.remove('dragging');
-                chatbotHeader.classList.remove('dragging'); // Remove class from header
-                chatbotContainer.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // Re-enable transitions
-
-                // Save final position
-                localStorage.setItem('chatbotLeft', chatbotContainer.style.left);
-                localStorage.setItem('chatbotTop', chatbotContainer.style.top);
-
-                document.removeEventListener('mousemove', dragChatbot);
-                document.removeEventListener('mouseup', dragChatbotEnd);
-            }
-
-            // Function to set chatbot position (from localStorage or default)
-            function setChatbotPosition() {
-                const savedChatbotLeft = localStorage.getItem('chatbotLeft');
-                const savedChatbotTop = localStorage.getItem('chatbotTop');
-
-                if (savedChatbotLeft && savedChatbotTop) {
-                    chatbotContainer.style.left = savedChatbotLeft;
-                    chatbotContainer.style.top = savedChatbotTop;
-                    chatbotContainer.style.right = 'auto';
-                    chatbotContainer.style.bottom = 'auto';
-                    chatbotContainer.style.transform = 'none'; // Remove transform if using left/top
-                } else {
-                    // Default position: bottom-right
-                    chatbotContainer.style.right = '20px';
-                    chatbotContainer.style.bottom = '20px';
-                    chatbotContainer.style.left = 'auto'; // Ensure left is auto
-                    chatbotContainer.style.top = 'auto'; // Ensure top is auto
-                    // Apply initial transform for inactive state if not already active
-                    if (!chatbotContainer.classList.contains('active')) {
-                        chatbotContainer.style.transform = 'translateY(20px)';
+            // Attach resize event listeners to handles for Chatbot
+            if (chatbotContainer) {
+                const chatbotResizeHandles = {
+                    topLeft: chatbotContainer.querySelector('.resize-handle.top-left'),
+                    topRight: chatbotContainer.querySelector('.resize-handle.top-right'),
+                    bottomLeft: chatbotContainer.querySelector('.resize-handle.bottom-left'),
+                    bottomRight: chatbotContainer.querySelector('.resize-handle.bottom-right')
+                };
+                for (const handleType in chatbotResizeHandles) {
+                    if (chatbotResizeHandles[handleType]) { // Defensive check
+                        chatbotResizeHandles[handleType].addEventListener('mousedown', (e) => startResize(e, chatbotContainer, handleType));
                     }
                 }
             }
 
-            // Call on load
-            setChatbotPosition();
-            window.addEventListener('resize', setChatbotPosition); // Re-adjust on resize
+
+            // Attach resize event listeners to handles for Contact Panel
+            if (contactPanelContainer) {
+                const contactPanelResizeHandles = {
+                    topLeft: contactPanelContainer.querySelector('.resize-handle.top-left'),
+                    topRight: contactPanelContainer.querySelector('.resize-handle.top-right'),
+                    bottomLeft: contactPanelContainer.querySelector('.resize-handle.bottom-left'),
+                    bottomRight: contactPanelContainer.querySelector('.resize-handle.bottom-right')
+                };
+                for (const handleType in contactPanelResizeHandles) {
+                    if (contactPanelResizeHandles[handleType]) { // Defensive check
+                        contactPanelResizeHandles[handleType].addEventListener('mousedown', (e) => startResize(e, contactPanelContainer, handleType));
+                    }
+                }
+            }
+
+
+            // Initial adjustment of inner content height when panels open
+            if (chatbotContainer && chatbotHeader && chatInput && chatHistoryDiv) { // Defensive checks
+                chatbotContainer.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'opacity' && chatbotContainer.classList.contains('active')) {
+                        const currentHeight = parseInt(window.getComputedStyle(chatbotContainer).height, 10);
+                        const currentChatbotHeader = chatbotHeader;
+                        const currentChatInputArea = chatInput.parentElement;
+                        chatHistoryDiv.style.height = `calc(${currentHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`;
+                    }
+                });
+            }
+            if (contactPanelContainer && contactPanelHeader && contactIconsContent) { // Defensive checks
+                contactPanelContainer.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'opacity' && contactPanelContainer.classList.contains('active')) {
+                        const currentHeight = parseInt(window.getComputedStyle(contactPanelContainer).height, 10);
+                        const currentContactPanelHeader = contactPanelHeader;
+                        contactIconsContent.style.height = `calc(${currentHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`;
+                    }
+                });
+            }
+
+
+            // Ensure inner content height adjusts if window is resized while panel is open
+            window.addEventListener('resize', () => {
+                if (chatbotContainer && chatbotContainer.classList.contains('active') && chatbotHeader && chatInput && chatHistoryDiv) {
+                    const currentHeight = parseInt(window.getComputedStyle(chatbotContainer).height, 10);
+                    const currentChatbotHeader = chatbotHeader;
+                    const currentChatInputArea = chatInput.parentElement;
+                    chatHistoryDiv.style.height = `calc(${currentHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`;
+                }
+                if (contactPanelContainer && contactPanelContainer.classList.contains('active') && contactPanelHeader && contactIconsContent) {
+                    const currentHeight = parseInt(window.getComputedStyle(contactPanelContainer).height, 10);
+                    const currentContactPanelHeader = contactPanelHeader;
+                    contactIconsContent.style.height = `calc(${currentHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`;
+                }
+            });
+
+
+            // Generic Draggable Logic for both Chatbot and Contact Panel
+            let isDraggingPanel = false;
+            let currentDraggingElement = null;
+            let currentDraggingHeader = null; // Added to store the header element for cursor change
+            let initialMouseX, initialMouseY;
+            let initialElementLeft, initialElementTop;
+
+            function dragPanelStart(e, element) {
+                // Only allow dragging on desktop (or larger screens)
+                if (window.innerWidth <= 768) return;
+
+                isDraggingPanel = true;
+                currentDraggingElement = element;
+                currentDraggingHeader = e.currentTarget; // The header element that received the mousedown
+                currentDraggingElement.classList.add('dragging'); // For container transition disable
+                currentDraggingHeader.classList.add('dragging'); // For header cursor change
+
+                const rect = currentDraggingElement.getBoundingClientRect();
+                initialMouseX = e.clientX;
+                initialMouseY = e.clientY;
+                initialElementLeft = rect.left;
+                initialElementTop = rect.top;
+
+                currentDraggingElement.style.transition = 'none';
+                currentDraggingElement.style.right = 'auto';
+                currentDraggingElement.style.bottom = 'auto';
+                currentDraggingElement.style.transform = 'none';
+
+                document.addEventListener('mousemove', dragPanel);
+                document.addEventListener('mouseup', dragPanelEnd);
+            }
+
+            function dragPanel(e) {
+                if (!isDraggingPanel || !currentDraggingElement) return; // Defensive check
+                e.preventDefault();
+
+                const dx = e.clientX - initialMouseX;
+                const dy = e.clientY - initialMouseY;
+
+                let newLeft = initialElementLeft + dx;
+                let newTop = initialElementTop + dy;
+
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - currentDraggingElement.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, window.innerHeight - currentDraggingElement.offsetHeight));
+
+                currentDraggingElement.style.left = `${newLeft}px`;
+                currentDraggingElement.style.top = `${newTop}px`;
+            }
+
+            function dragPanelEnd(e) {
+                isDraggingPanel = false;
+                if (currentDraggingElement) { // Defensive check
+                    currentDraggingElement.classList.remove('dragging');
+                    currentDraggingElement.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                }
+                if (currentDraggingHeader) { // Defensive check
+                    currentDraggingHeader.classList.remove('dragging'); // Remove from header
+                }
+
+
+                // Save final position
+                if (currentDraggingElement === chatbotContainer) {
+                    localStorage.setItem('chatbotLeft', currentDraggingElement.style.left);
+                    localStorage.setItem('chatbotTop', currentDraggingElement.style.top);
+                } else if (currentDraggingElement === contactPanelContainer) {
+                    localStorage.setItem('contactPanelLeft', currentDraggingElement.style.left);
+                    localStorage.setItem('contactPanelTop', currentDraggingElement.style.top);
+                }
+
+                currentDraggingElement = null;
+                currentDraggingHeader = null; // Reset header reference
+                document.removeEventListener('mousemove', dragPanel);
+                document.removeEventListener('mouseup', dragPanelEnd);
+            }
+
+            // Attach drag listeners to headers
+            if (chatbotHeader && chatbotContainer) { // Defensive checks
+                chatbotHeader.addEventListener('mousedown', (e) => dragPanelStart(e, chatbotContainer));
+            }
+            if (contactPanelHeader && contactPanelContainer) { // Defensive checks
+                contactPanelHeader.addEventListener('mousedown', (e) => dragPanelStart(e, contactPanelContainer));
+            }
+
+
+            // Function to set panel position (from localStorage or default)
+            function setPanelPosition(panel, leftKey, topKey, defaultRight, defaultTop) {
+                if (!panel) return; // Defensive check
+                const savedLeft = localStorage.getItem(leftKey);
+                const savedTop = localStorage.getItem(topKey);
+
+                if (savedLeft && savedTop) {
+                    panel.style.left = savedLeft;
+                    panel.style.top = savedTop;
+                    panel.style.right = 'auto';
+                    panel.style.bottom = 'auto';
+                    panel.style.transform = 'none';
+                } else {
+                    panel.style.right = defaultRight;
+                    panel.style.top = defaultTop;
+                    panel.style.left = 'auto';
+                    panel.style.bottom = 'auto';
+                    // Apply initial transform for inactive state if not already active
+                    if (!panel.classList.contains('active')) {
+                        panel.style.transform = 'translateY(20px)';
+                    }
+                }
+            }
+
+            // Call on load for both panels
+            setPanelPosition(chatbotContainer, 'chatbotLeft', 'chatbotTop', '20px', 'auto'); // Default bottom-right
+            setPanelPosition(contactPanelContainer, 'contactPanelLeft', 'contactPanelTop', '20px', '20px'); // Default top-right
+
+            // Re-adjust on resize
+            window.addEventListener('resize', () => {
+                setPanelPosition(chatbotContainer, 'chatbotLeft', 'chatbotTop', '20px', 'auto');
+                setPanelPosition(contactPanelContainer, 'contactPanelLeft', 'contactPanelTop', '20px', '20px');
+            });
+
+
+            // --- New Contact Panel Toggle Logic ---
+            if (contactToggleIcon && contactPanelContainer) { // Defensive checks
+                contactToggleIcon.addEventListener('click', (event) => {
+                    // Prevent opening if it was a drag
+                    if (contactToggleIcon.dataset.isDragging === 'true') {
+                        contactToggleIcon.dataset.isDragging = 'false'; // Reset flag
+                        return;
+                    }
+                    contactPanelContainer.classList.toggle('active');
+                    if (contactPanelContainer.classList.contains('active')) {
+                        // Adjust inner content height on open
+                        const currentHeight = parseInt(window.getComputedStyle(contactPanelContainer).height, 10);
+                        if (contactPanelHeader && contactIconsContent) { // Defensive checks
+                            const currentContactPanelHeader = contactPanelHeader;
+                            contactIconsContent.style.height = `calc(${currentHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`;
+                        }
+                    }
+                });
+            }
+
+
+            if (closeContactPanelBtn && contactPanelContainer) { // Defensive checks
+                closeContactPanelBtn.addEventListener('click', () => {
+                    contactPanelContainer.classList.remove('active');
+                });
+            }
+
+
+            // Draggable Contact Toggle Icon Logic (similar to AI icon)
+            let isDraggingContactIcon = false;
+            let currentContactIconX;
+            let currentContactIconY;
+            let initialContactIconX;
+            let initialContactIconY;
+            let xOffsetContactIcon = 0;
+            let yOffsetContactIcon = 0;
+
+            if (contactToggleIcon) { // Defensive check
+                contactToggleIcon.addEventListener("mousedown", dragStartContactIcon);
+                document.addEventListener("mouseup", dragEndContactIcon);
+                document.addEventListener("mousemove", dragContactIcon);
+            }
+
+
+            function dragStartContactIcon(e) {
+                initialContactIconX = e.clientX - xOffsetContactIcon;
+                initialContactIconY = e.clientY - yOffsetContactIcon;
+
+                if (e.target === contactToggleIcon || (contactToggleIcon && contactToggleIcon.contains(e.target))) { // Defensive check
+                    isDraggingContactIcon = true;
+                    if (contactToggleIcon) contactToggleIcon.classList.add('dragging'); // Defensive check
+                    if (contactToggleIcon) contactToggleIcon.dataset.startX = e.clientX; // Defensive check
+                    if (contactToggleIcon) contactToggleIcon.dataset.startY = e.clientY; // Defensive check
+                }
+            }
+
+            function dragEndContactIcon(e) {
+                isDraggingContactIcon = false;
+                if (contactToggleIcon) contactToggleIcon.classList.remove('dragging'); // Defensive check
+
+                const movedX = Math.abs(e.clientX - parseFloat(contactToggleIcon ? contactToggleIcon.dataset.startX || e.clientX : e.clientX));
+                const movedY = Math.abs(e.clientY - parseFloat(contactToggleIcon ? contactToggleIcon.dataset.startY || e.clientY : e.clientY));
+
+                if (movedX > 5 || movedY > 5) {
+                    if (contactToggleIcon) contactToggleIcon.dataset.isDragging = 'true'; // Defensive check
+                } else {
+                    if (contactToggleIcon) contactToggleIcon.dataset.isDragging = 'false'; // Defensive check
+                }
+
+                if (contactToggleIcon) { // Defensive check
+                    localStorage.setItem('contactToggleIconLeft', contactToggleIcon.style.left);
+                    localStorage.setItem('contactToggleIconTop', contactToggleIcon.style.top);
+                }
+            }
+
+            function dragContactIcon(e) {
+                if (isDraggingContactIcon && contactToggleIcon) { // Defensive check
+                    e.preventDefault();
+                    currentContactIconX = e.clientX - initialContactIconX;
+                    currentContactIconY = e.clientY - initialContactIconY;
+
+                    xOffsetContactIcon = currentContactIconX;
+                    yOffsetContactIcon = currentContactIconY;
+
+                    let newLeft = e.clientX - (contactToggleIcon.offsetWidth / 2);
+                    let newTop = e.clientY - (contactToggleIcon.offsetHeight / 2);
+
+                    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - contactToggleIcon.offsetWidth));
+                    newTop = Math.max(0, Math.min(newTop, window.innerHeight - contactToggleIcon.offsetHeight));
+
+                    contactToggleIcon.style.left = `${newLeft}px`;
+                    contactToggleIcon.style.top = `${newTop}px`;
+                    contactToggleIcon.style.right = 'auto';
+                    contactToggleIcon.style.transform = 'none';
+                }
+            }
+
+            function setContactToggleIconInitialPosition() {
+                if (!contactToggleIcon) return; // Defensive check
+                const savedLeft = localStorage.getItem('contactToggleIconLeft');
+                const savedTop = localStorage.getItem('contactToggleIconTop');
+
+                if (savedLeft && savedTop) {
+                    contactToggleIcon.style.left = savedLeft;
+                    contactToggleIcon.style.top = savedTop;
+                    contactToggleIcon.style.right = 'auto';
+                    contactToggleIcon.style.transform = 'translateY(0)';
+                } else {
+                    // Default position: 60px from right, centered vertically
+                    const iconWidth = contactToggleIcon.offsetWidth;
+                    const iconHeight = contactToggleIcon.offsetHeight;
+                    const viewportHeight = window.innerHeight;
+
+                    const initialTop = (viewportHeight / 2) - (iconHeight / 2);
+
+                    contactToggleIcon.style.top = `${initialTop}px`;
+                    contactToggleIcon.style.right = `60px`; // Offset from AI icon
+                    contactToggleIcon.style.left = `auto`;
+                    contactToggleIcon.style.transform = `translateY(0)`;
+                }
+            }
+
+            window.addEventListener('load', setContactToggleIconInitialPosition);
+            window.addEventListener('resize', setContactToggleIconInitialPosition);
+
 
             // --- New LLM Feature Logic ---
 
             // Summarize My Profile
-            generateSummaryBtn.addEventListener('click', async () => {
-                generatedSummaryOutput.classList.remove('hidden');
-                summaryText.textContent = ''; // Clear previous content
-                generatedSummaryOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
+            if (generateSummaryBtn && generatedSummaryOutput && summaryText) { // Defensive checks
+                generateSummaryBtn.addEventListener('click', async () => {
+                    generatedSummaryOutput.classList.remove('hidden');
+                    summaryText.textContent = ''; // Clear previous content
+                    generatedSummaryOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
 
-                const prompt = `Given the following professional summary, provide a very concise, high-level overview (1-2 sentences) of Sreenu Ponemoni's profile. Focus on his core role and most significant experience/skills.
-                Professional Summary: ${resumeContent.summary}`;
+                    const prompt = `Given the following professional summary, provide a very concise, high-level overview (1-2 sentences) of Sreenu Ponemoni's profile. Focus on his core role and most significant experience/skills.
+                    Professional Summary: ${resumeContent.summary}`;
 
-                const response = await getGeminiResponse(prompt);
-                summaryText.textContent = response;
-                generatedSummaryOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
-            });
+                    const response = await getGeminiResponse(prompt);
+                    summaryText.textContent = response;
+                    generatedSummaryOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
+                });
+            }
+
 
             // Elaborate on Skill
-            elaborateSkillBtn.addEventListener('click', async () => {
-                const skill = skillInput.value.trim();
-                if (!skill) {
-                    elaborationText.textContent = "Please enter a skill to elaborate on.";
+            if (elaborateSkillBtn && skillInput && skillElaborationOutput && elaborationText) { // Defensive checks
+                elaborateSkillBtn.addEventListener('click', async () => {
+                    const skill = skillInput.value.trim();
+                    if (!skill) {
+                        elaborationText.textContent = "Please enter a skill to elaborate on.";
+                        skillElaborationOutput.classList.remove('hidden');
+                        return;
+                    }
+
                     skillElaborationOutput.classList.remove('hidden');
-                    return;
-                }
+                    elaborationText.textContent = ''; // Clear previous content
+                    skillElaborationOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
 
-                skillElaborationOutput.classList.remove('hidden');
-                elaborationText.textContent = ''; // Clear previous content
-                skillElaborationOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
+                    const prompt = `As a Salesforce Administrator & Developer with 3.8 years of experience, explain the technical skill "${skill}" in simple terms, and briefly describe its importance or application in Salesforce development. Keep the explanation concise and to the point.`;
 
-                const prompt = `As a Salesforce Administrator & Developer with 3.8 years of experience, explain the technical skill "${skill}" in simple terms, and briefly describe its importance or application in Salesforce development. Keep the explanation concise and to the point.`;
+                    const response = await getGeminiResponse(prompt);
+                    elaborationText.textContent = response;
+                    skillElaborationOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
+                });
+            }
 
-                const response = await getGeminiResponse(prompt);
-                elaborationText.textContent = response;
-                skillElaborationOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
-            });
 
             // Generate Project Idea
-            generateProjectIdeaBtn.addEventListener('click', async () => {
-                generatedProjectIdeaOutput.classList.remove('hidden');
-                projectIdeaText.textContent = ''; // Clear previous content
-                generatedProjectIdeaOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
+            if (generateProjectIdeaBtn && generatedProjectIdeaOutput && projectIdeaText) { // Defensive checks
+                generateProjectIdeaBtn.addEventListener('click', async () => {
+                    generatedProjectIdeaOutput.classList.remove('hidden');
+                    projectIdeaText.textContent = ''; // Clear previous content
+                    generatedProjectIdeaOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
 
-                const prompt = `Based on Sreenu Ponemoni's experience as a Salesforce Administrator & Developer, particularly his work with Sales & Service Cloud, Apex, LWC, and integrations, suggest a new, innovative Salesforce project idea (1-2 sentences). Focus on a practical business problem it could solve or a new feature it could introduce.
-                Sreenu's Experience: ${resumeContent.experience}
-                Sreenu's Skills: ${resumeContent.technicalSkills}`;
+                    const prompt = `Based on Sreenu Ponemoni's experience as a Salesforce Administrator & Developer, particularly his work with Sales & Service Cloud, Apex, LWC, and integrations, suggest a new, innovative Salesforce project idea (1-2 sentences). Focus on a practical business problem it could solve or a new feature it could introduce.
+                    Sreenu's Experience: ${resumeContent.experience}
+                    Sreenu's Skills: ${resumeContent.technicalSkills}`;
 
-                const response = await getGeminiResponse(prompt);
-                projectIdeaText.textContent = response;
-                generatedProjectIdeaOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
-            });
+                    const response = await getGeminiResponse(prompt);
+                    projectIdeaText.textContent = response;
+                    generatedProjectIdeaOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
+                });
+            }
         });
 
         // Liquid Glass Effect Script
