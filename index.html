@@ -35,13 +35,14 @@
         /* Tab content base styling */
         .tab-content {
             display: none; /* Hidden by default */
-            /* Removed background-color: #ffffff; to allow Tailwind classes to apply */
             padding: 2rem; /* Consistent padding */
             border-radius: 0.5rem; /* Consistent rounded corners */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Consistent subtle shadow */
             min-height: 300px; /* Ensure a minimum visible height for all tabs */
             box-sizing: border-box; /* Include padding in height calculation */
             overflow-y: auto; /* Allow content within the tab to scroll if it overflows */
+            position: relative; /* Needed for inner-content positioning */
+            z-index: 1; /* Ensure content is above parallax background */
         }
         /* Tab content active state styling */
         .tab-content.active {
@@ -157,9 +158,14 @@
         }
 
         /* Enhanced hover effect for project/skill cards */
+        .card-hover-effect {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+            border: 1px solid transparent; /* Base border for transition */
+        }
         .card-hover-effect:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px) scale(1.02); /* More pronounced lift and slight scale */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            border-color: #4f46e5; /* Indigo border on hover */
         }
 
         /* Typing indicator animation for AI chat */
@@ -263,6 +269,11 @@
 
         header h1 {
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease; /* Smooth transition for text shadow */
+        }
+        header h1:hover {
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6); /* Glowing effect on hover */
+            transform: scale(1.02); /* Slight scale on hover */
         }
 
         header p {
@@ -602,6 +613,124 @@
             flex-grow: 1;
             overflow-y: auto;
         }
+
+        /* Parallax Background Effect */
+        .parallax-bg {
+            background-image: url('Sreenu ponemoni Image.jpg'); /* Use the uploaded image */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Ensure it's behind content */
+            filter: brightness(0.7) grayscale(0.2); /* Subtle effect */
+        }
+
+        /* Inner content wrapper for sections to apply background colors on top of parallax */
+        .section-inner-content {
+            position: relative;
+            z-index: 1; /* Ensure this is above the parallax background */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for readability */
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Specific background colors for each section's inner content */
+        #about .section-inner-content {
+            background-color: rgba(239, 246, 255, 0.9); /* blue-50 with opacity */
+        }
+        #experience .section-inner-content {
+            background-color: rgba(236, 253, 245, 0.9); /* green-50 with opacity */
+        }
+        #skills .section-inner-content {
+            background-color: rgba(245, 243, 255, 0.9); /* purple-50 with opacity */
+        }
+        #education .section-inner-content {
+            background-color: rgba(255, 251, 235, 0.9); /* yellow-50 with opacity */
+        }
+        #contact .section-inner-content {
+            background-color: rgba(254, 242, 242, 0.9); /* red-50 with opacity */
+        }
+
+        /* Advanced Button Styles */
+        .btn-primary {
+            background-image: linear-gradient(to right, #4f46e5 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+            background-size: 200% auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:hover {
+            background-position: right center; /* change the direction of the change here */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280; /* Gray 500 */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Gray 700 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Add a subtle animation to the header on scroll */
+        .header-scrolled {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+            background-color: rgba(79, 70, 229, 0.95); /* Slightly darker, more opaque */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Enhanced tab button hover/active effects */
+        .tab-button {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 0;
+        }
+        .tab-button:hover::before {
+            left: 100%;
+        }
+        .tab-button.active::before {
+            /* No shimmer on active */
+            display: none;
+        }
+        .tab-button span {
+            position: relative;
+            z-index: 1;
+        }
+        .tab-button.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        .tab-button:not(.active):hover {
+            background-color: #e0e7ff; /* Light indigo background */
+            color: #4f46e5; /* Indigo text */
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -610,19 +739,18 @@
     <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-4 px-6 shadow-lg">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
             <div class="flex items-center mb-2 md:mb-0 header-left-content">
-                <!-- Logo Placeholder - Replace 'path/to/your/logo.png' with your logo image -->
-                <img src="https://placehold.co/50x50/4f46e5/ffffff?text=Logo" alt="Logo" class="h-12 w-12 rounded-full mr-4">
+                <!-- Removed the image tag as requested -->
                 <div>
                     <h1 class="text-3xl font-bold">Sreenu Ponemoni</h1>
                     <p class="text-lg font-light">Salesforce Administrator & Developer</p>
                 </div>
             </div>
             <div class="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-2 md:space-y-0 md:space-x-4">
-                <a href="tel:9640352929" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
+                <a href="tel:9640352929" class="flex items-center text-white hover:text-indigo-200 transition duration-300 btn-primary">
                     <i class="fas fa-phone-alt w-5 h-5 mr-1"></i>
                     9640352929
                 </a>
-                <a href="mailto:sreeponemoni6264@gmail.com" class="flex items-center text-white hover:text-indigo-200 transition duration-300">
+                <a href="mailto:sreeponemoni6264@gmail.com" class="flex items-center text-white hover:text-indigo-200 transition duration-300 btn-primary">
                     <i class="fas fa-envelope w-5 h-5 mr-1"></i>
                     sreeponemoni6264@gmail.com
                 </a>
@@ -633,11 +761,11 @@
     <!-- Navigation Tabs -->
     <nav id="main-nav" class="bg-white shadow-md py-4 sticky-nav-glass">
         <div class="container mx-auto flex flex-wrap justify-center gap-4">
-            <button class="tab-button active px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="about">About</button>
-            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience">Experience</button>
-            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills">Skills</button>
-            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education">Education</button>
-            <button class="tab-button px-4 py-2 text-base font-medium transition-all duration-300 hover:bg-indigo-100 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact">Contact</button>
+            <button class="tab-button active px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="about"><span>About</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience"><span>Experience</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills"><span>Skills</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education"><span>Education</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact"><span>Contact</span></button>
         </div>
     </nav>
 
@@ -645,9 +773,9 @@
     <main class="flex-grow container mx-auto p-6 md:p-8 lg:p-10" id="main-content-area">
 
         <!-- About Section -->
-        <section id="about" class="tab-content active mb-8 bg-blue-50">
-            <!-- Removed max-w-3xl mx-auto to make it full width -->
-            <div class="bg-white/90 p-8 rounded-lg shadow-xl relative z-10">
+        <section id="about" class="tab-content active mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
                 <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
                 <div class="prose max-w-none">
                     <p class="text-lg leading-relaxed mb-4">
@@ -683,7 +811,7 @@
                     </ul>
                     <div class="mt-8 pt-4 border-t border-gray-200">
                         <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Insights ✨</h3>
-                        <button id="generateSummaryBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
+                        <button id="generateSummaryBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center btn-primary">
                             ✨ Summarize My Profile
                         </button>
                         <div id="generatedSummaryOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
@@ -697,233 +825,245 @@
         </section>
 
         <!-- Experience Section - Project divs updated with enhanced hover effect -->
-        <section id="experience" class="tab-content mb-8 bg-green-50">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Professional Experience</h2>
+        <section id="experience" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Professional Experience</h2>
 
-            <!-- Cognizant Technology Solutions -->
-            <div class="mb-8 p-6 card-hover-effect">
-                <h3 class="text-2xl font-semibold text-indigo-800 mb-2">Software Engineer at Cognizant Technology Solutions</h3>
-                <p class="text-lg text-gray-600 mb-4">February 17th, 2021 - June 20th, 2025</p>
+                <!-- Cognizant Technology Solutions -->
+                <div class="mb-8 p-6 card-hover-effect">
+                    <h3 class="text-2xl font-semibold text-indigo-800 mb-2">Software Engineer at Cognizant Technology Solutions</h3>
+                    <p class="text-lg text-gray-600 mb-4">February 17th, 2021 - June 20th, 2025</p>
 
-                <!-- Project 1: PMI -->
-                <div class="mb-6 border-l-4 border-indigo-400 pl-4">
-                    <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #1: PMI</h4>
-                    <p class="text-xl font-semibold text-green-700 mb-3">Role: Salesforce Developer | Cloud: Sales & Service Cloud | Duration: May 2023 - June 2025</p>
-                    <p class="text-md leading-relaxed mb-3">
-                        Philip Morris International Inc. is an American multinational tobacco company with products sold in over 180 countries. In Philip Morris, the entire Service Model is handled with the Salesforce Platform. The Salesforce Platform was set up to provide all kinds of sales and service queries to customers. In this application, I primarily worked on the development part, specifically "Asynchronous Apex" to run the application.
-                    </p>
-                    <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
-                    <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
-                        <li style="--delay: 0s;">Created User Profiles, Users, and Modifying User Page Layouts & Setting up Sharing Rules.</li>
-                        <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
-                        <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
-                        <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
-                        <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
-                        <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
-                        <li style="--delay: 0.6s;">Ensured data integrity through the appropriate use of loading and exporting tools, for bulk of data using Data Loader.</li>
-                        <li style="--delay: 0.7s;">Configured page layouts, workflows, document templates, and record types & data fields. Created Report Types, Reports and Dashboards.</li>
-                        <li style="--delay: 0.8s;">Created Custom Objects, Custom Fields, Tabs and Lightning Pages.</li>
-                        <li style="--delay: 0.9s;">Worked on Record Types and Page Layouts.</li>
-                        <li style="--delay: 1.0s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
-                    </ul>
+                    <!-- Project 1: PMI -->
+                    <div class="mb-6 border-l-4 border-indigo-400 pl-4">
+                        <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #1: PMI</h4>
+                        <p class="text-xl font-semibold text-green-700 mb-3">Role: Salesforce Developer | Cloud: Sales & Service Cloud | Duration: May 2023 - June 2025</p>
+                        <p class="text-md leading-relaxed mb-3">
+                            Philip Morris International Inc. is an American multinational tobacco company with products sold in over 180 countries. In Philip Morris, the entire Service Model is handled with the Salesforce Platform. The Salesforce Platform was set up to provide all kinds of sales and service queries to customers. In this application, I primarily worked on the development part, specifically "Asynchronous Apex" to run the application.
+                        </p>
+                        <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
+                        <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Created User Profiles, Users, and Modifying User Page Layouts & Setting up Sharing Rules.</li>
+                            <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
+                            <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
+                            <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                            <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                            <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                            <li style="--delay: 0.6s;">Ensured data integrity through the appropriate use of loading and exporting tools, for bulk of data using Data Loader.</li>
+                            <li style="--delay: 0.7s;">Configured page layouts, workflows, document templates, and record types & data fields. Created Report Types, Reports and Dashboards.</li>
+                            <li style="--delay: 0.8s;">Created Custom Objects, Custom Fields, Tabs and Lightning Pages.</li>
+                            <li style="--delay: 0.9s;">Worked on Record Types and Page Layouts.</li>
+                            <li style="--delay: 1.0s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Project 2: Eaton Corporation -->
+                    <div class="mb-6 border-l-4 border-indigo-400 pl-4">
+                        <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #2: Eaton Corporation</h4>
+                        <p class="text-xl font-semibold text-green-700 mb-3">Role: Salesforce Administrator/Developer | Cloud: Sales & Service Cloud | Duration: Nov 2021 - Oct 2022</p>
+                        <p class="text-md leading-relaxed mb-3">
+                            Eaton is an intelligent Power Management company dedicated to improving the quality of life and protecting the environment for people everywhere. Eaton is guided by their commitment to do business, to operate sustainably, and to help their customers manage power—today and well into the future. By capitalizing on the global trends of electrification and digitalization, Eaton is accelerating the planet's transition to renewable energy and helping to solve the world's most urgent power management challenges.
+                        </p>
+                        <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
+                        <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Requirement analysis, validating and migrating.</li>
+                            <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
+                            <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
+                            <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                            <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                            <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                            <li style="--delay: 0.6s;">Creating/add and manage Users, Roles, Profiles and setting up group members.</li>
+                            <li style="--delay: 0.7s;">Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations.</li>
+                            <li style="--delay: 0.8s;">Analyzing business requirement and loaded the objects through data loader.</li>
+                            <li style="--delay: 0.9s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Project 3: ELECTROLUX Sales -->
+                    <div class="border-l-4 border-indigo-400 pl-4">
+                        <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #3: ELECTROLUX Sales</h4>
+                        <p class="text-xl font-semibold text-green-700 mb-3">Domain: Retail Management | Role: Salesforce Developer | Duration: Feb 2021 - Oct 2021</p>
+                        <p class="text-md leading-relaxed mb-3">
+                            Electrolux is a global leader in household appliances and appliances for professional use, selling more more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
+                        </p>
+                        <h5 class="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h5>
+                        <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Development Activities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce.</li>
+                            <li style="--delay: 0.1s;">Provide technical support: Responded to inquiries and resolved technical issues related to Salesforce products and services, including custom code and integrations.</li>
+                            <li style="--delay: 0.2s;">Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and and displayed them on to the component.</li>
+                            <li style="--delay: 0.3s;">Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.</li>
+                        </ul>
+                    </div>
                 </div>
-
-                <!-- Project 2: Eaton Corporation -->
-                <div class="mb-6 border-l-4 border-indigo-400 pl-4">
-                    <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #2: Eaton Corporation</h4>
-                    <p class="text-xl font-semibold text-green-700 mb-3">Role: Salesforce Administrator/Developer | Cloud: Sales & Service Cloud | Duration: Nov 2021 - Oct 2022</p>
-                    <p class="text-md leading-relaxed mb-3">
-                        Eaton is an intelligent Power Management company dedicated to improving the quality of life and protecting the environment for people everywhere. Eaton is guided by their commitment to do business, to operate sustainably, and to help their customers manage power—today and well into the future. By capitalizing on the global trends of electrification and digitalization, Eaton is accelerating the planet's transition to renewable energy and helping to solve the world's most urgent power management challenges.
-                    </p>
-                    <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
-                    <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
-                        <li style="--delay: 0s;">Requirement analysis, validating and migrating.</li>
-                        <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
-                        <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
-                        <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
-                        <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
-                        <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
-                        <li style="--delay: 0.6s;">Creating/add and manage Users, Roles, Profiles and setting up group members.</li>
-                        <li style="--delay: 0.7s;">Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations.</li>
-                        <li style="--delay: 0.8s;">Analyzing business requirement and loaded the objects through data loader.</li>
-                        <li style="--delay: 0.9s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
-                    </ul>
-                </div>
-
-                <!-- Project 3: ELECTROLUX Sales -->
-                <div class="border-l-4 border-indigo-400 pl-4">
-                    <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #3: ELECTROLUX Sales</h4>
-                    <p class="text-xl font-semibold text-green-700 mb-3">Domain: Retail Management | Role: Salesforce Developer | Duration: Feb 2021 - Oct 2021</p>
-                    <p class="text-md leading-relaxed mb-3">
-                        Electrolux is a global leader in household appliances and appliances for professional use, selling more more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
-                    </p>
-                    <h5 class="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h5>
-                    <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
-                        <li style="--delay: 0s;">Development Activities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce.</li>
-                        <li style="--delay: 0.1s;">Provide technical support: Responded to inquiries and resolved technical issues related to Salesforce products and services, including custom code and integrations.</li>
-                        <li style="--delay: 0.2s;">Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and and displayed them on to the component.</li>
-                        <li style="--delay: 0.3s;">Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-8 pt-4 border-t border-gray-200">
-                <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Project Idea Generator ✨</h3>
-                <button id="generateProjectIdeaBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
-                    ✨ Generate Project Idea
-                </button>
-                <div id="generatedProjectIdeaOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
-                    <p class="text-sm text-gray-500 mb-2">Generated Project Idea:</p>
-                    <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating idea...</div>
-                    <p id="projectIdeaText" class="text-base"></p>
+                <div class="mt-8 pt-4 border-t border-gray-200">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Project Idea Generator ✨</h3>
+                    <button id="generateProjectIdeaBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center btn-primary">
+                        ✨ Generate Project Idea
+                    </button>
+                    <div id="generatedProjectIdeaOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
+                        <p class="text-sm text-gray-500 mb-2">Generated Project Idea:</p>
+                        <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating idea...</div>
+                        <p id="projectIdeaText" class="text-base"></p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Skills Section -->
-        <section id="skills" class="tab-content mb-8 bg-purple-50">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Skills</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
-                    <h3 class="text-xl font-semibold text-blue-700 mb-3">Salesforce Technologies</h3>
-                    <ul class="custom-bullet-list text-gray-700 space-y-1">
-                        <li style="--delay: 0s;">Salesforce.com CRM</li>
-                        <li style="--delay: 0.1s;">Apex Language, Apex Classes, Apex Triggers</li>
-                        <li style="--delay: 0.2s;">SOQL, SOSL</li>
-                        <li style="--delay: 0.3s;">Workflow & Approvals</li>
-                        <li style="--delay: 0.4s;">Reports, Dashboards</li>
-                        <li style="--delay: 0.5s;">Standard and Custom Objects</li>
-                        <li style="--delay: 0.6s;">Lightning Web Components (LWC)</li>
-                        <li style="--delay: 0.7s;">Visualforce</li>
-                        <li style="--delay: 0.8s;">Salesforce Communities</li>
-                        <li style="--delay: 0.9s;">Salesforce Mobile App</li>
-                        <li style="--delay: 1.0s;">Batch Apex, Scheduled Apex</li>
-                        <li style="--delay: 1.1s;">Process Builder, Flow</li>
-                        <li style="--delay: 1.2s;">Data Loader, Change Sets, Dataloader.io</li>
-                        <li style="--delay: 1.3s;">REST API Integration</li>
-                        <li style="--delay: 1.4s;">Organization Wide Defaults (OWDs) & Sharing Rules</li>
-                    </ul>
+        <section id="skills" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Skills</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
+                        <h3 class="text-xl font-semibold text-blue-700 mb-3">Salesforce Technologies</h3>
+                        <ul class="custom-bullet-list text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Salesforce.com CRM</li>
+                            <li style="--delay: 0.1s;">Apex Language, Apex Classes, Apex Triggers</li>
+                            <li style="--delay: 0.2s;">SOQL, SOSL</li>
+                            <li style="--delay: 0.3s;">Workflow & Approvals</li>
+                            <li style="--delay: 0.4s;">Reports, Dashboards</li>
+                            <li style="--delay: 0.5s;">Standard and Custom Objects</li>
+                            <li style="--delay: 0.6s;">Lightning Web Components (LWC)</li>
+                            <li style="--delay: 0.7s;">Visualforce</li>
+                            <li style="--delay: 0.8s;">Salesforce Communities</li>
+                            <li style="--delay: 0.9s;">Salesforce Mobile App</li>
+                            <li style="--delay: 1.0s;">Batch Apex, Scheduled Apex</li>
+                            <li style="--delay: 1.1s;">Process Builder, Flow</li>
+                            <li style="--delay: 1.2s;">Data Loader, Change Sets, Dataloader.io</li>
+                            <li style="--delay: 1.3s;">REST API Integration</li>
+                            <li style="--delay: 1.4s;">Organization Wide Defaults (OWDs) & Sharing Rules</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
+                        <h3 class="text-xl font-semibold text-green-700 mb-3">Development & Tools</h3>
+                        <ul class="custom-bullet-list text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">HTML, CSS, JavaScript</li>
+                            <li style="--delay: 0.1s;">VS Code</li>
+                            <li style="--delay: 0.2s;">Unit Test Classes</li>
+                            <li style="--delay: 0.3s;">Debugging</li>
+                            <li style="--delay: 0.4s;">SDLC (System Analysis, Design, Development, Testing)</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
+                        <h3 class="text-xl font-semibold text-purple-700 mb-3">Personal Skills</h3>
+                        <ul class="custom-bullet-list text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Strong analytical and assessment skills</li>
+                            <li style="--delay: 0.1s;">Ability to learn and adapt to new technologies quickly</li>
+                            <li style="--delay: 0.2s;">Rapid adaptability to learn new technologies and standards</li>
+                            <li style="--delay: 0.3s;">Troubleshooting</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
-                    <h3 class="text-xl font-semibold text-green-700 mb-3">Development & Tools</h3>
-                    <ul class="custom-bullet-list text-gray-700 space-y-1">
-                        <li style="--delay: 0s;">HTML, CSS, JavaScript</li>
-                        <li style="--delay: 0.1s;">VS Code</li>
-                        <li style="--delay: 0.2s;">Unit Test Classes</li>
-                        <li style="--delay: 0.3s;">Debugging</li>
-                        <li style="--delay: 0.4s;">SDLC (System Analysis, Design, Development, Testing)</li>
-                    </ul>
-                </div>
-                <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
-                    <h3 class="text-xl font-semibold text-purple-700 mb-3">Personal Skills</h3>
-                    <ul class="custom-bullet-list text-gray-700 space-y-1">
-                        <li style="--delay: 0s;">Strong analytical and assessment skills</li>
-                        <li style="--delay: 0.1s;">Ability to learn and adapt to new technologies quickly</li>
-                        <li style="--delay: 0.2s;">Rapid adaptability to learn new technologies and standards</li>
-                        <li style="--delay: 0.3s;">Troubleshooting</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="mt-8 pt-4 border-t border-gray-200">
-                <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Skill Elaborator ✨</h3>
-                <div class="flex flex-col sm:flex-row gap-3 items-center">
-                    <input type="text" id="skillInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter a skill to elaborate (e.g., Apex Triggers)">
-                    <button id="elaborateSkillBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
-                        ✨ Elaborate on Skill
-                    </button>
-                </div>
-                <div id="skillElaborationOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
-                    <p class="text-sm text-gray-500 mb-2">Skill Elaboration:</p>
-                    <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating elaboration...</div>
-                    <p id="elaborationText" class="text-base"></p>
+                <div class="mt-8 pt-4 border-t border-gray-200">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Skill Elaborator ✨</h3>
+                    <div class="flex flex-col sm:flex-row gap-3 items-center">
+                        <input type="text" id="skillInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter a skill to elaborate (e.g., Apex Triggers)">
+                        <button id="elaborateSkillBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center btn-primary">
+                            ✨ Elaborate on Skill
+                        </button>
+                    </div>
+                    <div id="skillElaborationOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
+                        <p class="text-sm text-gray-500 mb-2">Skill Elaboration:</p>
+                        <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating elaboration...</div>
+                        <p id="elaborationText" class="text-base"></p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Education Section -->
-        <section id="education" class="tab-content mb-8 bg-yellow-50">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Academic Qualifications</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
-                    <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Bachelor of Technology (B-Tech) in Mechanical Stream</h3>
-                    <p class="text-lg text-gray-700">Kasireddy Narayan Reddy College of Engineering & Research</p>
-                    <p class="text-md text-gray-600">Graduated: 2019 at Ranga Reddy</p>
-                </div>
-                <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card education-triveni-bg">
-                    <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Intermediate (M.P.C)</h3>
-                    <p class="text-lg text-gray-700">Triveni Jr College</p>
-                    <p class="text-md text-gray-600">Graduated: 2015 at Achampet</p>
-                </div>
-                <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
-                    <h3 class="text-2xl font-semibold text-yellow-700 mb-2">S.S.C (10th)</h3>
-                    <p class="text-lg text-gray-700">Z.P.H.S (Boys) School</p>
-                    <p class="text-md text-gray-600">Graduated: 2013 at Achampet</p>
+        <section id="education" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Academic Qualifications</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
+                        <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Bachelor of Technology (B-Tech) in Mechanical Stream</h3>
+                        <p class="text-lg text-gray-700">Kasireddy Narayan Reddy College of Engineering & Research</p>
+                        <p class="text-md text-gray-600">Graduated: 2019 at Ranga Reddy</p>
+                    </div>
+                    <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card education-triveni-bg">
+                        <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Intermediate (M.P.C)</h3>
+                        <p class="text-lg text-gray-700">Triveni Jr College</p>
+                        <p class="text-md text-gray-600">Graduated: 2015 at Achampet</p>
+                    </div>
+                    <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
+                        <h3 class="text-2xl font-semibold text-yellow-700 mb-2">S.S.C (10th)</h3>
+                        <p class="text-lg text-gray-700">Z.P.H.S (Boys) School</p>
+                        <p class="text-md text-gray-600">Graduated: 2013 at Achampet</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="tab-content mb-8 bg-red-50">
-            <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
-            <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8 relative">
-                <!-- Left Side: Contact Details -->
-                <div class="md:w-1/3 mb-8 md:mb-0">
-                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-b-2 border-indigo-300 pb-2">Personal & Contact Info</h3>
-                    <div class="mb-3"> <!-- Reduced margin-bottom -->
-                        <p class="text-base font-medium text-gray-800">Name:</p> <!-- Reduced font size -->
-                        <p class="text-lg text-indigo-700 font-semibold">Sreenu Ponemoni</p> <!-- Reduced font size -->
-                    </div>
-                    <div class="mb-3"> <!-- Reduced margin-bottom -->
-                        <p class="text-base font-medium text-gray-800">Date of Birth:</p> <!-- Reduced font size -->
-                        <p class="text-lg text-indigo-700 font-semibold">04-05-1997</p> <!-- Reduced font size -->
-                    </div>
-                    <div class="mb-3"> <!-- Reduced margin-bottom -->
-                        <p class="text-base font-medium text-gray-800">Marital Status:</p> <!-- Reduced font size -->
-                        <p class="text-lg text-indigo-700 font-semibold">Single</p> <!-- Reduced font size -->
-                    </div>
-                    <div class="mb-3"> <!-- Reduced margin-bottom -->
-                        <p class="text-base font-medium text-gray-800">Languages Known:</p> <!-- Reduced font size -->
-                        <p class="text-lg text-indigo-700 font-semibold">English, Hindi and Telugu</p> <!-- Reduced font size -->
-                    </div>
-                    <div class="mb-3"> <!-- Reduced margin-bottom -->
-                        <p class="text-base font-medium text-gray-800">Place:</p> <!-- Reduced font size -->
-                        <p class="text-lg text-indigo-700 font-semibold">Hyderabad</p> <!-- Reduced font size -->
-                    </div>
-                    <div class="mb-3"> <!-- Reduced margin-bottom -->
-                        <p class="text-base font-medium text-gray-800">LinkedIn Profile:</p> <!-- Reduced font size -->
-                        <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all"> <!-- Reduced font size -->
-                            http://linkedin.com/in/sreenu-ponemoni-b84167369
-                        </a>
-                    </div>
-                    <div class="mb-3"> <!-- Added GitHub link container -->
-                        <p class="text-base font-medium text-gray-800">GitHub Profile:</p>
-                        <a href="https://github.com/liveasyourlike" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all">
-                            https://github.com/liveasyourlike
-                        </a>
-                    </div>
-                    <div class="mt-6 pt-4 border-t border-gray-200">
-                        <p class="text-base font-medium text-gray-800 mb-2">Reach out to me:</p> <!-- Reduced font size -->
-                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-                            <a href="tel:9640352929" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
-                                <i class="fas fa-phone-alt w-5 h-5 mr-2"></i>
-                                Call Me
-                            </a>
-                            <a href="mailto:sreeponemoni6264@gmail.com" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center">
-                                <i class="fas fa-envelope w-5 h-5 mr-2"></i>
-                                Email Me
+        <section id="contact" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
+                <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8 relative">
+                    <!-- Left Side: Contact Details -->
+                    <div class="md:w-1/3 mb-8 md:mb-0">
+                        <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-b-2 border-indigo-300 pb-2">Personal & Contact Info</h3>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Name:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">Sreenu Ponemoni</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Date of Birth:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">04-05-1997</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Marital Status:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">Single</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Languages Known:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">English, Hindi and Telugu</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Place:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">Hyderabad</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">LinkedIn Profile:</p> <!-- Reduced font size -->
+                            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all"> <!-- Reduced font size -->
+                                http://linkedin.com/in/sreenu-ponemoni-b84167369
                             </a>
                         </div>
+                        <div class="mb-3"> <!-- Added GitHub link container -->
+                            <p class="text-base font-medium text-gray-800">GitHub Profile:</p>
+                            <a href="https://github.com/liveasyourlike" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all">
+                                https://github.com/liveasyourlike
+                            </a>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-200">
+                            <p class="text-base font-medium text-gray-800 mb-2">Reach out to me:</p> <!-- Reduced font size -->
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                                <a href="tel:9640352929" class="text-white px-5 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary">
+                                    <i class="fas fa-phone-alt w-5 h-5 mr-2"></i>
+                                    Call Me
+                                </a>
+                                <a href="mailto:sreeponemoni6264@gmail.com" class="text-white px-5 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary">
+                                    <i class="fas fa-envelope w-5 h-5 mr-2"></i>
+                                    Email Me
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Right Side: Google Form Embed -->
-                <div class="md:w-2/3 min-h-[600px]"> <!-- Changed to md:w-2/3 and added min-h -->
-                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
-                        Send a Message
-                    </h3>
-                    <p class="text-md text-gray-700 mb-4">Please fill out the form below to send a message to Sreenu. This form is powered by Google Forms.</p>
-                    <div class="google-form-container">
-                        <!-- Google Form Embed Code -->
-                        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3nhbX1XtlFFb7Lyf1QUAdxEtLOZ578sCLIwFvXcrFKkZJ0Q/viewform?embedded=true" width="640" height="1689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                    <!-- Right Side: Google Form Embed -->
+                    <div class="md:w-2/3 min-h-[600px]"> <!-- Changed to md:w-2/3 and added min-h -->
+                        <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
+                            Send a Message
+                        </h3>
+                        <p class="text-md text-gray-700 mb-4">Please fill out the form below to send a message to Sreenu. This form is powered by Google Forms.</p>
+                        <div class="google-form-container">
+                            <!-- Google Form Embed Code -->
+                            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3nhbX1XtlFFb7Lyf1QUAdxEtLOZ578sCLIwFvXcrFKkZJ0Q/viewform?embedded=true" width="640" height="1689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -965,7 +1105,7 @@
         </div>
         <div class="chat-input-area p-4 bg-white border-t border-gray-200">
             <input type="text" id="chatInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ask Sreenu Anything About His Profile...">
-            <button id="sendChatBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
+            <button id="sendChatBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center btn-primary">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.684-.236a1 1 0 00.54-1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
                 Send
             </button>
@@ -999,17 +1139,18 @@
             </button>
         </div>
         <div class="contact-icons-content p-4 flex flex-col space-y-3">
-            <a href="tel:9640352929" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="Call Me">
-                <i class="fas fa-phone-alt text-3xl mr-2"></i> <span>9640352929</span>
+            <!-- Updated contact links to use btn-primary and btn-secondary classes -->
+            <a href="tel:9640352929" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary" title="Call Me">
+                <i class="fas fa-phone-alt text-xl mr-2"></i> <span>Call Me</span>
             </a>
-            <a href="mailto:sreeponemoni6264@gmail.com" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="Email Me">
-                <i class="fas fa-envelope text-3xl mr-2"></i> <span>sreeponemoni6264@gmail.com</span>
+            <a href="mailto:sreeponemoni6264@gmail.com" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-secondary" title="Email Me">
+                <i class="fas fa-envelope text-xl mr-2"></i> <span>Email Me</span>
             </a>
-            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="LinkedIn Profile">
-                <i class="fab fa-linkedin text-3xl mr-2"></i> <span>LinkedIn</span>
+            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" rel="noopener noreferrer" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary" title="LinkedIn Profile">
+                <i class="fab fa-linkedin text-xl mr-2"></i> <span>LinkedIn</span>
             </a>
-            <a href="https://github.com/liveasyourlike" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 transition duration-300 flex items-center" title="GitHub Profile">
-                <i class="fab fa-github text-3xl mr-2"></i> <span>GitHub</span>
+            <a href="https://github.com/liveasyourlike" target="_blank" rel="noopener noreferrer" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-secondary" title="GitHub Profile">
+                <i class="fab fa-github text-xl mr-2"></i> <span>GitHub</span>
             </a>
         </div>
     </div>
