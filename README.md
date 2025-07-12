@@ -1,3 +1,15 @@
+Hi, I'm Sreenu Ponemoni! 👋
+
+Salesforce Developer | Apex & LWC Enthusiast | Building CRM Solutions
+
+"Highly motivated Salesforce Developer with 4 years of experience in Apex, Lightning Web Components (LWC), and Salesforce Administration. Passionate about building scalable and intuitive CRM solutions that drive business success."
+- 🔭 I’m currently working on ... "Currently exploring advanced LWC patterns and Salesforce DevOps practices."
+- 🌱 I’m currently learning ... "Deep diving into Salesforce Data Cloud and Service Cloud features."
+- 👯 I’m looking to collaborate on ... Any exciting Salesforce development projects, particularlyin Apex, LWC, or complex integrations.
+- 🤔 I’m looking for help with ... Insights and best practices from experienced professionals, passionate about enhancing Salesforce.
+- 💬 Ask /Suggest me about ... Salesforce development, career advice in the Salesforce ecosystem, or project ideas!
+- 📫 How to reach me: ... Visit my [personal portfolio website](https://sreeponemonisalesforceweb.netlify.app/) or connect with me on [LinkedIn](https://www.linkedin.com/in/sreenuponemoni/)!
+- ⚡ Fun fact: ... "When I'm not coding, you can find me..."
 ### Salesforce Core Development
 
 [![Apex Language](https://img.shields.io/badge/Apex%20Language-0070D2?style=for-the-badge&logo=salesforce&logoColor=white)](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_dev_guide.htm)
@@ -23,14 +35,15 @@
 [![Salesforce Communities](https://img.shields.io/badge/Experience%20Cloud-2A9D8F?style=for-the-badge&logo=salesforce&logoColor=white)](https://trailhead.salesforce.com/content/learn/modules/communities_basics)
 [![Salesforce Mobile App](https://img.shields.io/badge/Mobile%20App-2A9D8F?style=for-the-badge&logo=salesforce&logoColor=white)](https://trailhead.salesforce.com/content/learn/modules/salesforce_mobile_app)
 
-### Salesforce Cloud Expertise
+### Salesforce Cloud Expertise(TrailHead And Project Experience)
 
 [![Sales Cloud](https://img.shields.io/badge/Sales%20Cloud-FF8C00?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/sales-cloud/)
 [![Service Cloud](https://img.shields.io/badge/Service%20Cloud-00BFFF?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/service-cloud/)
-[![Experience Cloud (Communities)](https://img.shields.io/badge/Experience%20Cloud-6A5ACD?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/experience-cloud/)
+[![Experience Cloud](https://img.shields.io/badge/Experience%20Cloud-6A5ACD?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/experience-cloud/)
+[![Marketing Cloud](https://img.shields.io/badge/Marketing%20Cloud-FF69B4?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/marketing-cloud/)
+[![Commerce Cloud](https://img.shields.io/badge/Commerce%20Cloud-800080?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/commerce-cloud/)
 [![Data Cloud](https://img.shields.io/badge/Data%20Cloud-00CED1?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/data-cloud/)
-
-*Note: While my primary hands-on experience is with Sales and Service Cloud, I have familiarity with Data Cloud and Experience Cloud capabilities.*
+[![CRM Analytics (Tableau CRM)](https://img.shields.io/badge/CRM%20Analytics-20B2AA?style=for-the-badge&logo=salesforce&logoColor=white)](https://www.salesforce.com/products/crm-analytics/)
 
 ### Integration & Data Management
 
