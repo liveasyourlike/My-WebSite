@@ -776,14 +776,8 @@
         <section id="about" class="tab-content active mb-8">
             <div class="parallax-bg"></div> <!-- Parallax background for the section -->
             <div class="section-inner-content">
-<h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me <span class="intro-play-btn" style="display: inline-block; cursor: pointer; margin-left: 10px; background-color: #4f46e5; color: white; border-radius: 50%; width: 40px; height: 40px; text-align: center; line-height: 40px; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">▶</span></h2>  
-<div class="video-container" style="margin-top: 20px;">
-    <video controls style="width: 60%; border-radius: 50px;">
-        <source src="sreenu_intro.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>        <div class="prose max-w-none">
-    
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
+                <div class="prose max-w-none">
                     <p class="text-lg leading-relaxed mb-4">
                         I am a dedicated Salesforce Administrator & Developer with <strong class="text-indigo-600">3.8 years of hands-on experience</strong> in Salesforce.com CRM and the Force.com platform. My expertise spans the entire Software Development Life Cycle (SDLC).
                     </p>
@@ -2594,109 +2588,5 @@
             createLiquidGlass(); // Initialize the effect
         })();
     </script>
-    <div id="video-player-container" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1500; width: 320px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); background-color: #000; overflow: hidden; border-radius: 8px;">
-    <div id="video-header" style="padding: 10px; background-color: #222; color: #fff; cursor: grab; display: flex; justify-content: space-between; align-items: center;">
-        <span>My Intro</span>
-        <div style="display: flex; gap: 10px;">
-            <span id="minimize-btn" style="font-size: 20px; cursor: pointer; display: none;">-</span>
-            <span id="maximize-btn" style="font-size: 20px; cursor: pointer;">&#9634;</span>
-            <span id="close-btn" style="font-size: 20px; cursor: pointer;">&times;</span>
-        </div>
-    </div>
-    <video id="my-video" controls autoplay style="width: 100%; display: block;">
-        <source src="sreenu_intro.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const playBtns = document.querySelectorAll('.intro-play-btn');
-        const videoContainer = document.getElementById('video-player-container');
-        const videoHeader = document.getElementById('video-header');
-        const videoElement = document.getElementById('my-video');
-        const maximizeBtn = document.getElementById('maximize-btn');
-        const minimizeBtn = document.getElementById('minimize-btn');
-        const closeBtn = document.getElementById('close-btn');
-
-        let isDragging = false;
-        let offsetX, offsetY;
-
-        // --- Dragging functionality for the mini-player ---
-        videoHeader.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            offsetX = e.clientX - videoContainer.getBoundingClientRect().left;
-            offsetY = e.clientY - videoContainer.getBoundingClientRect().top;
-            videoHeader.style.cursor = 'grabbing';
-            videoContainer.style.transition = 'none'; // Disable transition during drag
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const newLeft = e.clientX - offsetX;
-            const newTop = e.clientY - offsetY;
-            videoContainer.style.left = `${newLeft}px`;
-            videoContainer.style.top = `${newTop}px`;
-            videoContainer.style.right = 'auto'; // Disable right/bottom styles during drag
-            videoContainer.style.bottom = 'auto';
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            videoHeader.style.cursor = 'grab';
-            videoContainer.style.transition = 'top 0.3s ease, left 0.3s ease';
-        });
-
-        // --- Button click handlers ---
-        playBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                videoContainer.style.display = 'block';
-                videoElement.play();
-                // Ensure mini-player styles are active
-                videoContainer.style.top = 'auto';
-                videoContainer.style.left = 'auto';
-                videoContainer.style.width = '320px';
-                videoContainer.style.height = 'auto';
-                videoContainer.style.bottom = '20px';
-                videoContainer.style.right = '20px';
-                maximizeBtn.style.display = 'block';
-                minimizeBtn.style.display = 'none';
-            });
-        });
-
-        closeBtn.addEventListener('click', () => {
-            videoContainer.style.display = 'none';
-            videoElement.pause();
-            videoElement.currentTime = 0; // Rewind the video
-        });
-
-        maximizeBtn.addEventListener('click', () => {
-            videoContainer.style.position = 'fixed';
-            videoContainer.style.top = '0';
-            videoContainer.style.left = '0';
-            videoContainer.style.width = '100%';
-            videoContainer.style.height = '100%';
-            videoContainer.style.borderRadius = '0';
-            videoContainer.style.zIndex = '2000';
-            videoHeader.style.display = 'flex';
-            maximizeBtn.style.display = 'none';
-            minimizeBtn.style.display = 'block';
-        });
-
-        minimizeBtn.addEventListener('click', () => {
-            videoContainer.style.position = 'fixed';
-            videoContainer.style.top = 'auto';
-            videoContainer.style.left = 'auto';
-            videoContainer.style.width = '320px';
-            videoContainer.style.height = 'auto';
-            videoContainer.style.bottom = '20px';
-            videoContainer.style.right = '20px';
-            videoContainer.style.borderRadius = '8px';
-            videoContainer.style.zIndex = '1500';
-            maximizeBtn.style.display = 'block';
-            minimizeBtn.style.display = 'none';
-        });
-    });
-</script>
 </body>
 </html>
