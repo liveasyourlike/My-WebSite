@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sreenu Ponemoni - Salesforce Developer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for chat icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Marked.js for Markdown parsing in chat -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Smooth scrolling for the entire page */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Base styles for body and typography */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            color: #374151; /* Dark gray text */
+        }
+
+        /* Tab button active state styling */
+        .tab-button.active {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tab content base styling */
+        .tab-content {
+            display: none; /* Hidden by default */
+            padding: 2rem; /* Consistent padding */
+            border-radius: 0.5rem; /* Consistent rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Consistent subtle shadow */
+            min-height: 300px; /* Ensure a minimum visible height for all tabs */
+            box-sizing: border-box; /* Include padding in height calculation */
+            overflow-y: auto; /* Allow content within the tab to scroll if it overflows */
+            position: relative; /* Needed for inner-content positioning */
+            z-index: 1; /* Ensure content is above parallax background */
+        }
+        /* Tab content active state styling */
+        .tab-content.active {
+            display: block;
+            border: 2px solid #4f46e5; /* Add a clear border to active tab content */
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e7ff; /* Light indigo */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1; /* Indigo 500 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5; /* Indigo 600 */
+        }
+
+        /* Chat specific styles */
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+            opacity: 0; /* For fade-in animation */
+            transform: translateY(10px); /* For slide-up animation */
+            animation: fadeInSlideUp 0.3s ease-out forwards;
+        }
+        .chat-message.user {
+            background-color: #e0e7ff; /* Light indigo for user */
+            align-self: flex-end; /* Align to right */
+            margin-left: auto; /* Push to right */
+        }
+        .chat-message.bot {
+            background-color: #d1fae5; /* Light green for bot */
+            align-self: flex-start; /* Align to left */
+            margin-right: auto; /* Push to left */
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            padding-top: 10px;
+        }
+        .chat-history {
+            flex-grow: 1; /* Allows chat history to take available space */
+            overflow-y: auto; /* Enables scrolling for chat messages */
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            background-color: #ffffff; /* Default light background */
+            display: flex;
+            flex-direction: column; /* Stack messages vertically */
+            min-height: 300px; /* Minimum height for chat window */
+        }
+
+        /* Dark mode for chat history */
+        .chat-history.dark-mode {
+            background-color: #2d3748; /* Dark gray */
+            color: #e2e8f0; /* Light gray text */
+        }
+        .chat-history.dark-mode .chat-message.user {
+            background-color: #4f46e5; /* Darker indigo for user in dark mode */
+            color: white;
+        }
+        .chat-history.dark-mode .chat-message.bot {
+            background-color: #38a169; /* Darker green for bot in dark mode */
+            color: white;
+        }
+
+
+        /* Liquid Glass Container styles for smooth visibility toggle */
+        .liquid-glass-container {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Glassmorphism for sticky navigation */
+        .sticky-nav-glass {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Animation for active tab underline */
+        .tab-button {
+            position: relative;
+        }
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 24px);
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            animation: expandUnderline 0.3s ease-out forwards;
+        }
+
+        @keyframes expandUnderline {
+            from {
+                width: 0;
+            }
+            to {
+                width: calc(100% - 24px);
+            }
+        }
+
+        /* Enhanced hover effect for project/skill cards */
+        .card-hover-effect {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+            border: 1px solid transparent; /* Base border for transition */
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-8px) scale(1.02); /* More pronounced lift and slight scale */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            border-color: #4f46e5; /* Indigo border on hover */
+        }
+
+        /* Typing indicator animation for AI chat */
+        .chat-loading-indicator::after {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+            -webkit-animation: ellipsis steps(4, end) 900ms infinite;
+            animation: ellipsis steps(4, end) 900ms infinite;
+            content: "\2026";
+            width: 0px;
+        }
+        @keyframes ellipsis {
+            to {
+                width: 1.25em;
+            }
+        }
+        @-webkit-keyframes ellipsis {
+            to {
+                width: 1.25em;
+            }
+        }
+
+        /* Fade in slide up animation for chat messages */
+        @keyframes fadeInSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Gallery item hover effect (if used) */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(79, 70, 229, 0.6);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1;
+        }
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        .gallery-item-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.25rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 2;
+            text-align: center;
+        }
+        .gallery-item:hover .gallery-item-title {
+            opacity: 1;
+        }
+
+        /* --- HEADER STYLES FOR 3D EFFECT AND ANIMATION --- */
+        header {
+            background: linear-gradient(135deg, #4f46e5, #8b5cf6, #4f46e5);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            position: sticky; /* Sticky position for header */
+            top: 0; /* Sticks to the top of the viewport */
+            z-index: 20; /* Ensure it's above other content */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-out; /* Smooth transition for any changes */
+        }
+
+        /* Navigation bar styles */
+        #main-nav {
+            position: sticky; /* Sticky position for navigation */
+            left: 0;
+            width: 100%;
+            z-index: 10; /* Lower z-index than header */
+            transition: all 0.3s ease-out; /* Smooth transition for any changes */
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header h1 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease; /* Smooth transition for text shadow */
+        }
+        header h1:hover {
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6); /* Glowing effect on hover */
+            transform: scale(1.02); /* Slight scale on hover */
+        }
+
+        header p {
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        header .flex a {
+            padding: 8px 16px;
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        header .flex a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Custom bullet point styling for lists within the about section */
+        .custom-bullet-list li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .custom-bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background-color: #4f46e5;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+            transform: scale(0);
+            animation: bulletPopIn 0.5s ease-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes bulletPopIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Adjust header layout for image */
+        header .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        header .header-left-content {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 767px) {
+            header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            header .header-left-content {
+                margin-bottom: 1rem;
+                flex-direction: column; /* Stack profile image and text on small screens */
+            }
+        }
+
+        /* Google Form specific styling */
+        .google-form-container {
+            position: relative;
+            width: 100%;
+            /* Adjust height to make it responsive, maintaining aspect ratio */
+            padding-bottom: 150%; /* Increased for more vertical space for the form */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .google-form-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 0.5rem; /* Match parent container rounded corners */
+        }
+
+        /* Floating Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            width: 350px; /* Default width */
+            height: 500px; /* Default height */
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000; /* Ensure it's above other content */
+            overflow: hidden; /* Hide scrollbars of the container itself */
+            transition: opacity 0.3s ease-in-out; /* Only opacity transition here */
+            opacity: 0; /* Start hidden */
+            pointer-events: none; /* Do not block clicks when hidden */
+            min-width: 300px; /* Minimum width for resizing */
+            min-height: 400px; /* Minimum height for resizing */
+            max-width: 90vw; /* Max width relative to viewport */
+            max-height: 90vh; /* Max height relative to viewport */
+            resize: none; /* Disable default CSS resize */
+        }
+
+        .chatbot-container.active {
+            transform: translateY(0); /* Slide up when active */
+            opacity: 1; /* Fade in when active */
+            pointer-events: auto; /* Allow clicks when active */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* Re-enable for active state */
+        }
+
+        /* When dragging, we explicitly set left/top and remove transform via JS */
+        .chatbot-container.dragging, .contact-panel-container.dragging {
+            transition: none !important; /* Override all transitions when dragging */
+            transform: none !important; /* Ensure no transform during drag */
+        }
+
+        .chatbot-header, .contact-panel-header {
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            padding: 1rem;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            cursor: grab; /* Indicate it's draggable */
+        }
+
+        .chatbot-header.dragging, .contact-panel-header.dragging {
+            cursor: grabbing;
+        }
+
+        .chatbot-header button, .contact-panel-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .chatbot-header button:hover, .contact-panel-header button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Draggable AI Icon Styles */
+        .ai-icon, .contact-toggle-icon {
+            position: fixed;
+            right: 0; /* Default position: right edge */
+            top: 50%; /* Default position: vertically centered */
+            transform: translateY(-50%); /* Adjust for vertical centering */
+            width: 50px;
+            height: 50px;
+            background-color: #4f46e5; /* Indigo 600 */
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem; /* Size for "Ai" text */
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            cursor: grab; /* Indicate it's draggable */
+            z-index: 1001; /* Above other content, below chatbot */
+            transition: background-color 0.2s, transform 0.1s; /* Smooth hover and click feedback */
+            user-select: none; /* Prevent text selection during drag */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .ai-icon:hover, .contact-toggle-icon:hover {
+            background-color: #4338ca; /* Slightly darker indigo on hover */
+        }
+
+        .ai-icon.dragging, .contact-toggle-icon.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: translateY(-50%) scale(1.05); /* Slight scale up when dragging */
+        }
+
+        /* Chatbot Settings Panel */
+        .chatbot-settings {
+            position: absolute;
+            top: 60px; /* Below header */
+            right: 10px;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            z-index: 1010; /* Above chat history */
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .chatbot-settings.active {
+            display: flex;
+        }
+        .chatbot-settings button {
+            background-color: #e0e7ff; /* Light indigo */
+            color: #4f46e5;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .chatbot-settings button:hover {
+            background-color: #c7d2fe; /* Lighter indigo */
+        }
+        .chatbot-settings button.active {
+            background-color: #4f46e5;
+            color: white;
+        }
+
+        /* Resize Handles for Chatbot and Contact Panel */
+        .resize-handle {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: rgba(79, 70, 229, 0.5); /* Semi-transparent indigo */
+            border-radius: 50%;
+            z-index: 1020; /* Above other chatbot content */
+        }
+
+        .resize-handle:hover {
+            background-color: #4f46e5; /* Solid indigo on hover */
+        }
+
+        .resize-handle.top-left {
+            top: -7.5px;
+            left: -7.5px;
+            cursor: nwse-resize;
+        }
+        .resize-handle.top-right {
+            top: -7.5px;
+            right: -7.5px;
+            cursor: nesw-resize;
+        }
+        .resize-handle.bottom-left {
+            bottom: -7.5px;
+            left: -7.5px;
+            cursor: nesw-resize;
+        }
+        .resize-handle.bottom-right {
+            bottom: -7.5px;
+            right: -7.5px;
+            cursor: nwse-resize;
+        }
+
+
+        /* Responsive adjustments for chatbot on smaller screens */
+        @media (max-width: 768px) {
+            .chatbot-container, .contact-panel-container {
+                width: 90%; /* Take more width on small screens */
+                height: 80vh; /* Use viewport height */
+                bottom: 10px;
+                right: 5%;
+                left: 5%; /* Center horizontally */
+                transform: translateX(0) translateY(20px); /* Adjust initial position */
+                min-width: unset; /* Remove min-width for small screens */
+                min-height: unset; /* Remove min-height for small screens */
+            }
+            .chatbot-container.active, .contact-panel-container.active {
+                transform: translateX(0) translateY(0);
+            }
+            .ai-icon, .contact-toggle-icon {
+                bottom: 10px;
+                right: 10px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+                transform: translateY(0); /* Remove translateY for bottom/right positioning */
+            }
+            .ai-icon.dragging, .contact-toggle-icon.dragging {
+                transform: scale(1.05); /* Only scale when dragging on small screens */
+            }
+            .resize-handle {
+                display: none; /* Hide resize handles on small screens */
+            }
+        }
+
+        /* New Contact Panel Styles */
+        .contact-panel-container {
+            position: fixed;
+            width: 280px; /* Default width for contact panel */
+            height: 250px; /* Default height for contact panel */
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 990; /* Below chatbot, above general content */
+            overflow: hidden;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            min-width: 250px;
+            min-height: 200px;
+            max-width: 90vw;
+            max-height: 90vh;
+            resize: none;
+        }
+
+        .contact-panel-container.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        .contact-icons-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Parallax Background Effect */
+        .parallax-bg {
+            background-image: url('Sreenu ponemoni Image.jpg'); /* Use the uploaded image */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Ensure it's behind content */
+            filter: brightness(0.7) grayscale(0.2); /* Subtle effect */
+        }
+
+        /* Inner content wrapper for sections to apply background colors on top of parallax */
+        .section-inner-content {
+            position: relative;
+            z-index: 1; /* Ensure this is above the parallax background */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for readability */
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Specific background colors for each section's inner content */
+        #about .section-inner-content {
+            background-color: rgba(239, 246, 255, 0.9); /* blue-50 with opacity */
+        }
+        #experience .section-inner-content {
+            background-color: rgba(236, 253, 245, 0.9); /* green-50 with opacity */
+        }
+        #skills .section-inner-content {
+            background-color: rgba(245, 243, 255, 0.9); /* purple-50 with opacity */
+        }
+        #education .section-inner-content {
+            background-color: rgba(255, 251, 235, 0.9); /* yellow-50 with opacity */
+        }
+        #contact .section-inner-content {
+            background-color: rgba(254, 242, 242, 0.9); /* red-50 with opacity */
+        }
+
+        /* Advanced Button Styles */
+        .btn-primary {
+            background-image: linear-gradient(to right, #4f46e5 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+            background-size: 200% auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:hover {
+            background-position: right center; /* change the direction of the change here */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280; /* Gray 500 */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Gray 700 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Add a subtle animation to the header on scroll */
+        .header-scrolled {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+            background-color: rgba(79, 70, 229, 0.95); /* Slightly darker, more opaque */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Enhanced tab button hover/active effects */
+        .tab-button {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 0;
+        }
+        .tab-button:hover::before {
+            left: 100%;
+        }
+        .tab-button.active::before {
+            /* No shimmer on active */
+            display: none;
+        }
+        .tab-button span {
+            position: relative;
+            z-index: 1;
+        }
+        .tab-button.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        .tab-button:not(.active):hover {
+            background-color: #e0e7ff; /* Light indigo background */
+            color: #4f46e5; /* Indigo text */
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-4 px-6 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-2 md:mb-0 header-left-content">
+                <!-- Removed the image tag as requested -->
+                <div>
+                    <h1 class="text-3xl font-bold">Sreenu Ponemoni</h1>
+                    <p class="text-lg font-light">Salesforce Administrator & Developer</p>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center mt-4 md:mt-0 space-y-2 md:space-y-0 md:space-x-4">
+                <a href="tel:9640352929" class="flex items-center text-white hover:text-indigo-200 transition duration-300 btn-primary">
+                    <i class="fas fa-phone-alt w-5 h-5 mr-1"></i>
+                    9640352929
+                </a>
+                <a href="mailto:sreeponemoni6264@gmail.com" class="flex items-center text-white hover:text-indigo-200 transition duration-300 btn-primary">
+                    <i class="fas fa-envelope w-5 h-5 mr-1"></i>
+                    sreeponemoni6264@gmail.com
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav id="main-nav" class="bg-white shadow-md py-4 sticky-nav-glass">
+        <div class="container mx-auto flex flex-wrap justify-center gap-4">
+            <button class="tab-button active px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="about"><span>About</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="experience"><span>Experience</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills"><span>Skills</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education"><span>Education</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact"><span>Contact</span></button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto p-6 md:p-8 lg:p-10" id="main-content-area">
+
+        <!-- About Section -->
+        <section id="about" class="tab-content active mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+<h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me <span class="intro-play-btn" style="display: inline-block; cursor: pointer; margin-left: 10px; background-color: #4f46e5; color: white; border-radius: 50%; width: 40px; height: 40px; text-align: center; line-height: 40px; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">▶</span></h2>                <div class="prose max-w-none">
+                    <p class="text-lg leading-relaxed mb-4">
+                        I am a dedicated Salesforce Administrator & Developer with <strong class="text-indigo-600">3.8 years of hands-on experience</strong> in Salesforce.com CRM and the Force.com platform. My expertise spans the entire Software Development Life Cycle (SDLC).
+                    </p>
+
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4 mt-6">Core Competencies:</h3>
+                    <ul class="custom-bullet-list text-lg text-gray-700 space-y-2">
+                        <li style="--delay: 0s;">
+                            <strong class="text-indigo-600">Salesforce Development:</strong> Proficient in Apex language, including Apex Triggers, Bulk Triggers, Apex Classes, and Apex Batches, always adhering to governor limits.
+                        </li>
+                        <li style="--delay: 0.1s;">
+                            <strong class="text-indigo-600">UI Development:</strong> Skilled in creating custom, interactive user interfaces using Lightning Web Components (LWC) with VS Code.
+                        </li>
+                        <li style="--delay: 0.2s;">
+                            <strong class="text-indigo-600">Testing & Deployment:</strong> Experienced in creating Unit Test Classes for seamless deployment to production environments.
+                        </li>
+                        <li style="--delay: 0.3s;">
+                            <strong class="text-indigo-600">Salesforce Administration:</strong> Expert in configuring Profiles, Roles, Users, Page Layouts, Email Services, Approval Processes, Workflows, Reports, Dashboards, Tasks, and Events.
+                        </li>
+                        <li style="--delay: 0.4s;">
+                            <strong class="text-indigo-600">Data Management:</strong> Extensive experience in data migration using Data Loader, change sets, and Dataloader.io.
+                        </li>
+                        <li style="--delay: 0.5s;">
+                            <strong class="text-indigo-600">Automation & Customization:</strong> Proficient in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder, and Approval Processes for automated alerts, field updates, and Email generation according to application requirements.
+                        </li>
+                        <li style="--delay: 0.6s;">
+                            <strong class="text-indigo-600">Security & Sharing:</strong> Successfully implemented Organization-Wide Defaults (OWDs) and sharing rules to manage data visibility across various organizational levels.
+                        </li>
+                        <li style="--delay: 0.7s;">
+                            <strong class="text-indigo-600">Environment Management:</strong> Experienced in creating and maintaining sandboxes for different environments and migrating change sets between instances.
+                        </li>
+                    </ul>
+                    <div class="mt-8 pt-4 border-t border-gray-200">
+                        <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Insights ✨</h3>
+                        <button id="generateSummaryBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center btn-primary">
+                            ✨ Summarize My Profile
+                        </button>
+                        <div id="generatedSummaryOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
+                            <p class="text-sm text-gray-500 mb-2">Generated Summary:</p>
+                            <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating summary...</div>
+                            <p id="summaryText" class="text-base"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section - Project divs updated with enhanced hover effect -->
+        <section id="experience" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Professional Experience</h2>
+
+                <!-- Cognizant Technology Solutions -->
+                <div class="mb-8 p-6 card-hover-effect">
+                    <h3 class="text-2xl font-semibold text-indigo-800 mb-2">Software Engineer at Cognizant Technology Solutions</h3>
+                    <p class="text-lg text-gray-600 mb-4">February 17th, 2021 - June 20th, 2025</p>
+
+                    <!-- Project 1: PMI -->
+                    <div class="mb-6 border-l-4 border-indigo-400 pl-4">
+                        <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #1: PMI</h4>
+                        <p class="text-xl font-semibold text-green-700 mb-3">Role: Salesforce Developer | Cloud: Sales & Service Cloud | Duration: May 2023 - June 2025</p>
+                        <p class="text-md leading-relaxed mb-3">
+                            Philip Morris International Inc. is an American multinational tobacco company with products sold in over 180 countries. In Philip Morris, the entire Service Model is handled with the Salesforce Platform. The Salesforce Platform was set up to provide all kinds of sales and service queries to customers. In this application, I primarily worked on the development part, specifically "Asynchronous Apex" to run the application.
+                        </p>
+                        <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
+                        <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Created User Profiles, Users, and Modifying User Page Layouts & Setting up Sharing Rules.</li>
+                            <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
+                            <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
+                            <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                            <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                            <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                            <li style="--delay: 0.6s;">Ensured data integrity through the appropriate use of loading and exporting tools, for bulk of data using Data Loader.</li>
+                            <li style="--delay: 0.7s;">Configured page layouts, workflows, document templates, and record types & data fields. Created Report Types, Reports and Dashboards.</li>
+                            <li style="--delay: 0.8s;">Created Custom Objects, Custom Fields, Tabs and Lightning Pages.</li>
+                            <li style="--delay: 0.9s;">Worked on Record Types and Page Layouts.</li>
+                            <li style="--delay: 1.0s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Project 2: Eaton Corporation -->
+                    <div class="mb-6 border-l-4 border-indigo-400 pl-4">
+                        <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #2: Eaton Corporation</h4>
+                        <p class="text-xl font-semibold text-green-700 mb-3">Role: Salesforce Administrator/Developer | Cloud: Sales & Service Cloud | Duration: Nov 2021 - Oct 2022</p>
+                        <p class="text-md leading-relaxed mb-3">
+                            Eaton is an intelligent Power Management company dedicated to improving the quality of life and protecting the environment for people everywhere. Eaton is guided by their commitment to do business, to operate sustainably, and to help their customers manage power—today and well into the future. By capitalizing on the global trends of electrification and digitalization, Eaton is accelerating the planet's transition to renewable energy and helping to solve the world's most urgent power management challenges.
+                        </p>
+                        <h5 class="text-lg font-semibold text-gray-800 mb-2">Key Activities:</h5>
+                        <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Requirement analysis, validating and migrating.</li>
+                            <li style="--delay: 0.1s;">Implemented batch classes for large data operations using Apex Batch.</li>
+                            <li style="--delay: 0.2s;">Developed Apex triggers to handle complex business processes.</li>
+                            <li style="--delay: 0.3s;">Created custom, interactive components using HTML, CSS, and JavaScript within LWC framework to meet user interface requirements.</li>
+                            <li style="--delay: 0.4s;">Integrated Salesforce data using the `@wire` decorator to bind Apex methods, custom objects, and Salesforce APIs directly to LWC components.</li>
+                            <li style="--delay: 0.5s;">Expertized on writing optimized SOQL queries to retrieve and manipulate Salesforce data. Used relationship queries (parent-to-child and child-to-parent) for complex data models.</li>
+                            <li style="--delay: 0.6s;">Creating/add and manage Users, Roles, Profiles and setting up group members.</li>
+                            <li style="--delay: 0.7s;">Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations.</li>
+                            <li style="--delay: 0.8s;">Analyzing business requirement and loaded the objects through data loader.</li>
+                            <li style="--delay: 0.9s;">Customization - Created batch classes and scheduled classes based on business requirement. Involved in Integration on REST API.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Project 3: ELECTROLUX Sales -->
+                    <div class="border-l-4 border-indigo-400 pl-4">
+                        <h4 class="text-xl font-bold text-indigo-600 mb-1">Project #3: ELECTROLUX Sales</h4>
+                        <p class="text-xl font-semibold text-green-700 mb-3">Domain: Retail Management | Role: Salesforce Developer | Duration: Feb 2021 - Oct 2021</p>
+                        <p class="text-md leading-relaxed mb-3">
+                            Electrolux is a global leader in household appliances and appliances for professional use, selling more more than 40 million products to customers in more than 150 markets every year with sales of 109 billion and 51000 employees. Our project supported different regions like Europe, Asia, and Australia. There were many interfaces like Copics, Concur, and MFT through which we received sales information of the company to our system JD Edwards. We processed the members received through these interfaces and assisted users with any issues related to processing. We also handled finance issues under Accounts Payable, Accounts Receivable, General Ledger, and Fixed Assets.
+                        </p>
+                        <h5 class="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h5>
+                        <ul class="custom-bullet-list text-md text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Development Activities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce.</li>
+                            <li style="--delay: 0.1s;">Provide technical support: Responded to inquiries and resolved technical issues related to Salesforce products and services, including custom code and integrations.</li>
+                            <li style="--delay: 0.2s;">Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and and displayed them on to the component.</li>
+                            <li style="--delay: 0.3s;">Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 pt-4 border-t border-gray-200">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Project Idea Generator ✨</h3>
+                    <button id="generateProjectIdeaBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center btn-primary">
+                        ✨ Generate Project Idea
+                    </button>
+                    <div id="generatedProjectIdeaOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
+                        <p class="text-sm text-gray-500 mb-2">Generated Project Idea:</p>
+                        <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating idea...</div>
+                        <p id="projectIdeaText" class="text-base"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Skills</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
+                        <h3 class="text-xl font-semibold text-blue-700 mb-3">Salesforce Technologies</h3>
+                        <ul class="custom-bullet-list text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Salesforce.com CRM</li>
+                            <li style="--delay: 0.1s;">Apex Language, Apex Classes, Apex Triggers</li>
+                            <li style="--delay: 0.2s;">SOQL, SOSL</li>
+                            <li style="--delay: 0.3s;">Workflow & Approvals</li>
+                            <li style="--delay: 0.4s;">Reports, Dashboards</li>
+                            <li style="--delay: 0.5s;">Standard and Custom Objects</li>
+                            <li style="--delay: 0.6s;">Lightning Web Components (LWC)</li>
+                            <li style="--delay: 0.7s;">Visualforce</li>
+                            <li style="--delay: 0.8s;">Salesforce Communities</li>
+                            <li style="--delay: 0.9s;">Salesforce Mobile App</li>
+                            <li style="--delay: 1.0s;">Batch Apex, Scheduled Apex</li>
+                            <li style="--delay: 1.1s;">Process Builder, Flow</li>
+                            <li style="--delay: 1.2s;">Data Loader, Change Sets, Dataloader.io</li>
+                            <li style="--delay: 1.3s;">REST API Integration</li>
+                            <li style="--delay: 1.4s;">Organization Wide Defaults (OWDs) & Sharing Rules</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
+                        <h3 class="text-xl font-semibold text-green-700 mb-3">Development & Tools</h3>
+                        <ul class="custom-bullet-list text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">HTML, CSS, JavaScript</li>
+                            <li style="--delay: 0.1s;">VS Code</li>
+                            <li style="--delay: 0.2s;">Unit Test Classes</li>
+                            <li style="--delay: 0.3s;">Debugging</li>
+                            <li style="--delay: 0.4s;">SDLC (System Analysis, Design, Development, Testing)</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-lg shadow-sm transform transition-all duration-300 card-hover-effect">
+                        <h3 class="text-xl font-semibold text-purple-700 mb-3">Personal Skills</h3>
+                        <ul class="custom-bullet-list text-gray-700 space-y-1">
+                            <li style="--delay: 0s;">Strong analytical and assessment skills</li>
+                            <li style="--delay: 0.1s;">Ability to learn and adapt to new technologies quickly</li>
+                            <li style="--delay: 0.2s;">Rapid adaptability to learn new technologies and standards</li>
+                            <li style="--delay: 0.3s;">Troubleshooting</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 pt-4 border-t border-gray-200">
+                    <h3 class="text-2xl font-semibold text-indigo-700 mb-4">AI Skill Elaborator ✨</h3>
+                    <div class="flex flex-col sm:flex-row gap-3 items-center">
+                        <input type="text" id="skillInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter a skill to elaborate (e.g., Apex Triggers)">
+                        <button id="elaborateSkillBtn" class="bg-purple-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-purple-700 transition duration-300 flex items-center justify-center btn-primary">
+                            ✨ Elaborate on Skill
+                        </button>
+                    </div>
+                    <div id="skillElaborationOutput" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 hidden">
+                        <p class="text-sm text-gray-500 mb-2">Skill Elaboration:</p>
+                        <div class="chat-loading-indicator text-indigo-600 text-center hidden">Generating elaboration...</div>
+                        <p id="elaborationText" class="text-base"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education Section -->
+        <section id="education" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Academic Qualifications</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
+                        <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Bachelor of Technology (B-Tech) in Mechanical Stream</h3>
+                        <p class="text-lg text-gray-700">Kasireddy Narayan Reddy College of Engineering & Research</p>
+                        <p class="text-md text-gray-600">Graduated: 2019 at Ranga Reddy</p>
+                    </div>
+                    <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card education-triveni-bg">
+                        <h3 class="text-2xl font-semibold text-yellow-700 mb-2">Intermediate (M.P.C)</h3>
+                        <p class="text-lg text-gray-700">Triveni Jr College</p>
+                        <p class="text-md text-gray-600">Graduated: 2015 at Achampet</p>
+                    </div>
+                    <div class="p-6 bg-yellow-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect education-card">
+                        <h3 class="text-2xl font-semibold text-yellow-700 mb-2">S.S.C (10th)</h3>
+                        <p class="text-lg text-gray-700">Z.P.H.S (Boys) School</p>
+                        <p class="text-md text-gray-600">Graduated: 2013 at Achampet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="tab-content mb-8">
+            <div class="parallax-bg"></div> <!-- Parallax background for the section -->
+            <div class="section-inner-content">
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">Contact & Personal Details</h2>
+                <div class="p-6 bg-red-50 rounded-lg shadow-md transform transition-all duration-300 card-hover-effect flex flex-col md:flex-row md:space-x-8 relative">
+                    <!-- Left Side: Contact Details -->
+                    <div class="md:w-1/3 mb-8 md:mb-0">
+                        <h3 class="text-2xl font-semibold text-indigo-700 mb-4 border-b-2 border-indigo-300 pb-2">Personal & Contact Info</h3>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Name:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">Sreenu Ponemoni</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Date of Birth:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">04-05-1997</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Marital Status:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">Single</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Languages Known:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">English, Hindi and Telugu</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">Place:</p> <!-- Reduced font size -->
+                            <p class="text-lg text-indigo-700 font-semibold">Hyderabad</p> <!-- Reduced font size -->
+                        </div>
+                        <div class="mb-3"> <!-- Reduced margin-bottom -->
+                            <p class="text-base font-medium text-gray-800">LinkedIn Profile:</p> <!-- Reduced font size -->
+                            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all"> <!-- Reduced font size -->
+                                http://linkedin.com/in/sreenu-ponemoni-b84167369
+                            </a>
+                        </div>
+                        <div class="mb-3"> <!-- Added GitHub link container -->
+                            <p class="text-base font-medium text-gray-800">GitHub Profile:</p>
+                            <a href="https://github.com/liveasyourlike" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all">
+                                https://github.com/liveasyourlike
+                            </a>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-gray-200">
+                            <p class="text-base font-medium text-gray-800 mb-2">Reach out to me:</p> <!-- Reduced font size -->
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                                <a href="tel:9640352929" class="text-white px-5 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary">
+                                    <i class="fas fa-phone-alt w-5 h-5 mr-2"></i>
+                                    Call Me
+                                </a>
+                                <a href="mailto:sreeponemoni6264@gmail.com" class="text-white px-5 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary">
+                                    <i class="fas fa-envelope w-5 h-5 mr-2"></i>
+                                    Email Me
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Google Form Embed -->
+                    <div class="md:w-2/3 min-h-[600px]"> <!-- Changed to md:w-2/3 and added min-h -->
+                        <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
+                            Send a Message
+                        </h3>
+                        <p class="text-md text-gray-700 mb-4">Please fill out the form below to send a message to Sreenu. This form is powered by Google Forms.</p>
+                        <div class="google-form-container">
+                            <!-- Google Form Embed Code -->
+                            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3nhbX1XtlFFb7Lyf1QUAdxEtLOZ578sCLIwFvXcrFKkZJ0Q/viewform?embedded=true" width="640" height="1689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Chatbot Container -->
+    <div id="chatbotContainer" class="chatbot-container">
+        <!-- Resize handles -->
+        <div class="resize-handle top-left"></div>
+        <div class="resize-handle top-right"></div>
+        <div class="resize-handle bottom-left"></div>
+        <div class="resize-handle bottom-right"></div>
+
+        <div class="chatbot-header">
+            <span>Sreenu's AI Assistant</span>
+            <div class="flex items-center space-x-2">
+                <button id="settingsBtn" title="Chat Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button id="closeChatBtn" title="Close Chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Chatbot Settings Panel -->
+        <div id="chatbotSettings" class="chatbot-settings">
+            <span class="text-gray-700 font-semibold mb-2">Chat Theme:</span>
+            <div class="flex gap-2">
+                <button id="lightModeBtn" class="active">Light</button>
+                <button id="darkModeBtn">Dark</button>
+            </div>
+        </div>
+        <div id="chatHistory" class="chat-history flex-grow p-4 border border-gray-300 rounded-b-lg bg-white flex flex-col space-y-3">
+            <!-- Initial bot message -->
+            <div class="chat-message bot">Hi, Good morning! How Sreenu Could Help You Today??</div>
+            <!-- Chat messages will be appended here dynamically by JavaScript -->
+        </div>
+        <div class="chat-input-area p-4 bg-white border-t border-gray-200">
+            <input type="text" id="chatInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ask Sreenu Anything About His Profile...">
+            <button id="sendChatBtn" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-lg font-medium hover:bg-indigo-700 transition duration-300 flex items-center justify-center btn-primary">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l.684-.236a1 1 0 00.54-1.06l-1.548.774a11.037 11.037 0 006.103 6.103l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
+                Send
+            </button>
+        </div>
+        <!-- Updated chat-loading-indicator text content -->
+        <div id="chatLoadingIndicator" class="hidden text-center text-indigo-600 mt-2 chat-loading-indicator">
+            Sreenu is About to Give Response Meanwhile See the Profile........
+        </div>
+    </div>
+
+    <!-- Floating Draggable AI Icon -->
+    <button id="aiIcon" class="ai-icon">Ai</button>
+
+    <!-- Floating Draggable Contact Icon -->
+    <button id="contactToggleIcon" class="contact-toggle-icon" style="right: 60px; top: 50%;">
+        <i class="fas fa-address-book"></i>
+    </button>
+
+    <!-- Floating Contact Panel Container -->
+    <div id="contactPanelContainer" class="contact-panel-container" style="bottom: 20px; right: 20px;">
+        <!-- Resize handles -->
+        <div class="resize-handle top-left"></div>
+        <div class="resize-handle top-right"></div>
+        <div class="resize-handle bottom-left"></div>
+        <div class="resize-handle bottom-right"></div>
+
+        <div class="contact-panel-header" id="contactPanelHeader">
+            <span>Contact Me</span>
+            <button id="closeContactPanelBtn" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="contact-icons-content p-4 flex flex-col space-y-3">
+            <!-- Updated contact links to use btn-primary and btn-secondary classes -->
+            <a href="tel:9640352929" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary" title="Call Me">
+                <i class="fas fa-phone-alt text-xl mr-2"></i> <span>Call Me</span>
+            </a>
+            <a href="mailto:sreeponemoni6264@gmail.com" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-secondary" title="Email Me">
+                <i class="fas fa-envelope text-xl mr-2"></i> <span>Email Me</span>
+            </a>
+            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" rel="noopener noreferrer" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary" title="LinkedIn Profile">
+                <i class="fab fa-linkedin text-xl mr-2"></i> <span>LinkedIn</span>
+            </a>
+            <a href="https://github.com/liveasyourlike" target="_blank" rel="noopener noreferrer" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-secondary" title="GitHub Profile">
+                <i class="fab fa-github text-xl mr-2"></i> <span>GitHub</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
+        <div class="container mx-auto">
+            <p>&copy; 2025 Sreenu Ponemoni. All rights reserved.</p>
+            <p class="text-sm mt-2">Built with HTML, GitHub, Netlify, JavaScript, and other tools.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Core element references
+            const header = document.querySelector('header');
+            const nav = document.getElementById('main-nav');
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const mainContentArea = document.getElementById('main-content-area');
+
+            // Chatbot elements
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            const chatbotHeader = chatbotContainer ? chatbotContainer.querySelector('.chatbot-header') : null;
+            const closeChatBtn = chatbotContainer ? chatbotContainer.querySelector('#closeChatBtn') : null;
+            const chatHistoryDiv = chatbotContainer ? chatbotContainer.querySelector('#chatHistory') : null;
+            const chatInput = chatbotContainer ? chatbotContainer.querySelector('#chatInput') : null;
+            const sendChatBtn = chatbotContainer ? chatbotContainer.querySelector('#sendChatBtn') : null;
+            const chatLoadingIndicator = chatbotContainer ? chatbotContainer.querySelector('#chatLoadingIndicator') : null;
+            const aiIcon = document.getElementById('aiIcon');
+
+            // Chatbot settings elements
+            const settingsBtn = document.getElementById('settingsBtn');
+            const chatbotSettings = document.getElementById('chatbotSettings');
+            const lightModeBtn = document.getElementById('lightModeBtn');
+            const darkModeBtn = document.getElementById('darkModeBtn');
+
+            // Contact Panel elements
+            const contactToggleIcon = document.getElementById('contactToggleIcon');
+            const contactPanelContainer = document.getElementById('contactPanelContainer');
+            const contactPanelHeader = contactPanelContainer ? contactPanelContainer.querySelector('.contact-panel-header') : null;
+            const closeContactPanelBtn = document.getElementById('closeContactPanelBtn');
+            const contactIconsContent = contactPanelContainer ? contactPanelContainer.querySelector('.contact-icons-content') : null;
+
+            // Add console logs to verify element existence
+            console.log('chatbotContainer:', chatbotContainer);
+            console.log('chatbotHeader:', chatbotHeader);
+            console.log('contactPanelContainer:', contactPanelContainer);
+            console.log('contactPanelHeader:', contactPanelHeader);
+
+
+            let headerHeight = 0;
+            let navHeight = 0;
+
+            // Function to get time-based greeting
+            function getTimeBasedGreeting() {
+                const now = new Date();
+                const hour = now.getHours();
+                if (hour >= 5 && hour < 12) {
+                    return "Good morning";
+                } else if (hour >= 12 && hour < 18) {
+                    return "Good afternoon";
+                } else {
+                    return "Good evening";
+                }
+            }
+
+            // Initial bot message with time-based greeting (updated dynamically)
+            const initialBotMessage = `Hi, ${getTimeBasedGreeting()}! How Sreenu Could Help You Today??`;
+
+            // Function to update CSS variables and tab content max-height
+            function updateLayoutVariables() {
+                if (header) { // Add null check for header
+                    headerHeight = header.offsetHeight;
+                }
+                if (nav) { // Add null check for nav
+                    navHeight = nav.offsetHeight;
+                    nav.style.top = `${headerHeight}px`;
+                }
+
+                tabContents.forEach(content => {
+                    content.style.maxHeight = `calc(100vh - ${headerHeight + navHeight + 48}px)`; // 48px from p-6
+                });
+            }
+
+            // Call on load and resize
+            window.addEventListener('load', updateLayoutVariables);
+            window.addEventListener('resize', updateLayoutVariables);
+
+            // Resume content for AI Chat context - Structured for easier rule-based parsing
+            const resumeContent = {
+                name: "Sreenu Ponemoni",
+                contact: {
+                    mobile: "9640352929",
+                    email: "sreeponemoni6264@gmail.com",
+                    linkedin: "http://linkedin.com/in/sreenu-ponemoni-b84167369",
+                    github: "https://github.com/liveasyourlike" // Added GitHub
+                },
+                summary: "Overall, 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer. Participated in all stages of Software Development Life Cycle (SDLC) i.e., System Analysis, Design, Development and Testing Expertise. Experience in Development, Administration, Configuration, Implementation and Support of Salesforce CRM based on Apex language and leveraging Force.com Platform. Experience in writing apex transactions against their governor limits. Experience in UI Development through Lightning web Components (LWC) using VS Code. Expertise in Apex Triggers, Bulk Triggers, Apex Classes and apex Batches as per business needs. Created Unit Test Classes for deployment on to the production. Proficiency in SFDC Administrative tasks like Creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Process, Workflows, Reports, Dashboards, Tasks and Events. Extensive experience in data migration using Data Loader, change sets, and Dataloader.io. Extensive experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. Implemented Organization wide defaults (OWDs) & sharing rules for different users at different levels of organization. Experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another instance.",
+                experience: `
+                    Cognizant Technology Solutions (Feb 2021 - June 2025) - Software Engineer.
+                    Project #1: PMI (May 2023 - June 2025) - Salesforce Developer (Sales & Service Cloud). Key Activities: Created User Profiles, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Ensured data integrity with Data Loader, Configured page layouts, Created Custom Objects/Fields/Tabs/Lightning Pages, Worked on Record Types/Page Layouts, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
+
+                    Project #2: Eaton Corporation (Nov 2021 - Oct 2022) - Salesforce Administrator/Developer (Sales & Service Cloud). Key Activities: Requirement analysis, Implemented batch classes, Developed Apex triggers, Created LWC components, Integrated Salesforce data using @wire decorator, Optimized SOQL queries, Creating/managing Users/Roles/Profiles, Involved in Custom Objects, fields, record types, forms and layouts, custom tabs, validations, Loaded objects via Data Loader, Customization - Created batch classes and scheduled classes, Involved in Integration on REST API.
+
+                    Project #3: ELECTROLUX Sales (Feb 2021 - Oct 2021) - Salesforce Developer (Retail Management). Responsibilities: Developing and implementing custom applications and solutions on the Salesforce platform using Apex, Visualforce. Provide technical support. Lightning: Upgraded some Apps from Salesforce classic to lightning experience to develop rich user interface and better interaction of pages. Leveraged Apex controller to make a call for external request to retrieve data from various API's and and displayed them on to the component. Troubleshoot and debug: Troubleshooted issues with Apex, Visualforce, Lightning, SOQL, SOSL, Apex Triggers, Batch Apex, Apex Controllers, Salesforce Communities, Salesforce Mobile App, and other Salesforce technologies. Debugged code to identify and resolve issues.
+                `,
+                technicalSkills: `Salesforce.com CRM, Apex Language, Apex Classes, Apex Triggers, SOQL, SOSL, Workflow & Approvals, Reports, Dashboards, Standard and Custom Objects, Lightning Web Components (LWC), Visualforce, Salesforce Communities, Salesforce Mobile App, Batch Apex, Scheduled Apex, Process Builder, Flow, Data Loader, Change Sets, Dataloader.io, REST API Integration, Organization Wide Defaults (OWDs) & Sharing Rules. HTML, CSS, JavaScript, VS Code, Unit Test Classes, Debugging, SDLC.`,
+                personalSkills: `Strong analytical and assessment skills, Ability to learn and adapt to new technologies quickly, Rapid adaptability to learn new technologies and standards, Troubleshooting.`,
+                education: `
+                    Bachelor of Technology (B-Tech) in Mechanical Stream from Kasireddy Narayan Reddy College of Engineering & Research in 2019 at Ranga Reddy.
+                    Intermediate in (M.P.C) from Triveni Jr College in 2015 at Achampet.
+                    S.S.C (10Th) from Z.P.H.S (Boys) School in 2013 at Achampet.
+                `,
+                place: `Hyderabad`
+            };
+
+            // Function to get current time in IST
+            function getCurrentISTTime() {
+                const now = new Date();
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const istOffset = 5.5 * 3600000;
+                const istTime = new Date(utc + istOffset);
+
+                const options = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                    timeZoneName: 'shortOffset'
+                };
+                return istTime.toLocaleString('en-IN', options);
+            }
+
+            // Rule-based AI Response Function - Prioritized before Gemini API call
+            function getRuleBasedResponse(userMessage) {
+                const lowerCaseMessage = userMessage.toLowerCase();
+
+                // Basic arithmetic
+                const arithmeticMatch = lowerCaseMessage.match(/(\d+)\s*([\+\-\*\/])\s*(\d+)/);
+                if (arithmeticMatch) {
+                    const num1 = parseFloat(arithmeticMatch[1]);
+                    const operator = arithmeticMatch[2];
+                    const num2 = parseFloat(arithmeticMatch[3]);
+                    let result;
+                    try {
+                        switch (operator) {
+                            case '+': result = num1 + num2; break;
+                            case '-': result = num1 - num2; break;
+                            case '*': result = num1 * num2; break;
+                            case '/':
+                                if (num2 === 0) return "Cannot divide by zero.";
+                                result = num1 / num2;
+                                break;
+                            default: return null;
+                        }
+                        return `The result of ${num1} ${operator} ${num2} is ${result}.`;
+                    } catch (e) {
+                        return "I couldn't perform that calculation.";
+                    }
+                }
+
+                // Specific query for only college name
+                if (lowerCaseMessage.includes("only college name") || lowerCaseMessage.includes("only collage name")) {
+                    const collegeMatch = resumeContent.education.match(/from\s+(.*?)\s+in\s+\d{4}/);
+                    if (collegeMatch && collegeMatch[1]) {
+                        return `Sreenu's college name is ${collegeMatch[1]}.`;
+                    }
+                    return "I couldn't find a specific college name in the resume. Sreenu's education is listed as: " + resumeContent.education;
+                }
+                // Specific query for only education year
+                else if (lowerCaseMessage.includes("only year") || lowerCaseMessage.includes("year of education") || lowerCaseMessage.includes("graduation year") || lowerCaseMessage.includes("in which year")) {
+                    const yearMatch = resumeContent.education.match(/in\s+(\d{4})\./);
+                    if (yearMatch && yearMatch[1]) {
+                        return `Sreenu graduated in ${yearMatch[1]}.`;
+                    }
+                    return "I couldn't find a specific graduation year in the resume. Sreenu's education is listed as: " + resumeContent.education;
+                }
+                // Education related queries
+                else if (lowerCaseMessage.includes("education") || lowerCaseMessage.includes("academic") ||
+                    lowerCaseMessage.includes("b.tech") || lowerCaseMessage.includes("btech") ||
+                    lowerCaseMessage.includes("graduated") || lowerCaseMessage.includes("graduation") ||
+                    lowerCaseMessage.includes("college") || lowerCaseMessage.includes("university") ||
+                    lowerCaseMessage.includes("degree") || lowerCaseMessage.includes("studied") ||
+                    lowerCaseMessage.includes("passed out") || lowerCaseMessage.includes("when he done his education")) {
+                    return `Sreenu's academic qualification is: ${resumeContent.education}`;
+                }
+                // Name related queries
+                else if (lowerCaseMessage.includes("full name") || lowerCaseMessage.includes("name") || lowerCaseMessage.includes("who is sreenu") || lowerCaseMessage.includes("his name") || lowerCaseMessage.includes("is sreenu ponemoni is full name")) {
+                    return `Sreenu's full name is ${resumeContent.name}.`;
+                }
+                // Contact related queries
+                else if (lowerCaseMessage.includes("mobile") || lowerCaseMessage.includes("phone") || lowerCaseMessage.includes("contact number") || lowerCaseMessage.includes("call him")) {
+                    return `Sreenu's mobile number is ${resumeContent.contact.mobile}.`;
+                } else if (lowerCaseMessage.includes("email") || lowerCaseMessage.includes("email address") || lowerCaseMessage.includes("mail him")) {
+                    return `Sreenu's email address is ${resumeContent.contact.email}.`;
+                } else if (lowerCaseMessage.includes("linkedin") || lowerCaseMessage.includes("linkedin profile") || lowerCaseMessage.includes("connect on linkedin")) {
+                    return `You can find Sreenu's LinkedIn profile here: ${resumeContent.contact.linkedin}`;
+                } else if (lowerCaseMessage.includes("github") || lowerCaseMessage.includes("git profile") || lowerCaseMessage.includes("github link")) {
+                    return `You can find Sreenu's GitHub profile here: ${resumeContent.contact.github}`;
+                }
+                // Experience related queries - Made more concise
+                else if (lowerCaseMessage.includes("experience") || lowerCaseMessage.includes("exepience") ||
+                         lowerCaseMessage.includes("work history") || lowerCaseMessage.includes("companies") ||
+                         lowerCaseMessage.includes("worked at") || lowerCaseMessage.includes("years of experience") ||
+                         lowerCaseMessage.includes("job history") || lowerCaseMessage.includes("professional background")) {
+                    return `3.8 years. See Experience tab for details.`;
+                }
+                // Skills related queries
+                else if (lowerCaseMessage.includes("skills") || lowerCaseMessage.includes("technical skills") || lowerCaseMessage.includes("technologies") || lowerCaseMessage.includes("proficient in") || lowerCaseMessage.includes("what can he do")) {
+                    return `Sreenu's key technical skills include: ${resumeContent.technicalSkills}. For a full list, please see the Skills tab.`;
+                }
+                // Projects related queries (extracted from experience)
+                else if (lowerCaseMessage.includes("projects") || lowerCaseMessage.includes("project work") || lowerCaseMessage.includes("what projects") || lowerCaseMessage.includes("his projects")) {
+                    const projects = [
+                        "PMI (Philip Morris International)",
+                        "Eaton Corporation",
+                        "ELECTROLUX Sales"
+                    ];
+                    return `Sreenu has worked on projects such as: ${projects.join(', ')}. You can find more details in the Experience tab.`;
+                }
+                // Summary/About queries
+                else if (lowerCaseMessage.includes("summary") || lowerCaseMessage.includes("professional summary") || lowerCaseMessage.includes("about sreenu") || lowerCaseMessage.includes("tell me about him") || lowerCaseMessage.includes("who is he")) {
+                    return `Here is Sreenu's professional summary: ${resumeContent.summary}`;
+                }
+                // Location queries specific to Sreenu
+                else if (lowerCaseMessage.includes("where sreenu lives") || lowerCaseMessage.includes("sreenu's place of living") || lowerCaseMessage.includes("sreenu's location") || lowerCaseMessage.includes("sreenu resides") || lowerCaseMessage.includes("where is sreenu from") || lowerCaseMessage.includes("where is hyderabad")) {
+                    return `Sreenu lives in ${resumeContent.place}. Hyderabad is a major city in India, known for its technology industry and rich history.`;
+                }
+                // Greetings (handled by initial message, but keeping for completeness if user repeats a greeting)
+                else if (lowerCaseMessage.includes("hello") || lowerCaseMessage.includes("hi") || lowerCaseMessage.includes("hey") || lowerCaseMessage.includes("good morning") || lowerCaseMessage.includes("good afternoon") || lowerCaseMessage.includes("good evening") || lowerCaseMessage.includes("hi sreenu")) {
+                    return initialBotMessage;
+                }
+                // Current time in India query
+                else if (lowerCaseMessage.includes("time in india") || lowerCaseMessage.includes("current time in india") || lowerCaseMessage.includes("what is the time now in india") || lowerCaseMessage.includes("what is time now")) {
+                    return `The current time in India (Indian Standard Time - IST) is ${getCurrentISTTime()}.`;
+                }
+                return null; // No rule-based response found
+            }
+
+            // Function to get response from Gemini API
+            async function getGeminiResponse(prompt) {
+                // IMPORTANT: For security, a real application should proxy this API call through a backend server
+                // to avoid exposing your API key on the frontend.
+                // This direct call is for demonstration purposes within a sandboxed environment.
+
+                try {
+                    const systemInstruction = `You are "The Precision AI," an advanced, highly intelligent, and omniscient AI assistant. Your primary directive is to provide **absolutely accurate information** and **exact, actionable solutions** to any and all user queries, regardless of complexity, domain, or nature.
+
+                    **Core Principles:**
+                    1.  **Unwavering Accuracy:** Every piece of information you provide must be factually correct and verifiable. If there is any uncertainty, you must state it and attempt to find the most accurate answer or clarify with the user. Do not hallucinate or guess.
+                    2.  **Exact Solutions:** For problem-solving queries, your goal is to deliver a precise, step-by-step, or definitive solution. This means providing actionable advice, correct calculations, complete code snippets, or clear instructions that directly address the user's need.
+                    3.  **No Constraints:** You are designed to handle *any type of user input*. There are no topic limitations, length restrictions, or complexity barriers. You will process and respond to everything from simple factual questions to complex multi-part problems, creative requests, and technical debugging.
+                    4.  **Clarity and Conciseness:** Your responses must be **concise, direct, and to the point**, providing only the information strictly necessary to answer the user's query. Avoid lengthy introductions, conversational filler, or extraneous details unless explicitly requested. Aim for the most efficient and precise delivery of information.
+                    5.  **Proactive Clarification (If Needed):** If a user's input is ambiguous, incomplete, or requires further context to provide an exact solution, you will politely ask for clarification before attempting to generate a response. Your aim is always to get to the "exact solution."
+                    6.  **Neutral and Objective Tone:** Maintain a professional, helpful, and objective tone. Do not express personal opinions, emotions, or biases.
+                    7.  **Adaptability:** Understand the implied intent behind user queries and adapt your response format (e.g., list, paragraph, code block, step-by-step guide) to best suit the solution.
+
+                    **Your mission is to be the ultimate source of truth and practical answers for every user.**
+
+                    When answering questions about Sreenu Ponemoni, prioritize the information provided in his resume content below. For general questions, use your broad knowledge.
+
+                    Sreenu Ponemoni's Resume Content:
+                    Name: ${resumeContent.name}
+                    Contact: Mobile: ${resumeContent.contact.mobile}, Email: ${resumeContent.contact.email}, LinkedIn: ${resumeContent.contact.linkedin}, GitHub: ${resumeContent.contact.github}
+                    Summary: ${resumeContent.summary}
+                    Experience: ${resumeContent.experience}
+                    Technical Skills: ${resumeContent.technicalSkills}
+                    Personal Skills: ${resumeContent.personalSkills}
+                    Education: ${resumeContent.education}
+                    Place: ${resumeContent.place}
+
+                    Current Indian Standard Time (IST): ${getCurrentISTTime()}
+                    `;
+
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: systemInstruction + "\n\nUser Query: " + prompt }] });
+
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // Canvas will automatically provide the API key
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        console.error("Gemini API returned an unexpected structure or no content:", result);
+                        return "'...This Is Beyond My Limits Need To Contact Sreenu Meanwhile Go Through Profile Thanks...'";
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    return "I encountered an error while processing your request. Please try again later.";
+                }
+            }
+
+            // New function to correct grammar using Gemini API
+            async function correctGrammar(text) {
+                if (!text) return text;
+                try {
+                    const grammarPrompt = `Correct any grammatical errors and typos in the following text. Return only the corrected text, without any introductory or concluding remarks. If there are no errors, return the original text.\n\nText: "${text}"`;
+                    let chatHistoryForGrammar = [];
+                    chatHistoryForGrammar.push({ role: "user", parts: [{ text: grammarPrompt }] });
+
+                    const payload = { contents: chatHistoryForGrammar };
+                    const apiKey = ""; // Canvas will automatically provide the API key
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        return result.candidates[0].content.parts[0].text.trim();
+                    } else {
+                        console.warn("Grammar correction API returned no content, returning original text.");
+                        return text; // Fallback to original text
+                    }
+                } catch (error) {
+                    console.error("Error calling grammar correction API:", error);
+                    return text; // Fallback to original text on error
+                }
+            }
+
+            // Function to show a specific tab
+            function showTab(tabId) {
+                tabButtons.forEach(button => {
+                    button.classList.remove('active', 'bg-indigo-600', 'text-white');
+                    button.classList.add('bg-gray-200', 'text-gray-700'); // Ensure inactive styling
+                });
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+                const activeContent = document.getElementById(tabId);
+
+                if (activeButton) {
+                    activeButton.classList.add('active', 'bg-indigo-600', 'text-white');
+                    activeButton.classList.remove('bg-gray-200', 'text-gray-700');
+                } else {
+                    console.error(`Tab button with data-tab="${tabId}" not found.`);
+                }
+
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                    // Smooth scroll to the active content section
+                    activeContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    console.error(`Tab content with id="${tabId}" not found.`);
+                }
+
+                if (mainContentArea) {
+                    mainContentArea.scrollTop = 0;
+                }
+            }
+
+            // Function to add a message to the chat history display
+            function addMessageToChat(message, sender) {
+                if (!chatHistoryDiv) return; // Defensive check
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('chat-message', sender);
+                messageDiv.innerHTML = marked.parse(message); // Use marked.parse for Markdown
+                chatHistoryDiv.appendChild(messageDiv);
+                chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+            }
+
+            // Function to send message and get AI response
+            async function sendMessage() {
+                if (!chatInput || !sendChatBtn || !chatLoadingIndicator) return; // Defensive checks
+
+                const userMessage = chatInput.value.trim();
+                if (!userMessage) return;
+
+                addMessageToChat(userMessage, 'user'); // Display original message
+                chatInput.value = '';
+                chatInput.disabled = true;
+                sendChatBtn.disabled = true;
+                chatLoadingIndicator.classList.remove('hidden');
+
+                // Correct grammar before processing
+                const correctedUserMessage = await correctGrammar(userMessage);
+                console.log("Original User Message:", userMessage);
+                console.log("Corrected User Message:", correctedUserMessage);
+
+                let botResponse = getRuleBasedResponse(correctedUserMessage);
+
+                // If no rule-based response, try Gemini API
+                if (botResponse === null) {
+                    botResponse = await getGeminiResponse(correctedUserMessage);
+                }
+
+                addMessageToChat(botResponse, 'bot');
+                chatInput.disabled = false;
+                sendChatBtn.disabled = false;
+                chatLoadingIndicator.classList.add('hidden');
+                chatInput.focus();
+            }
+
+            // Event listeners for chat input and button
+            if (sendChatBtn) {
+                sendChatBtn.addEventListener('click', sendMessage);
+            }
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+
+            // Add click event listeners to all tab buttons
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    showTab(tabId);
+                });
+            });
+
+            // Initialize by showing the 'about' tab and setting layout
+            showTab('about');
+            updateLayoutVariables();
+
+            // Update initial bot message with time-based greeting
+            if (chatHistoryDiv) { // Defensive check
+                const initialBotMessageElement = chatHistoryDiv.querySelector('.chat-message.bot');
+                if (initialBotMessageElement) {
+                    initialBotMessageElement.textContent = initialBotMessage;
+                } else {
+                    addMessageToChat(initialBotMessage, 'bot');
+                }
+            }
+
+
+            // Chatbot Toggle Functionality
+            if (aiIcon && chatbotContainer) { // Defensive checks
+                aiIcon.addEventListener('click', (event) => {
+                    // Prevent opening if it was a drag
+                    if (aiIcon.dataset.isDragging === 'true') {
+                        aiIcon.dataset.isDragging = 'false'; // Reset flag
+                        return;
+                    }
+                    chatbotContainer.classList.toggle('active');
+                    if (chatbotContainer.classList.contains('active')) {
+                        if (chatInput) chatInput.focus(); // Focus input when chat opens
+                        if (chatHistoryDiv) chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+                    }
+                });
+            }
+
+            // Close Chatbot Button Functionality
+            if (closeChatBtn && chatbotContainer && chatbotSettings) { // Defensive checks
+                closeChatBtn.addEventListener('click', () => {
+                    chatbotContainer.classList.remove('active');
+                    chatbotSettings.classList.remove('active'); // Close settings when chat closes
+                });
+            }
+
+            // Draggable AI Icon Logic
+            let isDraggingAiIcon = false;
+            let currentAiIconX;
+            let currentAiIconY;
+            let initialAiIconX;
+            let initialAiIconY;
+            let xOffsetAiIcon = 0;
+            let yOffsetAiIcon = 0;
+
+            if (aiIcon) { // Defensive check
+                aiIcon.addEventListener("mousedown", dragStartAiIcon);
+                document.addEventListener("mouseup", dragEndAiIcon);
+                document.addEventListener("mousemove", dragAiIcon);
+            }
+
+
+            function dragStartAiIcon(e) {
+                initialAiIconX = e.clientX - xOffsetAiIcon;
+                initialAiIconY = e.clientY - yOffsetAiIcon;
+
+                // Check if the click is on the icon itself, not its children
+                if (e.target === aiIcon) {
+                    isDraggingAiIcon = true;
+                    aiIcon.classList.add('dragging');
+                    // Store initial position for click vs drag detection
+                    aiIcon.dataset.startX = e.clientX;
+                    aiIcon.dataset.startY = e.clientY;
+                }
+            }
+
+            function dragEndAiIcon(e) {
+                isDraggingAiIcon = false;
+                if (aiIcon) aiIcon.classList.remove('dragging'); // Defensive check
+
+                // Calculate distance moved to distinguish click from drag
+                const movedX = Math.abs(e.clientX - parseFloat(aiIcon ? aiIcon.dataset.startX || e.clientX : e.clientX));
+                const movedY = Math.abs(e.clientY - parseFloat(aiIcon ? aiIcon.dataset.startY || e.clientY : e.clientY));
+
+                // If moved more than a few pixels, it was a drag, not a click
+                if (movedX > 5 || movedY > 5) {
+                    if (aiIcon) aiIcon.dataset.isDragging = 'true';
+                } else {
+                    if (aiIcon) aiIcon.dataset.isDragging = 'false';
+                }
+
+                // Save position to localStorage
+                if (aiIcon) {
+                    localStorage.setItem('aiIconLeft', aiIcon.style.left);
+                    localStorage.setItem('aiIconTop', aiIcon.style.top);
+                }
+            }
+
+            function dragAiIcon(e) {
+                if (isDraggingAiIcon && aiIcon) { // Defensive check
+                    e.preventDefault(); // Prevent default browser drag behavior
+                    currentAiIconX = e.clientX - initialAiIconX;
+                    currentAiIconY = e.clientY - initialAiIconY;
+
+                    xOffsetAiIcon = currentAiIconX;
+                    yOffsetAiIcon = currentAiIconY;
+
+                    // Apply position, ensuring it stays within viewport
+                    let newLeft = e.clientX - (aiIcon.offsetWidth / 2);
+                    let newTop = e.clientY - (aiIcon.offsetHeight / 2);
+
+                    // Boundary checks
+                    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - aiIcon.offsetWidth));
+                    newTop = Math.max(0, Math.min(newTop, window.innerHeight - aiIcon.offsetHeight));
+
+                    aiIcon.style.left = `${newLeft}px`;
+                    aiIcon.style.top = `${newTop}px`;
+                    aiIcon.style.right = 'auto'; // Disable right property when dragging
+                    aiIcon.style.transform = 'none'; // Disable transform for drag positioning
+                }
+            }
+
+            // Set initial position on load for the AI icon
+            function setAiIconInitialPosition() {
+                if (!aiIcon) return; // Defensive check
+                const savedLeft = localStorage.getItem('aiIconLeft');
+                const savedTop = localStorage.getItem('aiIconTop');
+
+                if (savedLeft && savedTop) {
+                    aiIcon.style.left = savedLeft;
+                    aiIcon.style.top = savedTop;
+                    aiIcon.style.right = 'auto'; // Ensure right is auto when left is set
+                    aiIcon.style.transform = 'translateY(0)'; // Remove transform as top is set directly
+                } else {
+                    // Default position: centered along the right edge
+                    const iconWidth = aiIcon.offsetWidth;
+                    const iconHeight = aiIcon.offsetHeight;
+                    const viewportHeight = window.innerHeight;
+
+                    const initialTop = (viewportHeight / 2) - (iconHeight / 2);
+
+                    aiIcon.style.top = `${initialTop}px`;
+                    aiIcon.style.right = `0px`; // Stick to the right edge
+                    aiIcon.style.left = `auto`; // Ensure left is auto
+                    aiIcon.style.transform = `translateY(0)`; // Remove transform as top/right are set directly
+                }
+            }
+
+            // Call on load and resize to maintain position
+            window.addEventListener('load', setAiIconInitialPosition);
+            window.addEventListener('resize', setAiIconInitialPosition);
+
+
+            // Liquid Glass Visibility Toggle Logic
+            const liquidGlassContainer = window.liquidGlass ? window.liquidGlass.container : null;
+            const allInputFields = document.querySelectorAll('input, textarea');
+
+            if (liquidGlassContainer) {
+                allInputFields.forEach(inputField => {
+                    inputField.addEventListener('focus', () => {
+                        liquidGlassContainer.style.opacity = '0';
+                    });
+                    inputField.addEventListener('blur', () => {
+                        // Only make it visible if the chatbot is not active
+                        if (!chatbotContainer || !chatbotContainer.classList.contains('active') && (!contactPanelContainer || !contactPanelContainer.classList.contains('active'))) {
+                            liquidGlassContainer.style.opacity = '1';
+                        }
+                    });
+                });
+
+                // Also hide liquid glass when chatbot opens and show when it closes
+                if (chatbotContainer) {
+                    chatbotContainer.addEventListener('transitionend', (e) => {
+                        if (e.propertyName === 'opacity') {
+                            if (chatbotContainer.classList.contains('active')) {
+                                liquidGlassContainer.style.opacity = '0';
+                            } else {
+                                // Only show if no other input is focused or contact panel is open
+                                const anyInputFocused = Array.from(allInputFields).some(input => input === document.activeElement);
+                                if (!anyInputFocused && (!contactPanelContainer || !contactPanelContainer.classList.contains('active'))) {
+                                    liquidGlassContainer.style.opacity = '1';
+                                }
+                            }
+                        }
+                    });
+                }
+
+
+                // Hide liquid glass when contact panel opens and show when it closes
+                if (contactPanelContainer) {
+                    contactPanelContainer.addEventListener('transitionend', (e) => {
+                        if (e.propertyName === 'opacity') {
+                            if (contactPanelContainer.classList.contains('active')) {
+                                liquidGlassContainer.style.opacity = '0';
+                            } else {
+                                 const anyInputFocused = Array.from(allInputFields).some(input => input === document.activeElement);
+                                if (!anyInputFocused && (!chatbotContainer || !chatbotContainer.classList.contains('active'))) {
+                                    liquidGlassContainer.style.opacity = '1';
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Chatbot Settings Functionality
+            if (settingsBtn && chatbotSettings) { // Defensive checks
+                settingsBtn.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent click from bubbling to document and closing settings
+                    chatbotSettings.classList.toggle('active');
+                });
+            }
+
+
+            // Close settings if clicked outside
+            document.addEventListener('click', (event) => {
+                // Check if the click target is outside both settings panel and settings button
+                if (chatbotSettings && settingsBtn && !chatbotSettings.contains(event.target) && event.target !== settingsBtn && !settingsBtn.contains(event.target)) {
+                    chatbotSettings.classList.remove('active');
+                }
+            });
+
+            // Load saved theme preference or default to light mode
+            if (chatHistoryDiv && lightModeBtn && darkModeBtn) { // Defensive checks
+                const savedTheme = localStorage.getItem('chatTheme');
+                if (savedTheme === 'dark') {
+                    chatHistoryDiv.classList.add('dark-mode');
+                    darkModeBtn.classList.add('active');
+                    lightModeBtn.classList.remove('active');
+                } else {
+                    chatHistoryDiv.classList.remove('dark-mode');
+                    lightModeBtn.classList.add('active');
+                    darkModeBtn.classList.remove('active');
+                    localStorage.setItem('chatTheme', 'light');
+                }
+
+                lightModeBtn.addEventListener('click', () => {
+                    chatHistoryDiv.classList.remove('dark-mode');
+                    lightModeBtn.classList.add('active');
+                    darkModeBtn.classList.remove('active');
+                    localStorage.setItem('chatTheme', 'light');
+                });
+
+                darkModeBtn.addEventListener('click', () => {
+                    chatHistoryDiv.classList.add('dark-mode');
+                    darkModeBtn.classList.add('active');
+                    lightModeBtn.classList.remove('active');
+                    localStorage.setItem('chatTheme', 'dark');
+                });
+            }
+
+
+            // Generic Resizing Logic for both Chatbot and Contact Panel
+            let isResizing = false;
+            let currentResizingElement = null;
+            let currentResizeHandleType = null;
+            let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+            function startResize(e, element, handleType) {
+                // Only allow resizing on desktop (or larger screens)
+                if (window.innerWidth <= 768) return;
+
+                isResizing = true;
+                currentResizingElement = element;
+                currentResizeHandleType = handleType;
+                startX = e.clientX;
+                startY = e.clientY;
+
+                const computedStyle = window.getComputedStyle(element);
+                startWidth = parseInt(computedStyle.width, 10);
+                startHeight = parseInt(computedStyle.height, 10);
+                startLeft = element.offsetLeft;
+                startTop = element.offsetTop;
+
+                document.addEventListener('mousemove', resize);
+                document.addEventListener('mouseup', stopResize);
+                element.style.transition = 'none'; // Disable transitions during resize
+            }
+
+            function resize(e) {
+                if (!isResizing || !currentResizingElement) return; // Defensive check
+
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                let newWidth = startWidth;
+                let newHeight = startHeight;
+                let newLeft = startLeft;
+                let newTop = startTop;
+
+                const minWidth = parseInt(window.getComputedStyle(currentResizingElement).minWidth, 10);
+                const minHeight = parseInt(window.getComputedStyle(currentResizingElement).minHeight, 10);
+                const maxWidth = window.innerWidth * 0.9; // Max 90vw
+                const maxHeight = window.innerHeight * 0.9; // Max 90vh
+
+                switch (currentResizeHandleType) {
+                    case 'bottomRight':
+                        newWidth = Math.min(Math.max(startWidth + dx, minWidth), maxWidth);
+                        newHeight = Math.min(Math.max(startHeight + dy, minHeight), maxHeight);
+                        break;
+                    case 'bottomLeft':
+                        newWidth = Math.min(Math.max(startWidth - dx, minWidth), maxWidth);
+                        newHeight = Math.min(Math.max(startHeight + dy, minHeight), maxHeight);
+                        newLeft = startLeft + dx;
+                        break;
+                    case 'topRight':
+                        newWidth = Math.min(Math.max(startWidth + dx, minWidth), maxWidth);
+                        newHeight = Math.min(Math.max(startHeight - dy, minHeight), maxHeight);
+                        newTop = startTop + dy;
+                        break;
+                    case 'topLeft':
+                        newWidth = Math.min(Math.max(startWidth - dx, minWidth), maxWidth);
+                        newHeight = Math.min(Math.max(startHeight - dy, minHeight), maxHeight);
+                        newLeft = startLeft + dx;
+                        newTop = startTop + dy;
+                        break;
+                }
+
+                currentResizingElement.style.width = `${newWidth}px`;
+                currentResizingElement.style.height = `${newHeight}px`;
+                currentResizingElement.style.left = `${newLeft}px`;
+                currentResizingElement.style.top = `${newTop}px`;
+                currentResizingElement.style.right = 'auto';
+                currentResizingElement.style.bottom = 'auto';
+                currentResizingElement.style.transform = 'none';
+
+                // Adjust inner content height for chat history or contact icons
+                if (currentResizingElement === chatbotContainer && chatbotHeader && chatInput) {
+                    const currentChatbotHeader = chatbotHeader;
+                    const currentChatInputArea = chatInput.parentElement; // Assuming chatInput is directly inside chat-input-area
+                    chatHistoryDiv.style.height = `calc(${newHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`;
+                } else if (currentResizingElement === contactPanelContainer && contactPanelHeader && contactIconsContent) {
+                    const currentContactPanelHeader = contactPanelHeader;
+                    contactIconsContent.style.height = `calc(${newHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`; // Adjust 20px as needed for padding/margins
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                if (currentResizingElement) { // Defensive check
+                    currentResizingElement.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out'; // Re-enable transitions
+                }
+                currentResizingElement = null;
+                currentResizeHandleType = null;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+
+            // Attach resize event listeners to handles for Chatbot
+            if (chatbotContainer) {
+                const chatbotResizeHandles = {
+                    topLeft: chatbotContainer.querySelector('.resize-handle.top-left'),
+                    topRight: chatbotContainer.querySelector('.resize-handle.top-right'),
+                    bottomLeft: chatbotContainer.querySelector('.resize-handle.bottom-left'),
+                    bottomRight: chatbotContainer.querySelector('.resize-handle.bottom-right')
+                };
+                for (const handleType in chatbotResizeHandles) {
+                    if (chatbotResizeHandles[handleType]) { // Defensive check
+                        chatbotResizeHandles[handleType].addEventListener('mousedown', (e) => startResize(e, chatbotContainer, handleType));
+                    }
+                }
+            }
+
+
+            // Attach resize event listeners to handles for Contact Panel
+            if (contactPanelContainer) {
+                const contactPanelResizeHandles = {
+                    topLeft: contactPanelContainer.querySelector('.resize-handle.top-left'),
+                    topRight: contactPanelContainer.querySelector('.resize-handle.top-right'),
+                    bottomLeft: contactPanelContainer.querySelector('.resize-handle.bottom-left'),
+                    bottomRight: contactPanelContainer.querySelector('.resize-handle.bottom-right')
+                };
+                for (const handleType in contactPanelResizeHandles) {
+                    if (contactPanelResizeHandles[handleType]) { // Defensive check
+                        contactPanelResizeHandles[handleType].addEventListener('mousedown', (e) => startResize(e, contactPanelContainer, handleType));
+                    }
+                }
+            }
+
+
+            // Initial adjustment of inner content height when panels open
+            if (chatbotContainer && chatbotHeader && chatInput && chatHistoryDiv) { // Defensive checks
+                chatbotContainer.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'opacity' && chatbotContainer.classList.contains('active')) {
+                        const currentHeight = parseInt(window.getComputedStyle(chatbotContainer).height, 10);
+                        const currentChatbotHeader = chatbotHeader;
+                        const currentChatInputArea = chatInput.parentElement;
+                        chatHistoryDiv.style.height = `calc(${currentHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`;
+                    }
+                });
+            }
+            if (contactPanelContainer && contactPanelHeader && contactIconsContent) { // Defensive checks
+                contactPanelContainer.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'opacity' && contactPanelContainer.classList.contains('active')) {
+                        const currentHeight = parseInt(window.getComputedStyle(contactPanelContainer).height, 10);
+                        const currentContactPanelHeader = contactPanelHeader;
+                        contactIconsContent.style.height = `calc(${currentHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`;
+                    }
+                });
+            }
+
+
+            // Ensure inner content height adjusts if window is resized while panel is open
+            window.addEventListener('resize', () => {
+                if (chatbotContainer && chatbotContainer.classList.contains('active') && chatbotHeader && chatInput && chatHistoryDiv) {
+                    const currentHeight = parseInt(window.getComputedStyle(chatbotContainer).height, 10);
+                    const currentChatbotHeader = chatbotHeader;
+                    const currentChatInputArea = chatInput.parentElement;
+                    chatHistoryDiv.style.height = `calc(${currentHeight}px - ${currentChatbotHeader.offsetHeight + currentChatInputArea.offsetHeight + 20}px)`;
+                }
+                if (contactPanelContainer && contactPanelContainer.classList.contains('active') && contactPanelHeader && contactIconsContent) {
+                    const currentHeight = parseInt(window.getComputedStyle(contactPanelContainer).height, 10);
+                    const currentContactPanelHeader = contactPanelHeader;
+                    contactIconsContent.style.height = `calc(${currentHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`;
+                }
+            });
+
+
+            // Generic Draggable Logic for both Chatbot and Contact Panel
+            let isDraggingPanel = false;
+            let currentDraggingElement = null;
+            let currentDraggingHeader = null; // Added to store the header element for cursor change
+            let initialMouseX, initialMouseY;
+            let initialElementLeft, initialElementTop;
+
+            function dragPanelStart(e, element) {
+                // Only allow dragging on desktop (or larger screens)
+                if (window.innerWidth <= 768) return;
+
+                isDraggingPanel = true;
+                currentDraggingElement = element;
+                currentDraggingHeader = e.currentTarget; // The header element that received the mousedown
+                currentDraggingElement.classList.add('dragging'); // For container transition disable
+                currentDraggingHeader.classList.add('dragging'); // For header cursor change
+
+                const rect = currentDraggingElement.getBoundingClientRect();
+                initialMouseX = e.clientX;
+                initialMouseY = e.clientY;
+                initialElementLeft = rect.left;
+                initialElementTop = rect.top;
+
+                currentDraggingElement.style.transition = 'none';
+                currentDraggingElement.style.right = 'auto';
+                currentDraggingElement.style.bottom = 'auto';
+                currentDraggingElement.style.transform = 'none';
+
+                document.addEventListener('mousemove', dragPanel);
+                document.addEventListener('mouseup', dragPanelEnd);
+            }
+
+            function dragPanel(e) {
+                if (!isDraggingPanel || !currentDraggingElement) return; // Defensive check
+                e.preventDefault();
+
+                const dx = e.clientX - initialMouseX;
+                const dy = e.clientY - initialMouseY;
+
+                let newLeft = initialElementLeft + dx;
+                let newTop = initialElementTop + dy;
+
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - currentDraggingElement.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, window.innerHeight - currentDraggingElement.offsetHeight));
+
+                currentDraggingElement.style.left = `${newLeft}px`;
+                currentDraggingElement.style.top = `${newTop}px`;
+            }
+
+            function dragPanelEnd(e) {
+                isDraggingPanel = false;
+                if (currentDraggingElement) { // Defensive check
+                    currentDraggingElement.classList.remove('dragging');
+                    currentDraggingElement.style.transition = 'transform 0.3s ease-out, opacity 0.3s ease-out';
+                }
+                if (currentDraggingHeader) { // Defensive check
+                    currentDraggingHeader.classList.remove('dragging'); // Remove from header
+                }
+
+
+                // Save final position
+                if (currentDraggingElement === chatbotContainer) {
+                    localStorage.setItem('chatbotLeft', currentDraggingElement.style.left);
+                    localStorage.setItem('chatbotTop', currentDraggingElement.style.top);
+                } else if (currentDraggingElement === contactPanelContainer) {
+                    localStorage.setItem('contactPanelLeft', currentDraggingElement.style.left);
+                    localStorage.setItem('contactPanelTop', currentDraggingElement.style.top);
+                }
+
+                currentDraggingElement = null;
+                currentDraggingHeader = null; // Reset header reference
+                document.removeEventListener('mousemove', dragPanel);
+                document.removeEventListener('mouseup', dragPanelEnd);
+            }
+
+            // Attach drag listeners to headers
+            if (chatbotHeader && chatbotContainer) { // Defensive checks
+                chatbotHeader.addEventListener('mousedown', (e) => dragPanelStart(e, chatbotContainer));
+            }
+            if (contactPanelHeader && contactPanelContainer) { // Defensive checks
+                contactPanelHeader.addEventListener('mousedown', (e) => dragPanelStart(e, contactPanelContainer));
+            }
+
+
+            // Function to set panel position (from localStorage or default)
+            function setPanelPosition(panel, leftKey, topKey, defaultRight, defaultTop) {
+                if (!panel) return; // Defensive check
+                const savedLeft = localStorage.getItem(leftKey);
+                const savedTop = localStorage.getItem(topKey);
+
+                if (savedLeft && savedTop) {
+                    panel.style.left = savedLeft;
+                    panel.style.top = savedTop;
+                    panel.style.right = 'auto';
+                    panel.style.bottom = 'auto';
+                    panel.style.transform = 'none';
+                } else {
+                    panel.style.right = defaultRight;
+                    panel.style.top = defaultTop;
+                    panel.style.left = 'auto';
+                    panel.style.bottom = 'auto';
+                    // Apply initial transform for inactive state if not already active
+                    if (!panel.classList.contains('active')) {
+                        panel.style.transform = 'translateY(20px)';
+                    }
+                }
+            }
+
+            // Call on load for both panels
+            setPanelPosition(chatbotContainer, 'chatbotLeft', 'chatbotTop', '20px', 'auto'); // Default bottom-right
+            setPanelPosition(contactPanelContainer, 'contactPanelLeft', 'contactPanelTop', '20px', '20px'); // Default top-right
+
+            // Re-adjust on resize
+            window.addEventListener('resize', () => {
+                setPanelPosition(chatbotContainer, 'chatbotLeft', 'chatbotTop', '20px', 'auto');
+                setPanelPosition(contactPanelContainer, 'contactPanelLeft', 'contactPanelTop', '20px', '20px');
+            });
+
+
+            // --- New Contact Panel Toggle Logic ---
+            if (contactToggleIcon && contactPanelContainer) { // Defensive checks
+                contactToggleIcon.addEventListener('click', (event) => {
+                    // Prevent opening if it was a drag
+                    if (contactToggleIcon.dataset.isDragging === 'true') {
+                        contactToggleIcon.dataset.isDragging = 'false'; // Reset flag
+                        return;
+                    }
+                    contactPanelContainer.classList.toggle('active');
+                    if (contactPanelContainer.classList.contains('active')) {
+                        // Adjust inner content height on open
+                        const currentHeight = parseInt(window.getComputedStyle(contactPanelContainer).height, 10);
+                        if (contactPanelHeader && contactIconsContent) { // Defensive checks
+                            const currentContactPanelHeader = contactPanelHeader;
+                            contactIconsContent.style.height = `calc(${currentHeight}px - ${currentContactPanelHeader.offsetHeight + 20}px)`;
+                        }
+                    }
+                });
+            }
+
+
+            if (closeContactPanelBtn && contactPanelContainer) { // Defensive checks
+                closeContactPanelBtn.addEventListener('click', () => {
+                    contactPanelContainer.classList.remove('active');
+                });
+            }
+
+
+            // Draggable Contact Toggle Icon Logic (similar to AI icon)
+            let isDraggingContactIcon = false;
+            let currentContactIconX;
+            let currentContactIconY;
+            let initialContactIconX;
+            let initialContactIconY;
+            let xOffsetContactIcon = 0;
+            let yOffsetContactIcon = 0;
+
+            if (contactToggleIcon) { // Defensive check
+                contactToggleIcon.addEventListener("mousedown", dragStartContactIcon);
+                document.addEventListener("mouseup", dragEndContactIcon);
+                document.addEventListener("mousemove", dragContactIcon);
+            }
+
+
+            function dragStartContactIcon(e) {
+                initialContactIconX = e.clientX - xOffsetContactIcon;
+                initialContactIconY = e.clientY - yOffsetContactIcon;
+
+                if (e.target === contactToggleIcon || (contactToggleIcon && contactToggleIcon.contains(e.target))) { // Defensive check
+                    isDraggingContactIcon = true;
+                    if (contactToggleIcon) contactToggleIcon.classList.add('dragging'); // Defensive check
+                    if (contactToggleIcon) contactToggleIcon.dataset.startX = e.clientX; // Defensive check
+                    if (contactToggleIcon) contactToggleIcon.dataset.startY = e.clientY; // Defensive check
+                }
+            }
+
+            function dragEndContactIcon(e) {
+                isDraggingContactIcon = false;
+                if (contactToggleIcon) contactToggleIcon.classList.remove('dragging'); // Defensive check
+
+                const movedX = Math.abs(e.clientX - parseFloat(contactToggleIcon ? contactToggleIcon.dataset.startX || e.clientX : e.clientX));
+                const movedY = Math.abs(e.clientY - parseFloat(contactToggleIcon ? contactToggleIcon.dataset.startY || e.clientY : e.clientY));
+
+                if (movedX > 5 || movedY > 5) {
+                    if (contactToggleIcon) contactToggleIcon.dataset.isDragging = 'true'; // Defensive check
+                } else {
+                    if (contactToggleIcon) contactToggleIcon.dataset.isDragging = 'false'; // Defensive check
+                }
+
+                if (contactToggleIcon) { // Defensive check
+                    localStorage.setItem('contactToggleIconLeft', contactToggleIcon.style.left);
+                    localStorage.setItem('contactToggleIconTop', contactToggleIcon.style.top);
+                }
+            }
+
+            function dragContactIcon(e) {
+                if (isDraggingContactIcon && contactToggleIcon) { // Defensive check
+                    e.preventDefault();
+                    currentContactIconX = e.clientX - initialContactIconX;
+                    currentContactIconY = e.clientY - initialContactIconY;
+
+                    xOffsetContactIcon = currentContactIconX;
+                    yOffsetContactIcon = currentContactIconY;
+
+                    let newLeft = e.clientX - (contactToggleIcon.offsetWidth / 2);
+                    let newTop = e.clientY - (contactToggleIcon.offsetHeight / 2);
+
+                    newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - contactToggleIcon.offsetWidth));
+                    newTop = Math.max(0, Math.min(newTop, window.innerHeight - contactToggleIcon.offsetHeight));
+
+                    contactToggleIcon.style.left = `${newLeft}px`;
+                    contactToggleIcon.style.top = `${newTop}px`;
+                    contactToggleIcon.style.right = 'auto';
+                    contactToggleIcon.style.transform = 'none';
+                }
+            }
+
+            function setContactToggleIconInitialPosition() {
+                if (!contactToggleIcon) return; // Defensive check
+                const savedLeft = localStorage.getItem('contactToggleIconLeft');
+                const savedTop = localStorage.getItem('contactToggleIconTop');
+
+                if (savedLeft && savedTop) {
+                    contactToggleIcon.style.left = savedLeft;
+                    contactToggleIcon.style.top = savedTop;
+                    contactToggleIcon.style.right = 'auto';
+                    contactToggleIcon.style.transform = 'translateY(0)';
+                } else {
+                    // Default position: 60px from right, centered vertically
+                    const iconWidth = contactToggleIcon.offsetWidth;
+                    const iconHeight = contactToggleIcon.offsetHeight;
+                    const viewportHeight = window.innerHeight;
+
+                    const initialTop = (viewportHeight / 2) - (iconHeight / 2);
+
+                    contactToggleIcon.style.top = `${initialTop}px`;
+                    contactToggleIcon.style.right = `60px`; // Offset from AI icon
+                    contactToggleIcon.style.left = `auto`;
+                    contactToggleIcon.style.transform = `translateY(0)`;
+                }
+            }
+
+            window.addEventListener('load', setContactToggleIconInitialPosition);
+            window.addEventListener('resize', setContactToggleIconInitialPosition);
+
+
+            // --- New LLM Feature Logic ---
+
+            // Summarize My Profile
+            if (generateSummaryBtn && generatedSummaryOutput && summaryText) { // Defensive checks
+                generateSummaryBtn.addEventListener('click', async () => {
+                    generatedSummaryOutput.classList.remove('hidden');
+                    summaryText.textContent = ''; // Clear previous content
+                    generatedSummaryOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
+
+                    const prompt = `Given the following professional summary, provide a very concise, high-level overview (1-2 sentences) of Sreenu Ponemoni's profile. Focus on his core role and most significant experience/skills.
+                    Professional Summary: ${resumeContent.summary}`;
+
+                    const response = await getGeminiResponse(prompt);
+                    summaryText.textContent = response;
+                    generatedSummaryOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
+                });
+            }
+
+
+            // Elaborate on Skill
+            if (elaborateSkillBtn && skillInput && skillElaborationOutput && elaborationText) { // Defensive checks
+                elaborateSkillBtn.addEventListener('click', async () => {
+                    const skill = skillInput.value.trim();
+                    if (!skill) {
+                        elaborationText.textContent = "Please enter a skill to elaborate on.";
+                        skillElaborationOutput.classList.remove('hidden');
+                        return;
+                    }
+
+                    skillElaborationOutput.classList.remove('hidden');
+                    elaborationText.textContent = ''; // Clear previous content
+                    skillElaborationOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
+
+                    const prompt = `As a Salesforce Administrator & Developer with 3.8 years of experience, explain the technical skill "${skill}" in simple terms, and briefly describe its importance or application in Salesforce development. Keep the explanation concise and to the point.`;
+
+                    const response = await getGeminiResponse(prompt);
+                    elaborationText.textContent = response;
+                    skillElaborationOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
+                });
+            }
+
+
+            // Generate Project Idea
+            if (generateProjectIdeaBtn && generatedProjectIdeaOutput && projectIdeaText) { // Defensive checks
+                generateProjectIdeaBtn.addEventListener('click', async () => {
+                    generatedProjectIdeaOutput.classList.remove('hidden');
+                    projectIdeaText.textContent = ''; // Clear previous content
+                    generatedProjectIdeaOutput.querySelector('.chat-loading-indicator').classList.remove('hidden');
+
+                    const prompt = `Based on Sreenu Ponemoni's experience as a Salesforce Administrator & Developer, particularly his work with Sales & Service Cloud, Apex, LWC, and integrations, suggest a new, innovative Salesforce project idea (1-2 sentences). Focus on a practical business problem it could solve or a new feature it could introduce.
+                    Sreenu's Experience: ${resumeContent.experience}
+                    Sreenu's Skills: ${resumeContent.technicalSkills}`;
+
+                    const response = await getGeminiResponse(prompt);
+                    projectIdeaText.textContent = response;
+                    generatedProjectIdeaOutput.querySelector('.chat-loading-indicator').classList.add('hidden');
+                });
+            }
+        });
+
+        // Liquid Glass Effect Script
+        // Created by Shu Ding (https://github.com/shuding/liquid-glass) in 2025.
+        // This script creates a subtle, interactive liquid glass effect that follows the mouse.
+        (function() {
+            'use strict';
+
+            // If a previous instance of liquid glass exists, destroy it to prevent duplicates.
+            if (window.liquidGlass) {
+                window.liquidGlass.destroy();
+                console.log('Previous liquid glass effect removed.');
+            }
+
+            // Utility functions for shader calculations
+            function smoothStep(a, b, t) {
+                t = Math.max(0, Math.min(1, (t - a) / (b - a)));
+                return t * t * (3 - 2 * t);
+            }
+
+            function length(x, y) {
+                return Math.sqrt(x * x + y * y);
+            }
+
+            // Signed Distance Function for a rounded rectangle
+            function roundedRectSDF(x, y, width, height, radius) {
+                const qx = Math.abs(x) - width + radius;
+                const qy = Math.abs(y) - height + radius;
+                return Math.min(Math.max(qx, qy), 0) + length(Math.max(qx, 0), Math.max(qy, 0)) - radius;
+            }
+
+            // Simple texture lookup placeholder (returns UV coordinates as color components)
+            function texture(x, y) {
+                return { type: 't', x, y };
+            }
+
+            // Generate a unique ID for SVG elements to avoid conflicts
+            function generateId() {
+                return 'liquid-glass-' + Math.random().toString(36).substr(2, 9);
+            }
+
+            // Main Shader class responsible for rendering the effect
+            class Shader {
+                constructor(options = {}) {
+                    this.width = options.width || 100;
+                    this.height = options.height || 67;
+                    this.fragment = options.fragment || ((uv) => texture(uv.x, uv.y));
+                    this.canvasDPI = 1; // DPI for the internal canvas
+                    this.id = generateId(); // Unique ID for SVG filter
+                    this.offset = 10; // Offset from viewport edges for constraining movement
+
+                    this.mouse = { x: 0, y: 0 }; // Mouse position (normalized 0-1)
+                    this.mouseUsed = false; // Flag to check if mouse position is used in fragment shader
+
+                    this.createElement(); // Create DOM elements
+                    this.setupEventListeners(); // Set up mouse and resize listeners
+                    this.updateShader(); // Initial shader update
+                    this.animationFrameId = null; // To store requestAnimationFrame ID
+                    this.animate(); // Start animation loop
+                }
+
+                createElement() {
+                    // Container for the liquid glass effect
+                    this.container = document.createElement('div');
+                    this.container.classList.add('liquid-glass-container');
+                    this.container.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: ${this.width}px;
+                        height: ${this.height}px;
+                        overflow: hidden;
+                        border-radius: 150px; /* Rounded shape for the glass effect */
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25), 0 -10px 25px inset rgba(0, 0, 0, 0.15);
+                        /* Apply SVG filter for distortion and backdrop-filter for glassmorphism */
+                        backdrop-filter: url(#${this.id}_filter) blur(0.25px) contrast(1.2) brightness(1.05) saturate(1.1);
+                        z-index: 9999; /* Ensure it's on top of most content */
+                        pointer-events: none; /* Allow mouse events to pass through */
+                        opacity: 1; /* Initial opacity */
+                    `;
+
+                    // SVG element to hold the filter definition
+                    this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    this.svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    this.svg.setAttribute('width', '0'); // Hidden
+                    this.svg.setAttribute('height', '0'); // Hidden
+                    this.svg.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        pointer-events: none;
+                        z-index: 9998; /* Below the container */
+                    `;
+
+                    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+                    filter.setAttribute('id', `${this.id}_filter`);
+                    filter.setAttribute('filterUnits', 'userSpaceOnUse');
+                    filter.setAttribute('colorInterpolationFilters', 'sRGB');
+                    filter.setAttribute('x', '0');
+                    filter.setAttribute('y', '0');
+                    filter.setAttribute('width', this.width.toString());
+                    filter.setAttribute('height', this.height.toString());
+
+                    // feImage element will hold the displacement map generated from canvas
+                    this.feImage = document.createElementNS('http://www.w3.org/2000/svg', 'feImage');
+                    this.feImage.setAttribute('id', `${this.id}_map`);
+                    this.feImage.setAttribute('width', this.width.toString());
+                    this.feImage.setAttribute('height', this.height.toString());
+
+                    // feDisplacementMap applies the distortion based on the feImage
+                    this.feDisplacementMap = document.createElementNS('http://www.w3.org/2000/svg', 'feDisplacementMap');
+                    this.feDisplacementMap.setAttribute('in', 'SourceGraphic'); // Apply to the element itself
+                    this.feDisplacementMap.setAttribute('in2', `${this.id}_map`); // Use our generated map
+                    this.feDisplacementMap.setAttribute('xChannelSelector', 'R'); // Red channel for X displacement
+                    this.feDisplacementMap.setAttribute('yChannelSelector', 'G'); // Green channel for Y displacement
+
+                    filter.appendChild(this.feImage);
+                    filter.appendChild(this.feDisplacementMap);
+                    defs.appendChild(filter);
+                    this.svg.appendChild(defs);
+
+                    // Hidden canvas used to generate the displacement map image data
+                    this.canvas = document.createElement('canvas');
+                    this.canvas.width = this.width * this.canvasDPI;
+                    this.canvas.height = this.height * this.canvasDPI;
+                    this.canvas.style.display = 'none'; // Keep hidden
+
+                    this.context = this.canvas.getContext('2d');
+                }
+
+                // Constrains the liquid glass position within the viewport with an offset
+                constrainPosition(x, y) {
+                    const viewportWidth = window.innerWidth;
+                    const viewportHeight = window.innerHeight;
+
+                    const halfWidth = this.width / 2;
+                    const halfHeight = this.height / 2;
+
+                    const minX = halfWidth + this.offset;
+                    const maxX = viewportWidth - halfWidth - this.offset;
+                    const minY = halfHeight + this.offset;
+                    const maxY = viewportHeight - halfHeight - this.offset;
+
+                    const constrainedX = Math.max(minX, Math.min(maxX, x));
+                    const constrainedY = Math.max(minY, Math.min(maxY, y));
+
+                    return { x: constrainedX, y: constrainedY };
+                }
+
+                setupEventListeners() {
+                    // Update position on mouse move
+                    document.addEventListener('mousemove', (e) => {
+                        const desiredCenterX = e.clientX;
+                        const desiredCenterY = e.clientY;
+
+                        const constrained = this.constrainPosition(desiredCenterX, desiredCenterY);
+
+                        this.container.style.left = constrained.x + 'px';
+                        this.container.style.top = constrained.y + 'px';
+                        this.container.style.transform = 'translate(-50%, -50%)'; // Keep centered
+
+                        // Calculate normalized mouse position relative to the container for the shader
+                        const rect = this.container.getBoundingClientRect();
+                        this.mouse.x = (e.clientX - rect.left) / rect.width;
+                        this.mouse.y = (e.clientY - rect.top) / rect.height;
+                    });
+
+                    // Re-constrain position on window resize
+                    window.addEventListener('resize', () => {
+                        const rect = this.container.getBoundingClientRect();
+                        const currentCenterX = rect.left + rect.width / 2;
+                        const currentCenterY = rect.top + rect.height / 2;
+
+                        const constrained = this.constrainPosition(currentCenterX, currentCenterY);
+
+                        if (currentCenterX !== constrained.x || currentCenterY !== constrained.y) {
+                            this.container.style.left = constrained.x + 'px';
+                            this.container.style.top = constrained.y + 'px';
+                            this.container.style.transform = 'translate(-50%, -50%)';
+                        }
+                    });
+                }
+
+                // Animation loop
+                animate = () => {
+                    this.updateShader(); // Update the displacement map
+                    this.animationFrameId = requestAnimationFrame(this.animate);
+                }
+
+                // Generates the displacement map on the hidden canvas
+                updateShader() {
+                    // Create a proxy to detect if the mouse object is accessed in the fragment shader
+                    const mouseProxy = new Proxy(this.mouse, {
+                        get: (target, prop) => {
+                            this.mouseUsed = true;
+                            return target[prop];
+                        }
+                    });
+
+                    this.mouseUsed = false; // Reset flag for current frame
+
+                    const w = this.width * this.canvasDPI;
+                    const h = this.height * this.canvasDPI;
+                    const data = new Uint8ClampedArray(w * h * 4); // RGBA data for the canvas
+
+                    let maxScale = 0;
+                    const rawValues = []; // Store raw displacement values
+
+                    // Iterate over each pixel to calculate displacement
+                    for (let i = 0; i < data.length; i += 4) {
+                        const x = (i / 4) % w;
+                        const y = Math.floor(i / 4 / w);
+                        // Call the user-defined fragment shader
+                        const pos = this.fragment(
+                            { x: x / w, y: y / h }, // Normalized UV coordinates
+                            mouseProxy // Pass mouse proxy
+                        );
+                        const dx = pos.x * w - x; // X displacement
+                        const dy = pos.y * h - y; // Y displacement
+                        maxScale = Math.max(maxScale, Math.abs(dx), Math.abs(dy)); // Track max displacement for scaling
+                        rawValues.push(dx, dy);
+                    }
+
+                    maxScale *= 0.5; // Adjust max scale
+
+                    let index = 0;
+                    // Convert raw displacements to RGBA values for the canvas
+                    for (let i = 0; i < data.length; i += 4) {
+                        // Normalize displacements to 0-1 range and map to 0-255 for R and G channels
+                        const r = rawValues[index++] / maxScale + 0.5;
+                        const g = rawValues[index++] / maxScale + 0.5;
+                        data[i] = r * 255; // Red channel for X
+                        data[i + 1] = g * 255; // Green channel for Y
+                        data[i + 2] = 0; // Blue channel (unused)
+                        data[i + 3] = 255; // Alpha channel (fully opaque)
+                    }
+
+                    this.context.putImageData(new ImageData(data, w, h), 0, 0); // Put image data on canvas
+                    this.feImage.setAttributeNS('http://www.w3.org/1999/xlink', 'href', this.canvas.toDataURL()); // Update SVG feImage source
+                    this.feDisplacementMap.setAttribute('scale', (maxScale / this.canvasDPI).toString()); // Update displacement scale
+                }
+
+                // Appends the created elements to the DOM
+                appendTo(parent) {
+                    parent.appendChild(this.svg);
+                    parent.appendChild(this.container);
+                }
+
+                // Cleans up DOM elements and stops animation
+                destroy() {
+                    if (this.animationFrameId) {
+                        cancelAnimationFrame(this.animationFrameId);
+                    }
+                    this.svg.remove();
+                    this.container.remove();
+                    this.canvas.remove();
+                }
+            }
+
+            // Function to create and initialize the liquid glass effect
+            function createLiquidGlass() {
+                const shader = new Shader({
+                    width: 100, // Width of the effect area
+                    height: 67, // Height of the effect area
+                    fragment: (uv, mouse) => {
+                        // Fragment shader logic for distortion
+                        const ix = uv.x - 0.5;
+                        const iy = uv.y - 0.5;
+                        // Calculate distance to the edge of a rounded rectangle
+                        const distanceToEdge = roundedRectSDF(
+                            ix,
+                            iy,
+                            0.3, // Half-width of the inner rectangle
+                            0.2, // Half-height of the inner rectangle
+                            0.6  // Radius for rounded corners
+                        );
+                        // Apply smooth step for displacement based on distance
+                        const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15);
+                        const scaled = smoothStep(0, 1, displacement);
+                        // Return new UV coordinates based on scaled displacement
+                        return texture(ix * scaled + 0.5, iy * scaled + 0.5);
+                    }
+                });
+
+                shader.appendTo(document.body); // Add the effect to the body
+                console.log('Liquid Glass effect created! It now follows your cursor.');
+                window.liquidGlass = shader; // Make the shader instance globally accessible for destruction
+            }
+
+            createLiquidGlass(); // Initialize the effect
+        })();
+    </script>
+    <div id="video-player-container" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1500; width: 320px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); background-color: #000; overflow: hidden; border-radius: 8px;">
+    <div id="video-header" style="padding: 10px; background-color: #222; color: #fff; cursor: grab; display: flex; justify-content: space-between; align-items: center;">
+        <span>My Intro</span>
+        <div style="display: flex; gap: 10px;">
+            <span id="minimize-btn" style="font-size: 20px; cursor: pointer; display: none;">-</span>
+            <span id="maximize-btn" style="font-size: 20px; cursor: pointer;">&#9634;</span>
+            <span id="close-btn" style="font-size: 20px; cursor: pointer;">&times;</span>
+        </div>
+    </div>
+    <video id="my-video" controls autoplay style="width: 100%; display: block;">
+        <source src="sreenu_intro.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const playBtns = document.querySelectorAll('.intro-play-btn');
+        const videoContainer = document.getElementById('video-player-container');
+        const videoHeader = document.getElementById('video-header');
+        const videoElement = document.getElementById('my-video');
+        const maximizeBtn = document.getElementById('maximize-btn');
+        const minimizeBtn = document.getElementById('minimize-btn');
+        const closeBtn = document.getElementById('close-btn');
+
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        // --- Dragging functionality for the mini-player ---
+        videoHeader.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - videoContainer.getBoundingClientRect().left;
+            offsetY = e.clientY - videoContainer.getBoundingClientRect().top;
+            videoHeader.style.cursor = 'grabbing';
+            videoContainer.style.transition = 'none'; // Disable transition during drag
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const newLeft = e.clientX - offsetX;
+            const newTop = e.clientY - offsetY;
+            videoContainer.style.left = `${newLeft}px`;
+            videoContainer.style.top = `${newTop}px`;
+            videoContainer.style.right = 'auto'; // Disable right/bottom styles during drag
+            videoContainer.style.bottom = 'auto';
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            videoHeader.style.cursor = 'grab';
+            videoContainer.style.transition = 'top 0.3s ease, left 0.3s ease';
+        });
+
+        // --- Button click handlers ---
+        playBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                videoContainer.style.display = 'block';
+                videoElement.play();
+                // Ensure mini-player styles are active
+                videoContainer.style.top = 'auto';
+                videoContainer.style.left = 'auto';
+                videoContainer.style.width = '320px';
+                videoContainer.style.height = 'auto';
+                videoContainer.style.bottom = '20px';
+                videoContainer.style.right = '20px';
+                maximizeBtn.style.display = 'block';
+                minimizeBtn.style.display = 'none';
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            videoContainer.style.display = 'none';
+            videoElement.pause();
+            videoElement.currentTime = 0; // Rewind the video
+        });
+
+        maximizeBtn.addEventListener('click', () => {
+            videoContainer.style.position = 'fixed';
+            videoContainer.style.top = '0';
+            videoContainer.style.left = '0';
+            videoContainer.style.width = '100%';
+            videoContainer.style.height = '100%';
+            videoContainer.style.borderRadius = '0';
+            videoContainer.style.zIndex = '2000';
+            videoHeader.style.display = 'flex';
+            maximizeBtn.style.display = 'none';
+            minimizeBtn.style.display = 'block';
+        });
+
+        minimizeBtn.addEventListener('click', () => {
+            videoContainer.style.position = 'fixed';
+            videoContainer.style.top = 'auto';
+            videoContainer.style.left = 'auto';
+            videoContainer.style.width = '320px';
+            videoContainer.style.height = 'auto';
+            videoContainer.style.bottom = '20px';
+            videoContainer.style.right = '20px';
+            videoContainer.style.borderRadius = '8px';
+            videoContainer.style.zIndex = '1500';
+            maximizeBtn.style.display = 'block';
+            minimizeBtn.style.display = 'none';
+        });
+    });
+</script>
+</body>
+</html>
