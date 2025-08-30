@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for chat icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    
     <!-- Marked.js for Markdown parsing in chat -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -27,7 +30,7 @@
 
         /* Tab button active state styling */
         .tab-button.active {
-            background-color: #4f46e5; /* Indigo 600 */
+            background-color: #e5466e; /* Indigo 600 */
             color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -49,6 +52,38 @@
             display: block;
             border: 2px solid #4f46e5; /* Add a clear border to active tab content */
         }
+.project-box {
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: left;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.project-box h3 {
+  color: #0070f3;
+  margin-bottom: 10px;
+}
+
+.visitor-stats {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.visitor-stats p {
+  font-size: 1rem;
+  margin: 6px 0;
+}
 
         /* Custom scrollbar for better aesthetics */
         ::-webkit-scrollbar {
@@ -361,8 +396,8 @@
             position: relative;
             width: 100%;
             /* Adjust height to make it responsive, maintaining aspect ratio */
-            padding-bottom: 150%; /* Increased for more vertical space for the form */
-            height: 0;
+            padding-bottom: 1000%; /* Increased for more vertical space for the form */
+            height: 50%;
             overflow: hidden;
         }
 
@@ -410,6 +445,67 @@
             transition: none !important; /* Override all transitions when dragging */
             transform: none !important; /* Ensure no transform during drag */
         }
+        /* Floating Play Button */
+#playBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff4444, #cc0000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255,0,0,0.7);
+  animation: blink 1s infinite;
+  z-index: 1000;
+}
+#playBtn:after {
+  content: '';
+  border-style: solid;
+  border-width: 12px 0 12px 20px;
+  border-color: transparent transparent transparent white;
+  margin-left: 5px;
+}
+@keyframes blink {
+  0%, 100% { box-shadow: 0 0 10px red, 0 0 30px orange; transform: scale(1);}
+  50% { box-shadow: 0 0 25px yellow, 0 0 50px red; transform: scale(1.1);}
+}
+
+/* Video Container */
+/* Make the player resizable */
+#videoContainer {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 600px;
+  height: 340px;
+  background: black;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+  overflow: hidden;
+  display: none;
+  cursor: grab;
+  z-index: 999;
+  transition: box-shadow 0.2s ease;
+  resize: both;              /* 🔑 Enables resizing */
+  min-width: 250px;          /* 🔑 Minimum size */
+  min-height: 140px;
+}
+
+#videoContainer:active {
+  cursor: grabbing;
+  box-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+#videoContainer video {
+  width: 100%;
+  height: calc(100% - 30px);
+  object-fit: cover;
+}
+
 
         .chatbot-header, .contact-panel-header {
             background-color: #4f46e5; /* Indigo 600 */
@@ -443,42 +539,33 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Draggable AI Icon Styles */
-        .ai-icon, .contact-toggle-icon {
-            position: fixed;
-            right: 0; /* Default position: right edge */
-            top: 50%; /* Default position: vertically centered */
-            transform: translateY(-50%); /* Adjust for vertical centering */
-            width: 50px;
-            height: 50px;
-            background-color: #4f46e5; /* Indigo 600 */
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem; /* Size for "Ai" text */
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            cursor: grab; /* Indicate it's draggable */
-            z-index: 1001; /* Above other content, below chatbot */
-            transition: background-color 0.2s, transform 0.1s; /* Smooth hover and click feedback */
-            user-select: none; /* Prevent text selection during drag */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
+        /* === Floating AI & Contact Buttons (updated) === */
+.ai-icon, .contact-toggle-icon {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  background-color: #4f46e5; /* Indigo 600 */
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(0,0,0,.3);
+  cursor: grab;
+  z-index: 1001;
+  transition: background-color .2s, transform .1s;
+  user-select: none;
+  animation: pulse-glow 2.2s infinite; /* continuous blink */
+}
 
-        .ai-icon:hover, .contact-toggle-icon:hover {
-            background-color: #4338ca; /* Slightly darker indigo on hover */
-        }
+.ai-icon:hover, .contact-toggle-icon:hover { background-color: #4338ca; }
+.ai-icon.dragging, .contact-toggle-icon.dragging { opacity: .9; transform: scale(1.05); cursor: grabbing; }
 
-        .ai-icon.dragging, .contact-toggle-icon.dragging {
-            cursor: grabbing;
-            opacity: 0.8;
-            transform: translateY(-50%) scale(1.05); /* Slight scale up when dragging */
-        }
-
+/* Initial positions so they never overlap */
+#aiIcon { bottom: 96px; right: 20px; animation-delay: 0s; }
+#contactToggleIcon { bottom: 20px; right: 20px; animation-delay: .9s; }
         /* Chatbot Settings Panel */
         .chatbot-settings {
             position: absolute;
@@ -730,8 +817,360 @@
             transform: translateY(-2px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
+#controlBar {
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 6px;
+}
 
+
+#controlBar button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+}
+
+#controlBar button:hover {
+  color: #00aced;
+  transform: scale(1.2);
+}
+
+/* minimized state */
+#videoContainer.minimized {
+  width: 300px;
+  height: 170px;
+}
+/* Smooth hide (optional) */
+#videoContainer { opacity: 1; transition: opacity .2s ease; }
+#videoContainer.is-hiding { opacity: 0; }
+
+/* Make sure control buttons are always clickable */
+#controlBar button { position: relative; z-index: 2; }
+body.light-theme .chat-message.bot { background-color: #d1fae5; color: #065f46; }
+
+
+/* Footer light */
+body.light-theme footer { background-color: #f3f4f6; color: #1f2937; }
+
+
+/* =============================
+🌙 DARK THEME (Accessible)
+============================= */
+body.dark-theme {
+background-color: #0f172a; /* slate-900 */
+color: #f3f4f6; /* light text */
+}
+
+
+nav#main-nav.dark-theme {
+background-color: #111827; /* slate-800 nav */
+color: #d1d5db;
+}
+nav#main-nav.dark-theme .tab-button { color: #0a5cd8; }
+nav#main-nav.dark-theme .tab-button.active,
+nav#main-nav.dark-theme .tab-button:hover {
+background-color: #6366f1; /* indigo-500 */
+color: #ffffff;
+}
+
+
+/* Section containers */
+body.dark-theme .section-inner-content {
+background-color: #0fef61; /* slate-800 card */
+color: #bb10a2;
+border: 1px solid #374151; /* gray-700 border */
+}
+
+
+/* Headings */
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme h5 { color: #edb10c; }
+
+
+/* Links */
+body.dark-theme a { color: #33d280; }
+body.dark-theme a:hover { color: #0c9061; }
+
+
+/* Chatbot dark */
+body.dark-theme .chatbot-container { background-color: #1e293b; color: #f3f4f6; }
+body.dark-theme .chatbot-header { background-color: #4f46e5; color: #ffffff; }
+body.dark-theme .chat-history { background-color: #111827; color: #f3f4f6; }
+body.dark-theme .chat-message.user { background-color: #4f46e5; color: #ffffff; }
+body.dark-theme .chat-message.bot { background-color: #059669; color: #ffffff; }
+
+
+/* Footer dark */
+body.dark-theme footer { background-color: #111827; color: #bcd4f8; }
+
+
+/* =============================
+TRANSITIONS
+============================= */
+body, nav#main-nav, nav#main-nav .tab-button, .section-inner-content, .chatbot-container, footer {
+transition: all 0.3s ease;
+}
+/* Floating buttons container */
+.floating-buttons {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* spacing so they don't merge */
+  z-index: 9999;
+}
+
+/* Common floating button styles */
+.floating-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  animation: pulse-glow 2s infinite;
+}
+
+/* Light theme buttons */
+body.light-theme .floating-btn {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+
+/* Dark theme buttons */
+body.dark-theme .floating-btn {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+/* Pulse glow animation */
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 rgba(79,70,229,0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(79,70,229,0); }
+  100% { box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+/* =============================
+Floating Buttons (AI + Contact)
+============================= */
+.floating-buttons {
+position: fixed;
+bottom: 20px;
+right: 20px;
+display: flex;
+flex-direction: column;
+gap: 12px;
+z-index: 9999;
+}
+
+
+#chatbot-toggle-btn,
+#contact-toggle-btn {
+width: 56px;
+height: 56px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+animation: pulse-glow 2s infinite;
+position: relative;
+}
+
+
+/* Light theme */
+body.light-theme #chatbot-toggle-btn,
+body.light-theme #contact-toggle-btn {
+background-color: #4f46e5;
+color: #ffffff;
+}
+
+
+/* Dark theme */
+body.dark-theme #chatbot-toggle-btn,
+body.dark-theme #contact-toggle-btn {
+background-color: #6366f1;
+color: #ffffff;
+}
+
+
+/* Pulse glow */
+@keyframes pulse-glow {
+0% { box-shadow: 0 0 0 0 rgba(79,70,229,0.6); }
+70% { box-shadow: 0 0 0 10px rgba(79,70,229,0); }
+100% { box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+
+
+/* Tooltip styles */
+.floating-btn-tooltip {
+position: absolute;
+right: 70px;
+top: 50%;
+transform: translateY(-50%);
+background: rgba(0,0,0,0.8);
+color: #ffffff;
+padding: 6px 10px;
+border-radius: 6px;
+font-size: 14px;
+white-space: nowrap;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+#chatbot-toggle-btn:hover .floating-btn-tooltip,
+#contact-toggle-btn:hover .floating-btn-tooltip {
+opacity: 1;
+transform: translateY(-50%) scale(1.05);
+}
+/* =============================
+body.light-theme #contact-toggle-btn {
+background-color: #4f46e5;
+color: #ffffff;
+}
+
+
+/* Dark theme */
+body.dark-theme #chatbot-toggle-btn,
+body.dark-theme #contact-toggle-btn {
+background-color: #6366f1;
+color: #ffffff;
+}
+
+
+/* Pulse glow */
+@keyframes pulse-glow {
+0% { box-shadow: 0 0 0 0 rgba(79,70,229,0.6); }
+70% { box-shadow: 0 0 0 10px rgba(79,70,229,0); }
+100% { box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+
+
+/* Tooltip styles */
+.floating-btn-tooltip {
+position: absolute;
+right: 70px;
+top: 50%;
+transform: translateY(-50%);
+background: rgba(0,0,0,0.8);
+color: #ffffff;
+padding: 6px 10px;
+border-radius: 6px;
+font-size: 14px;
+white-space: nowrap;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+#chatbot-toggle-btn:hover .floating-btn-tooltip,
+#contact-toggle-btn:hover .floating-btn-tooltip {
+opacity: 1;
+transform: translateY(-50%) scale(1.05);
+}
+
+
+/* Auto popup animation */
+.floating-btn-tooltip.show-on-load {
+opacity: 1 !important;
+transform: translateY(-50%) scale(1.05) !important;
+}
+/* Pulse glow for icons */
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 rgba(79,70,229,0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(79,70,229,0); }
+  100% { box-shadow: 0 0 0 0 rgba(79,70,229,0); }
+}
+
+/* Tooltip blink animation */
+@keyframes tooltip-blink {
+  0%, 80%, 100% { opacity: 0; transform: translateY(-50%) scale(0.95); }
+  40% { opacity: 1; transform: translateY(-50%) scale(1.05); }
+}
+
+/* Apply blinking to tooltips */
+.floating-btn-tooltip.blinking {
+  animation: tooltip-blink 4s infinite ease-in-out;
+}
+/* Smooth fade for floating icons */
+.ai-icon, .contact-toggle-icon {
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.ai-icon.hidden, .contact-toggle-icon.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+/* Einstein AI Button */
+#aiIcon {
+  bottom: 96px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: pulse-glow 2.2s infinite, snake-float 6s ease-in-out infinite;
+}
+
+/* Einstein image fills button */
+#aiIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Snake-like floating (slow up & down wave) */
+@keyframes snake-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-6px) rotate(-2deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(6px) rotate(2deg); }
+}
+/* Einstein AI Button */
+#aiIcon {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  animation: pulse-glow 2.2s infinite;
+  z-index: 1001;
+}
+
+#aiIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.ai-icon.hidden, .contact-toggle-icon.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
     </style>
+    
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -756,7 +1195,27 @@
                 </a>
             </div>
         </div>
+        
     </header>
+    <!-- Floating Play Button -->
+<div id="playBtn"></div>
+
+<!-- Video Container -->
+<div id="videoContainer">
+<div id="controlBar">
+  <button id="playPauseBtn" title="Play/Pause"><i class="fas fa-play"></i></button>
+  <button id="minBtn" title="Minimize"><i class="fas fa-window-minimize"></i></button>
+  <button id="restoreBtn" title="Restore" style="display:none;"><i class="fas fa-window-restore"></i></button>
+  <button id="closeBtn" title="Close"><i class="fas fa-times"></i></button>
+</div>
+
+
+  <video id="introVideo" src="sreenu_intro.mp4" controls></video>
+  <div id="errorMsg" style="display:none; color:white; text-align:center; padding:20px;">
+    ❌ Video file not found. Please check the path!
+  </div>
+</div>
+
 
     <!-- Navigation Tabs -->
     <nav id="main-nav" class="bg-white shadow-md py-4 sticky-nav-glass">
@@ -766,6 +1225,8 @@
             <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="skills"><span>Skills</span></button>
             <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="education"><span>Education</span></button>
             <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="contact"><span>Contact</span></button>
+            <button class="tab-button px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" data-tab="my-works"><span>My Works</span></button>
+    
         </div>
     </nav>
 
@@ -774,16 +1235,11 @@
 
         <!-- About Section -->
         <section id="about" class="tab-content active mb-8">
+
             <div class="parallax-bg"></div> <!-- Parallax background for the section -->
             <div class="section-inner-content">
-<h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me <span class="intro-play-btn" style="display: inline-block; cursor: pointer; margin-left: 10px; background-color: #4f46e5; color: white; border-radius: 50%; width: 40px; height: 40px; text-align: center; line-height: 40px; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">▶</span></h2>  
-<div class="video-container" style="margin-top: 20px;">
-    <video controls style="width: 60%; border-radius: 50px;">
-        <source src="sreenu_intro.mp4" type="video/mp4">
-        Your browser does not support the video  tag.
-    </video>
-</div>        <div class="prose max-w-none">
-    
+                <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">About Me</h2>
+                <div class="prose max-w-none">
                     <p class="text-lg leading-relaxed mb-4">
                         I am a dedicated Salesforce Administrator & Developer with <strong class="text-indigo-600">3.8 years of hands-on experience</strong> in Salesforce.com CRM and the Force.com platform. My expertise spans the entire Software Development Life Cycle (SDLC).
                     </p>
@@ -1003,7 +1459,7 @@
                 </div>
             </div>
         </section>
-
+                
         <!-- Contact Section -->
         <section id="contact" class="tab-content mb-8">
             <div class="parallax-bg"></div> <!-- Parallax background for the section -->
@@ -1044,6 +1500,11 @@
                             <a href="https://github.com/liveasyourlike" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all">
                                 https://github.com/liveasyourlike
                             </a>
+                             <div class="mb-3"> <!-- Added Trailhead link container -->
+                            <p class="text-base font-medium text-gray-800">Trailhead Profile:</p>
+                            <a href="https://www.salesforce.com/trailblazer/sreenuponemoni" target="_blank" class="text-lg text-indigo-600 hover:underline font-semibold break-all">
+                                https://www.salesforce.com/trailblazer/sreenuponemoni
+                            </a>
                         </div>
                         <div class="mt-6 pt-4 border-t border-gray-200">
                             <p class="text-base font-medium text-gray-800 mb-2">Reach out to me:</p> <!-- Reduced font size -->
@@ -1061,19 +1522,331 @@
                     </div>
 
                     <!-- Right Side: Google Form Embed -->
-                    <div class="md:w-2/3 min-h-[600px]"> <!-- Changed to md:w-2/3 and added min-h -->
+                    <div class="md:w-2/3 min-h-[1000px]"> <!-- Changed to md:w-2/3 and added min-h -->
                         <h3 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center border-b-2 border-indigo-300 pb-2">
                             Send a Message
                         </h3>
-                        <p class="text-md text-gray-700 mb-4">Please fill out the form below to send a message to Sreenu. This form is powered by Google Forms.</p>
+                        <p class="text-md text-gray-700 mb-4">Please fill out the form below to send a message to Me...</p>
                         <div class="google-form-container">
                             <!-- Google Form Embed Code -->
-                            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3nhbX1XtlFFb7Lyf1QUAdxEtLOZ578sCLIwFvXcrFKkZJ0Q/viewform?embedded=true" width="640" height="1689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+                            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSe3nhbX1XtlFFb7Lyf1QUAdxEtLOZ578sCLIwFvXcrFKkZJ0Q/viewform?embedded=true" width="1640" height="1689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+<!-- My Works Section (VALID TAB) -->
+<section id="my-works" class="tab-content mb-8">
+  <div class="parallax-bg"></div>
+  <div class="section-inner-content">
+    <h2 class="text-3xl font-semibold text-indigo-700 mb-6 border-b-2 border-indigo-300 pb-2">
+      Works Which Resembles Salesforce Lightning Web Components (LWC)
+    </h2>
+
+    <article class="project-box min-h-[280px] h-full">
+      <h3>⚡ LWC Dynamic Visitors Count</h3>
+      <p class="text-gray-700 mb-3">
+        "Demo dashboard that mirrors a real Salesforce LWC:"
+      </p>
+
+      <section id="visitors" class="visitor-stats">
+        <p>👥 Active Now: <span id="activeUsers">0</span></p>
+        <p>📅 Today: <span id="todayCount">0</span></p>
+        <p>📈 This Week: <span id="weekCount">0</span></p>
+        <p>🌍 All Time: <span id="allTimeCount">0</span></p>
+      </section>
+
+      <div class="mt-4 flex flex-wrap gap-3">
+    <article class="project-box">
+  <h3>📊 LWC Datatable Simulation</h3>
+  <p class="text-gray-700 mb-3">A table showing sample project data just like Salesforce lightning-datatable.</p>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm border-collapse border border-gray-300">
+      <thead class="bg-indigo-600 text-white">
+        <tr>
+          <th class="border border-gray-300 px-4 py-2">Project</th>
+          <th class="border border-gray-300 px-4 py-2">Role</th>
+          <th class="border border-gray-300 px-4 py-2">Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hover:bg-gray-100">
+          <td class="border px-4 py-2">PMI</td>
+          <td class="border px-4 py-2">Developer</td>
+          <td class="border px-4 py-2">2024</td>
+        </tr>
+        <tr class="hover:bg-gray-100">
+          <td class="border px-4 py-2">Eaton</td>
+          <td class="border px-4 py-2">Admin/Dev</td>
+          <td class="border px-4 py-2">2023</td>
+        </tr>
+        <tr class="hover:bg-gray-100">
+          <td class="border px-4 py-2">Electrolux</td>
+          <td class="border px-4 py-2">Admin/Dev</td>
+          <td class="border px-4 py-2">2021</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</article>
+<article class="project-box min-h-[260px] h-full">
+  <h3>🔔 LWC Connect Demo </h3>   <p class="text-gray-700 mb-3"> Salesforce lightning-Toast messages.</p>
+
+  <p class="text-gray-700 mb-3">Hover to preview, click to connect:</p>
+
+  <div class="flex flex-col gap-3 w-72">
+    <!-- WhatsApp -->
+    <div class="relative group">
+      <button onclick="sendToast('WhatsApp','https://wa.me/919640352929?text=Hello%20Sreenu,%20I%20would%20like%20to%20connect')" 
+        class="bg-green-500 text-white py-2 w-full rounded hover:bg-green-600">
+        📱 WhatsApp
+      </button>
+      <!-- Hover Tooltip -->
+      <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 hidden group-hover:block bg-black text-white text-xs px-3 py-1 rounded shadow-lg whitespace-nowrap">
+        Open WhatsApp Chat
+      </div>
+    </div>
+
+    <!-- Gmail -->
+    <div class="relative group">
+      <button onclick="sendToast('Email','https://mail.google.com/mail/?view=cm&fs=1&to=sreeponemoni6264@gmail.com&su=Connect%20Request&body=Hi%20Sreenu,%20I%20would%20like%20to%20connect')" 
+        class="bg-blue-500 text-white py-2 w-full rounded hover:bg-blue-600">
+        📧 Email
+      </button>
+      <!-- Hover Tooltip -->
+      <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 hidden group-hover:block bg-black text-white text-xs px-3 py-1 rounded shadow-lg whitespace-nowrap">
+        Send me an Email
+      </div>
+    </div>
+
+    <!-- Direct Message -->
+    <div class="relative group">
+      <button onclick="sendToast('Direct Message','#contact')" 
+        class="bg-purple-500 text-white py-2 w-full rounded hover:bg-purple-600">
+        💬 Direct Message
+      </button>
+      <!-- Hover Tooltip -->
+      <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2 hidden group-hover:block bg-black text-white text-xs px-3 py-1 rounded shadow-lg whitespace-nowrap">
+        Go to Contact Form
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-10 right-10 bg-indigo-600 text-white px-5 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-10 opacity-0">
+    ✅ Message Sent to Sreenu - Successfully!
+  </div>
+</article>
+
+<script>
+  // Send Toast + Perform Action Immediately
+  function sendToast(type, link) {
+    const toast = document.getElementById('toast');
+    toast.innerText = `✅ "${type}" request sent successfully!`;
+    toast.classList.remove('hidden', 'translate-y-10', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    // Perform the action
+    setTimeout(() => {
+      if (link.startsWith("http")) {
+        window.open(link, "_blank");
+      } else if (link.startsWith("#")) {
+        document.querySelector(link).scrollIntoView({ behavior: "smooth" });
+      }
+    }, 500); // small delay so toast appears before redirect
+
+    // Hide toast automatically
+    setTimeout(() => {
+      toast.classList.add('translate-y-10', 'opacity-0');
+      setTimeout(() => toast.classList.add('hidden'), 500);
+    }, 3000);
+  }
+</script>
+
+</script>
+
+<article class="project-box min-h-[220px] h-full">
+  <h3>📈 Salesforce Skills: Progress Bar </h3>
+  <p class="text-gray-700 mb-3">Visual progress of learning Salesforce Advancements.</p>
+  
+  <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden relative">
+    <!-- Animated bar -->
+    <div id="progressBar" class="bg-indigo-600 h-4 rounded-full"></div>
+  </div>
+  <p id="progressText" class="text-sm mt-2 text-gray-600">Loading...</p>
+    <p class="text-green-700 mb-3">Always a continues learner....</p>
+
+</article>
+<article class="project-box min-h-[260px] h-full">
+  <h3>🛠️ Skills Accordion (lwc-accordion)</h3>
+  <p class="text-gray-700 mb-3">Expand sections to view my skills.</p>
+
+  <!-- Salesforce Technologies -->
+  <details class="accordion-item mb-2 border rounded-lg p-2">
+    <summary class="cursor-pointer font-semibold text-indigo-700">⚡ Salesforce Technologies</summary>
+    <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+      <li>Apex Programming,Triggers</li>
+      <li>Lightning Web Components (LWC)</li>
+      <li>Flows & Process Automation</li>
+      <li>SOQL & SOSL</li>
+    </ul>
+  </details>
+
+  <!-- Development & Tools -->
+  <details class="accordion-item mb-2 border rounded-lg p-2">
+    <summary class="cursor-pointer font-semibold text-indigo-700">💻 Development & Tools</summary>
+    <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+      <li>Git & GitHub</li>
+      <li>VS Code & Extensions</li>
+      <li>Salesforce CLI (SFDX)</li>
+      <li>Postman & APIs</li>
+    </ul>
+  </details>
+
+  <!-- Personal Skills -->
+  <details class="accordion-item mb-2 border rounded-lg p-2">
+    <summary class="cursor-pointer font-semibold text-indigo-700">🌟 Personal Skills</summary>
+    <ul class="list-disc list-inside text-gray-600 mt-2 space-y-1">
+      <li>Problem Solving</li>
+      <li>Communication & Teamwork</li>
+      <li>Quick Learner</li>
+      <li>Leadership</li>
+    </ul>
+  </details>
+</article>
+
+<script>
+  // Get all accordion items
+  const accordions = document.querySelectorAll(".accordion-item");
+
+  accordions.forEach((accordion) => {
+    accordion.addEventListener("toggle", function () {
+      if (this.open) {
+        // Close all other accordions
+        accordions.forEach((item) => {
+          if (item !== this) {
+            item.open = false;
+          }
+        });
+      }
+    });
+  });
+</script>
+<article class="project-box min-h-[320px] h-full">
+  <h3>⏳ LWC Spinner with Image </h3>
+  <p id="instructionText" class="text-gray-700 mb-3">
+    Click below to simulate loading and then display an image Related to Trailhead.
+  </p>
+
+  <!-- Button to trigger loading -->
+  <button id="loadBtn" onclick="showSpinner()" 
+    class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+    Load Image...
+  </button>
+
+  <!-- Spinner (hidden by default) -->
+  <div id="spinner" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+  </div>
+
+  <!-- Image container -->
+  <div id="imageContent" class="mt-4 hidden">
+    <img src="Trailblazer image.png" alt="Skill Image" class="rounded-lg shadow-lg max-w-sm">
+    <p class="mt-2 text-gray-700">✅ Image Loaded Successfully!</p>
+  </div>
+</article>
+
+<script>
+  function showSpinner() {
+    const spinner = document.getElementById("spinner");
+    const imageContent = document.getElementById("imageContent");
+    const loadBtn = document.getElementById("loadBtn");
+    const instruction = document.getElementById("instructionText");
+
+    // Hide button & instructions
+    loadBtn.classList.add("hidden");
+    instruction.classList.add("hidden");
+
+    // Show spinner
+    spinner.classList.remove("hidden");
+
+    // Simulate longer loading delay (5 seconds)
+    setTimeout(() => {
+      spinner.classList.add("hidden");
+      imageContent.classList.remove("hidden");
+    }, 800);
+  }
+</script>
+<article class="project-box min-h-[320px] h-full">
+  <h3>📐 Website Tech Stack (LWC Lightning Layout Style)</h3>
+  <p class="text-gray-700 mb-3">Technologies, libraries, and services powering this website.</p>
+
+  <!-- Lightning Layout mimic -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    
+    <!-- Column 1: Languages -->
+    <div class="bg-white p-4 rounded-lg shadow border">
+      <h4 class="font-semibold text-indigo-700 mb-2">🖥️ Languages</h4>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li><strong>HTML5</strong>: Structural backbone for UI components and content.</li>
+        <li><strong>CSS (inline, CSS3, Tailwind)</strong>: Styling, layout, custom scrollbars, animations, and themes.</li>
+        <li><strong>JavaScript (ES6+)</strong>: Powers interactivity, chatbot, video controls, and real-time updates.</li>
+      </ul>
+    </div>
+
+    <!-- Column 2: Software & Libraries -->
+    <div class="bg-white p-4 rounded-lg shadow border">
+      <h4 class="font-semibold text-indigo-700 mb-2">📦 Software & Libraries</h4>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li><strong>Tailwind CSS (CDN)</strong>: Utility classes for responsive UI.</li>
+        <li><strong>Google Fonts (Inter)</strong>: Typography across the site.</li>
+        <li><strong>Font Awesome 6.x</strong>: Icons for UI (chat, settings, social media).</li>
+        <li><strong>Marked.js</strong>: Markdown → HTML in chatbot messages.</li>
+        <li><strong>Firebase v12 SDK</strong>: Authentication, Realtime DB, presence tracking, counters.</li>
+        <li><strong>Google Gemini API</strong>: AI responses for chatbot (summarisation, skills, prompts).</li>
+      </ul>
+    </div>
+
+    <!-- Column 3: Other Services -->
+    <div class="bg-white p-4 rounded-lg shadow border">
+      <h4 class="font-semibold text-indigo-700 mb-2">🌐 Other Services</h4>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li><strong>Google Forms</strong>: Embedded for Contact section.</li>
+        <li><strong>Netlify</strong>: Hosting & deployment of the website.</li>
+      </ul>
+    </div>
+    
+  </div>
+</article>
+
+<script>
+  let progress = 0;
+
+  function animateProgress() {
+    const bar = document.getElementById("progressBar");
+    const text = document.getElementById("progressText");
+
+    progress += 1; // move forward
+    if (progress > 100) progress = 0; // reset to start once complete
+
+    bar.style.width = progress + "%";
+    text.innerText = progress + "% Advancements";
+
+    // Adjust speed (higher = slower)
+    setTimeout(animateProgress, 300);
+  }
+
+  animateProgress();
+</script>
+
+    
+      </div>
+    </article>
+  </div>
+</section>
+</script>
+
 
     </main>
 
@@ -1123,49 +1896,59 @@
     </div>
 
     <!-- Floating Draggable AI Icon -->
-    <button id="aiIcon" class="ai-icon">Ai</button>
+<button id="aiIcon" class="ai-icon" aria-label="Open AI chat">
+  <img src="Einstein.png" alt="AI Bot">
+  <span class="floating-btn-tooltip blinking">Chat</span>
+</button>
 
-    <!-- Floating Draggable Contact Icon -->
-    <button id="contactToggleIcon" class="contact-toggle-icon" style="right: 60px; top: 50%;">
-        <i class="fas fa-address-book"></i>
+<!-- Floating Draggable Contact Icon -->
+<button id="contactToggleIcon" class="contact-toggle-icon" aria-label="Open contacts">
+  <i class="fas fa-address-book"></i>
+  <span class="floating-btn-tooltip blinking">Contact</span>
+</button>
     </button>
 
     <!-- Floating Contact Panel Container -->
-    <div id="contactPanelContainer" class="contact-panel-container" style="bottom: 20px; right: 20px;">
-        <!-- Resize handles -->
-        <div class="resize-handle top-left"></div>
-        <div class="resize-handle top-right"></div>
-        <div class="resize-handle bottom-left"></div>
-        <div class="resize-handle bottom-right"></div>
+<div id="contactPanelContainer" class="contact-panel-container" style="bottom: 20px; right: 20px;">
+    <!-- Resize handles -->
+    <div class="resize-handle top-left"></div>
+    <div class="resize-handle top-right"></div>
+    <div class="resize-handle bottom-left"></div>
+    <div class="resize-handle bottom-right"></div>
 
-        <div class="contact-panel-header" id="contactPanelHeader">
-            <span>Contact Me</span>
-            <button id="closeContactPanelBtn" title="Close">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="contact-icons-content p-4 flex flex-col space-y-3">
-            <!-- Updated contact links to use btn-primary and btn-secondary classes -->
-            <a href="tel:9640352929" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary" title="Call Me">
-                <i class="fas fa-phone-alt text-xl mr-2"></i> <span>Call Me</span>
-            </a>
-            <a href="mailto:sreeponemoni6264@gmail.com" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-secondary" title="Email Me">
-                <i class="fas fa-envelope text-xl mr-2"></i> <span>Email Me</span>
-            </a>
-            <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" rel="noopener noreferrer" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-primary" title="LinkedIn Profile">
-                <i class="fab fa-linkedin text-xl mr-2"></i> <span>LinkedIn</span>
-            </a>
-            <a href="https://github.com/liveasyourlike" target="_blank" rel="noopener noreferrer" class="text-white px-4 py-2 rounded-full text-lg font-medium flex items-center justify-center btn-secondary" title="GitHub Profile">
-                <i class="fab fa-github text-xl mr-2"></i> <span>GitHub</span>
-            </a>
-        </div>
+    <div class="contact-panel-header" id="contactPanelHeader">
+        <span>Contact Me</span>
+        <button id="closeContactPanelBtn" title="Close">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
+    <div class="contact-icons-content p-4 flex flex-col space-y-3">
+        <a href="tel:9640352929" class="contact-btn call" title="Call Me">
+            <i class="fas fa-phone-alt"></i><span>....Call Me</span>
+        </a>
+        <a href="mailto:sreeponemoni6264@gmail.com" class="contact-btn email" title="Email Me">
+            <i class="fas fa-envelope"></i><span>....Email Me</span>
+        </a>
+        <a href="http://linkedin.com/in/sreenu-ponemoni-b84167369" target="_blank" class="contact-btn linkedin" title="LinkedIn Profile">
+            <i class="fab fa-linkedin"></i><span>....LinkedIn</span>
+        </a>
+        <a href="https://github.com/liveasyourlike" target="_blank" class="contact-btn github" title="GitHub Profile">
+            <i class="fab fa-github"></i><span>....GitHub</span>
+        </a>
+        <a href="https://www.salesforce.com/trailblazer/sreenuponemoni" target="_blank" class="contact-btn trailhead" title="Trailhead Profile">
+            <i class="fas fa-mountain"></i><span>....Trailhead</span>
+        </a>
+    </div>
+</div>
+
+
+
     <!-- Footer Section -->
-    <footer class="bg-gray-800 text-white p-6 text-center mt-auto">
+    <footer class="p-6 text-center mt-auto bg-gray-500 text-white light-theme:bg-gray-100 light-theme:text-gray-900 dark-theme:bg-gray-900 dark-theme:text-gray-100">
         <div class="container mx-auto">
             <p>&copy; 2025 Sreenu Ponemoni. All rights reserved.</p>
-            <p class="text-sm mt-2">Built with HTML, GitHub, Netlify, JavaScript, and other tools.</p>
+            <p class="text-sm mt-2">Built with HTML, GitHub, Netlify, JavaScript, and other tools along with Creativity.</p>
         </div>
     </footer>
 
@@ -1216,11 +1999,11 @@
                 const now = new Date();
                 const hour = now.getHours();
                 if (hour >= 5 && hour < 12) {
-                    return "Good morning";
+                    return "Good-morning Visitor🌄";
                 } else if (hour >= 12 && hour < 18) {
-                    return "Good afternoon";
+                    return "Good-afternoon Visitor🌞";
                 } else {
-                    return "Good evening";
+                    return "Good-evening Visitor🌆";
                 }
             }
 
@@ -1253,6 +2036,7 @@
                     mobile: "9640352929",
                     email: "sreeponemoni6264@gmail.com",
                     linkedin: "http://linkedin.com/in/sreenu-ponemoni-b84167369",
+                    Trailhead: "https://www.salesforce.com/trailblazer/sreenuponemoni", // Added Trailhead
                     github: "https://github.com/liveasyourlike" // Added GitHub
                 },
                 summary: "Overall, 3.8 years of work experience in Salesforce.com CRM and Force.com platform as a Salesforce Administrator & developer. Participated in all stages of Software Development Life Cycle (SDLC) i.e., System Analysis, Design, Development and Testing Expertise. Experience in Development, Administration, Configuration, Implementation and Support of Salesforce CRM based on Apex language and leveraging Force.com Platform. Experience in writing apex transactions against their governor limits. Experience in UI Development through Lightning web Components (LWC) using VS Code. Expertise in Apex Triggers, Bulk Triggers, Apex Classes and apex Batches as per business needs. Created Unit Test Classes for deployment on to the production. Proficiency in SFDC Administrative tasks like Creating Profiles, Roles, Users, Page Layouts, Email Services, Approval Process, Workflows, Reports, Dashboards, Tasks and Events. Extensive experience in data migration using Data Loader, change sets, and Dataloader.io. Extensive experience in designing Custom Formula Fields, Field Dependencies, Validation Rules, Workflows, Process Builder and Approval Processes for automated alerts, field updates, and Email generation according to application requirements. Implemented Organization wide defaults (OWDs) & sharing rules for different users at different levels of organization. Experience in creating and maintaining sandboxes for different environments and migrating change sets from one instance to another instance.",
@@ -2564,8 +3348,8 @@
             // Function to create and initialize the liquid glass effect
             function createLiquidGlass() {
                 const shader = new Shader({
-                    width: 100, // Width of the effect area
-                    height: 67, // Height of the effect area
+                    width: 80, // Width of the effect area
+                    height: 47, // Height of the effect area
                     fragment: (uv, mouse) => {
                         // Fragment shader logic for distortion
                         const ix = uv.x - 0.5;
@@ -2576,7 +3360,7 @@
                             iy,
                             0.3, // Half-width of the inner rectangle
                             0.2, // Half-height of the inner rectangle
-                            0.6  // Radius for rounded corners
+                            0.5  // Radius for rounded corners
                         );
                         // Apply smooth step for displacement based on distance
                         const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15);
@@ -2594,109 +3378,468 @@
             createLiquidGlass(); // Initialize the effect
         })();
     </script>
-    <div id="video-player-container" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1500; width: 320px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); background-color: #000; overflow: hidden; border-radius: 8px;">
-    <div id="video-header" style="padding: 10px; background-color: #222; color: #fff; cursor: grab; display: flex; justify-content: space-between; align-items: center;">
-        <span>My Intro</span>
-        <div style="display: flex; gap: 10px;">
-            <span id="minimize-btn" style="font-size: 20px; cursor: pointer; display: none;">-</span>
-            <span id="maximize-btn" style="font-size: 20px; cursor: pointer;">&#9634;</span>
-            <span id="close-btn" style="font-size: 20px; cursor: pointer;">&times;</span>
-        </div>
-    </div>
-    <video id="my-video" controls autoplay style="width: 100%; display: block;">
-        <source src="sreenu_intro.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+    <script>
+const playBtn = document.getElementById("playBtn");
+const videoContainer = document.getElementById("videoContainer");
+const introVideo = document.getElementById("introVideo");
+const closeBtn = document.getElementById("closeBtn");
+const minBtn = document.getElementById("minBtn");
+const restoreBtn = document.getElementById("restoreBtn");
+const errorMsg = document.getElementById("errorMsg");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const playIcon = '<i class="fas fa-play"></i>';
+const pauseIcon = '<i class="fas fa-pause"></i>';
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const playBtns = document.querySelectorAll('.intro-play-btn');
-        const videoContainer = document.getElementById('video-player-container');
-        const videoHeader = document.getElementById('video-header');
-        const videoElement = document.getElementById('my-video');
-        const maximizeBtn = document.getElementById('maximize-btn');
-        const minimizeBtn = document.getElementById('minimize-btn');
-        const closeBtn = document.getElementById('close-btn');
+// Toggle play/pause with button
+playPauseBtn.addEventListener("click", () => {
+  if (introVideo.paused) {
+    introVideo.play();
+    playPauseBtn.innerHTML = pauseIcon;
+  } else {
+    introVideo.pause();
+    playPauseBtn.innerHTML = playIcon;
+  }
+});
 
-        let isDragging = false;
-        let offsetX, offsetY;
+// Keep button synced with video state
+introVideo.addEventListener("play", () => playPauseBtn.innerHTML = pauseIcon);
+introVideo.addEventListener("pause", () => playPauseBtn.innerHTML = playIcon);
 
-        // --- Dragging functionality for the mini-player ---
-        videoHeader.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            offsetX = e.clientX - videoContainer.getBoundingClientRect().left;
-            offsetY = e.clientY - videoContainer.getBoundingClientRect().top;
-            videoHeader.style.cursor = 'grabbing';
-            videoContainer.style.transition = 'none'; // Disable transition during drag
-        });
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const newLeft = e.clientX - offsetX;
-            const newTop = e.clientY - offsetY;
-            videoContainer.style.left = `${newLeft}px`;
-            videoContainer.style.top = `${newTop}px`;
-            videoContainer.style.right = 'auto'; // Disable right/bottom styles during drag
-            videoContainer.style.bottom = 'auto';
-        });
+// Both play button and video use the same toggle function
+playBtn.addEventListener("click", toggleVideo);
+introVideo.addEventListener("click", toggleVideo);
 
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            videoHeader.style.cursor = 'grab';
-            videoContainer.style.transition = 'top 0.3s ease, left 0.3s ease';
-        });
+function toggleVideo() {
+  // If video container is hidden, open it and start playing
+  if (videoContainer.style.display === "none" || videoContainer.style.display === "") {
+    videoContainer.style.display = "block";
+    videoContainer.classList.remove("minimized");
+    restoreBtn.style.display = "none";
+    minBtn.style.display = "inline";
+    introVideo.play().catch(() => {});
+    return;
+  }
 
-        // --- Button click handlers ---
-        playBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                videoContainer.style.display = 'block';
-                videoElement.play();
-                // Ensure mini-player styles are active
-                videoContainer.style.top = 'auto';
-                videoContainer.style.left = 'auto';
-                videoContainer.style.width = '320px';
-                videoContainer.style.height = 'auto';
-                videoContainer.style.bottom = '20px';
-                videoContainer.style.right = '20px';
-                maximizeBtn.style.display = 'block';
-                minimizeBtn.style.display = 'none';
-            });
-        });
+  // If video is visible → toggle play/pause
+  if (introVideo.paused) {
+    introVideo.play();
+  } else {
+    introVideo.pause();
+  }
+}
 
-        closeBtn.addEventListener('click', () => {
-            videoContainer.style.display = 'none';
-            videoElement.pause();
-            videoElement.currentTime = 0; // Rewind the video
-        });
+// MINIMIZE
+minBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  videoContainer.classList.add("minimized");
+  minBtn.style.display = "none";
+  restoreBtn.style.display = "inline";
+});
 
-        maximizeBtn.addEventListener('click', () => {
-            videoContainer.style.position = 'fixed';
-            videoContainer.style.top = '0';
-            videoContainer.style.left = '0';
-            videoContainer.style.width = '100%';
-            videoContainer.style.height = '100%';
-            videoContainer.style.borderRadius = '0';
-            videoContainer.style.zIndex = '2000';
-            videoHeader.style.display = 'flex';
-            maximizeBtn.style.display = 'none';
-            minimizeBtn.style.display = 'block';
-        });
+// RESTORE
+restoreBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  videoContainer.classList.remove("minimized");
+  restoreBtn.style.display = "none";
+  minBtn.style.display = "inline";
+});
 
-        minimizeBtn.addEventListener('click', () => {
-            videoContainer.style.position = 'fixed';
-            videoContainer.style.top = 'auto';
-            videoContainer.style.left = 'auto';
-            videoContainer.style.width = '320px';
-            videoContainer.style.height = 'auto';
-            videoContainer.style.bottom = '20px';
-            videoContainer.style.right = '20px';
-            videoContainer.style.borderRadius = '8px';
-            videoContainer.style.zIndex = '1500';
-            maximizeBtn.style.display = 'block';
-            minimizeBtn.style.display = 'none';
-        });
-    });
+// CLOSE  ── fades out, then hides; also pauses the video
+closeBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  introVideo.pause();
+  // optional fade
+  videoContainer.classList.add("is-hiding");
+  setTimeout(() => {
+    videoContainer.style.display = "none";
+    videoContainer.classList.remove("is-hiding");
+    // reset to normal size next time it opens
+    videoContainer.classList.remove("minimized");
+    restoreBtn.style.display = "none";
+    minBtn.style.display = "inline";
+  }, 200);
+});
+
+
+// Detect if video file fails
+introVideo.addEventListener("error", () => {
+  introVideo.style.display = "none";
+  errorMsg.style.display = "block";
+});
+// ✅ Toggle play/pause on single click
+introVideo.addEventListener("click", (e) => {
+  // prevent accidental pause when double-clicking for fullscreen later
+  if (introVideo.paused) {
+    introVideo.play();
+  } else {
+    introVideo.pause();
+  }
+});
+
+// Make draggable
+// Make draggable with snap-to-corner (like YouTube mini player)
+// Make freely draggable (anywhere on page)
+// Smooth free dragging
+let isDragging = false, offsetX, offsetY;
+
+// DRAG: ignore clicks on the video and ALL control buttons
+videoContainer.addEventListener("mousedown", (e) => {
+  // don't start drag from the <video> itself
+  if (e.target.tagName.toLowerCase() === "video") return;
+  // don't start drag when clicking any control button (play/pause/min/restore/close)
+  if (e.target.closest("#controlBar button")) return;
+
+  isDragging = true;
+  offsetX = e.clientX - videoContainer.offsetLeft;
+  offsetY = e.clientY - videoContainer.offsetTop;
+  videoContainer.style.transition = "none";
+});
+
+document.addEventListener("mouseup", () => {
+  if (isDragging) {
+    isDragging = false;
+    videoContainer.style.transition = "box-shadow 0.2s ease"; // re-enable smooth transitions
+  }
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (isDragging) {
+    let newX = e.clientX - offsetX;
+    let newY = e.clientY - offsetY;
+
+    // keep inside window boundaries
+    const maxX = window.innerWidth - videoContainer.offsetWidth;
+    const maxY = window.innerHeight - videoContainer.offsetHeight;
+    if (newX < 0) newX = 0;
+    if (newY < 0) newY = 0;
+    if (newX > maxX) newX = maxX;
+    if (newY > maxY) newY = maxY;
+
+    // apply smooth movement
+    videoContainer.style.left = newX + "px";
+    videoContainer.style.top = newY + "px";
+    videoContainer.style.right = "auto";
+    videoContainer.style.bottom = "auto";
+  }
+});
+document.addEventListener("DOMContentLoaded", function() {
+const body = document.body;
+const nav = document.getElementById("main-nav");
+const themeToggleBtn = document.createElement("button");
+
+
+themeToggleBtn.textContent = "🌞 / 🌙";
+themeToggleBtn.className = "ml-4 px-3 py-1 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition";
+
+
+const container = nav.querySelector(".container");
+if (container) container.appendChild(themeToggleBtn);
+
+
+body.classList.add("light-theme");
+nav.classList.add("light-theme");
+
+
+themeToggleBtn.addEventListener("click", function() {
+if (body.classList.contains("light-theme")) {
+body.classList.remove("light-theme");
+nav.classList.remove("light-theme");
+body.classList.add("dark-theme");
+nav.classList.add("dark-theme");
+} else {
+body.classList.remove("dark-theme");
+nav.classList.remove("dark-theme");
+body.classList.add("light-theme");
+nav.classList.add("light-theme");
+}
+});
+});
+
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+const chatbotBtn = document.getElementById("chatbot-toggle-btn");
+const contactBtn = document.getElementById("contact-toggle-btn");
+
+
+// Wrap buttons if not already
+let wrapper = document.querySelector(".floating-buttons");
+if (!wrapper) {
+wrapper = document.createElement("div");
+wrapper.className = "floating-buttons";
+chatbotBtn.parentNode.insertBefore(wrapper, chatbotBtn);
+wrapper.appendChild(chatbotBtn);
+if (contactBtn) wrapper.appendChild(contactBtn);
+}
+
+
+// Add tooltips
+if (chatbotBtn && !chatbotBtn.querySelector('.floating-btn-tooltip')) {
+const tooltip = document.createElement("div");
+tooltip.className = "floating-btn-tooltip";
+tooltip.innerText = "Chat with AI";
+chatbotBtn.appendChild(tooltip);
+}
+
+
+if (contactBtn && !contactBtn.querySelector('.floating-btn-tooltip')) {
+const tooltip = document.createElement("div");
+tooltip.className = "floating-btn-tooltip";
+tooltip.innerText = "Contact Me";
+contactBtn.appendChild(tooltip);
+}
+});
+document.addEventListener("DOMContentLoaded", function() {
+const chatbotBtn = document.getElementById("chatbot-toggle-btn");
+const contactBtn = document.getElementById("contact-toggle-btn");
+
+
+// Wrap buttons if not already
+let wrapper = document.querySelector(".floating-buttons");
+if (!wrapper) {
+wrapper = document.createElement("div");
+wrapper.className = "floating-buttons";
+chatbotBtn.parentNode.insertBefore(wrapper, chatbotBtn);
+wrapper.appendChild(chatbotBtn);
+if (contactBtn) wrapper.appendChild(contactBtn);
+}
+
+
+// Add tooltips
+function addTooltip(button, text) {
+if (button && !button.querySelector('.floating-btn-tooltip')) {
+const tooltip = document.createElement("div");
+tooltip.className = "floating-btn-tooltip";
+tooltip.innerText = text;
+button.appendChild(tooltip);
+return tooltip;
+}
+return null;
+}
+
+
+const chatbotTooltip = addTooltip(chatbotBtn, "Chat with AI");
+const contactTooltip = addTooltip(contactBtn, "Contact Me");
+
+
+// Auto-show tooltips briefly on load
+setTimeout(() => {
+if (chatbotTooltip) chatbotTooltip.classList.add("show-on-load");
+if (contactTooltip) contactTooltip.classList.add("show-on-load");
+}, 1000);
+
+
+setTimeout(() => {
+if (chatbotTooltip) chatbotTooltip.classList.remove("show-on-load");
+if (contactTooltip) contactTooltip.classList.remove("show-on-load");
+}, 4000);
+});
+document.addEventListener("DOMContentLoaded", function() {
+  const chatbotBtn = document.getElementById("chatbot-toggle-btn");
+  const contactBtn = document.getElementById("contact-toggle-btn");
+
+  function addTooltip(button, text) {
+    if (button && !button.querySelector('.floating-btn-tooltip')) {
+      const tooltip = document.createElement("div");
+      tooltip.className = "floating-btn-tooltip blinking"; // 🔥 blinking class added
+      tooltip.innerText = text;
+      button.appendChild(tooltip);
+    }
+  }
+
+  addTooltip(chatbotBtn, "Chat with AI");
+  addTooltip(contactBtn, "Contact Me");
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const ai = document.getElementById("aiIcon");
+  const contact = document.getElementById("contactToggleIcon");
+  const chatbotContainer = document.getElementById("chatbot-container");
+  const contactPanel = document.getElementById("contact-panel"); // change to your real contact panel ID
+  const chatbotClose = document.getElementById("chatbot-close-btn");
+  const contactClose = document.getElementById("contact-close-btn");
+
+  // AI button click → show chatbot, hide AI icon
+  if (ai && chatbotContainer) {
+    ai.addEventListener("click", () => {
+      chatbotContainer.style.display = "block";
+      ai.classList.add("hidden");
+    });
+  }
+
+  // Contact button click → show contact panel, hide Contact icon
+  if (contact && contactPanel) {
+    contact.addEventListener("click", () => {
+      contactPanel.style.display = "block";
+      contact.classList.add("hidden");
+    });
+  }
+
+  // Close chatbot → hide chatbot, show AI icon again
+  if (chatbotClose && ai) {
+    chatbotClose.addEventListener("click", () => {
+      chatbotContainer.style.display = "none";
+      ai.classList.remove("hidden");
+    });
+  }
+
+  // Close contact → hide contact panel, show Contact icon again
+  if (contactClose && contact) {
+    contactClose.addEventListener("click", () => {
+      contactPanel.style.display = "none";
+      contact.classList.remove("hidden");
+    });
+  }
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const ai = document.getElementById("aiIcon");
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  // --- Draggable logic ---
+  ai.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - ai.getBoundingClientRect().left;
+    offsetY = e.clientY - ai.getBoundingClientRect().top;
+    ai.style.transition = "none"; // disable smooth movement while dragging
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    ai.style.left = e.clientX - offsetX + "px";
+    ai.style.top = e.clientY - offsetY + "px";
+    ai.style.right = "auto";
+    ai.style.bottom = "auto";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    ai.style.transition = "all 10s linear"; // restore slow floating
+  });
+
+  // --- Auto-slow floating across website ---
+  function floatRandomly() {
+    if (isDragging) return; // skip if user dragging
+
+    const maxX = window.innerWidth - ai.offsetWidth - 20;
+    const maxY = window.innerHeight - ai.offsetHeight - 20;
+
+    const randomX = Math.floor(Math.random() * maxX);
+    const randomY = Math.floor(Math.random() * maxY);
+
+    ai.style.transition = "all 20s ease-in-out"; // smooth very slow move
+    ai.style.left = randomX + "px";
+    ai.style.top = randomY + "px";
+    ai.style.right = "auto";
+    ai.style.bottom = "auto";
+  }
+
+  // start floating every 12 seconds
+  setInterval(floatRandomly, 12000);
+
+  // initial random move after 2s
+  setTimeout(floatRandomly, 2000);
+});
+</script>
+  <!-- 🔹 Firebase SDK Init (final version) -->
+ <!-- >>> Paste ONLY THIS block once, at the end of <body> (after all HTML elements) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  import {
+    getDatabase,
+    ref,
+    runTransaction,
+    onValue,
+    onDisconnect,
+    set,
+    update
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+  // ---------- Replace these with the config from your Firebase Console (Project Settings → Web app) ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeqb_iB9l6EhFbtiaUVUpzJe1e4Cnakr0",
+  authDomain: "my-website-ecaa9.firebaseapp.com",
+  databaseURL: "https://my-website-ecaa9-default-rtdb.firebaseio.com",
+  projectId: "my-website-ecaa9",
+  storageBucket: "my-website-ecaa9.firebasestorage.app",
+  messagingSenderId: "1026285644487",
+  appId: "1:1026285644487:web:911a55533f1588f59face2",
+  };
+  // --------------------------------------------------------------------------------
+
+  // Initialize
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // DOM nodes (make sure these IDs exist in your HTML)
+  const elActive = document.getElementById('activeUsers');
+  const elToday  = document.getElementById('todayCount');
+  const elWeek   = document.getElementById('weekCount');
+  const elAll    = document.getElementById('allTimeCount');
+
+  function todayKey() { return new Date().toISOString().split('T')[0]; }
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+  }
+  function weekKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-W${getWeekNumber(d)}`;
+  }
+
+  // Sign in anonymously (must enable in Firebase Console → Authentication → Sign-in method → Anonymous)
+  signInAnonymously(auth)
+    .then(() => console.log('✅ Signed in anonymously'))
+    .catch(err => console.error('Auth error:', err));
+
+  // When we get an auth user, mark presence and increment counts
+  onAuthStateChanged(auth, user => {
+    if (!user) return;
+    const uid = user.uid;
+    const presenceRef = ref(db, `presence/${uid}`);
+
+    // mark presence and remove on disconnect
+    set(presenceRef, Date.now()).catch(console.error);
+    onDisconnect(presenceRef).remove();
+
+    // increment counters (transaction safe)
+    runTransaction(ref(db, `counts/today/${todayKey()}`), n => (n || 0) + 1).catch(console.error);
+    runTransaction(ref(db, `counts/week/${weekKey()}`), n => (n || 0) + 1).catch(console.error);
+    runTransaction(ref(db, 'counts/allTime'), n => (n || 0) + 1).catch(console.error);
+  });
+
+  // Live listeners to update UI
+  onValue(ref(db, 'counts/allTime'), snap => elAll && (elAll.textContent = snap.exists() ? snap.val() : 0));
+  onValue(ref(db, `counts/today/${todayKey()}`), snap => elToday && (elToday.textContent = snap.exists() ? snap.val() : 0));
+  onValue(ref(db, `counts/week/${weekKey()}`), snap => elWeek && (elWeek.textContent = snap.exists() ? snap.val() : 0));
+
+  // Active now = presence entries updated in last 5 minutes
+  onValue(ref(db, 'presence'), snap => {
+    if (!elActive) return;
+    if (!snap.exists()) { elActive.textContent = 0; return; }
+    const now = Date.now();
+    const vals = Object.values(snap.val());
+    // If your presence entries are objects (e.g., {timestamp:xxxx}), adjust accordingly
+    const times = vals.map(v => (typeof v === 'number' ? v : v.timestamp || Number(v) || 0));
+    const activeCount = times.filter(ts => now - ts < 5 * 60 * 1000).length;
+    elActive.textContent = activeCount;
+  });
+
+  // OPTIONAL: simulate button to test (keeps working for demo, remove in prod)
+  const simBtn = document.getElementById('simulateViewBtn');
+  if (simBtn) {
+    simBtn.addEventListener('click', () => {
+      runTransaction(ref(db, 'counts/allTime'), n => (n || 0) + 1);
+      runTransaction(ref(db, `counts/today/${todayKey()}`), n => (n || 0) + 1);
+      runTransaction(ref(db, `counts/week/${weekKey()}`), n => (n || 0) + 1);
+      console.log('Simulated view: increments sent');
+    });
+  }
+</script>
+
 </body>
 </html>
